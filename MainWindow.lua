@@ -1,8 +1,9 @@
 local addonName, ns = ...
 
-local MainWindow = { classButtons = {}, slotButtons = {}, tierCards = {} }
+local MainWindow = { classButtons = {}, rows = {} }
 ns.MainWindow = MainWindow
 
+local ROW_HEIGHT = 52
 local C = {
     window = { 0.022, 0.029, 0.044, 0.99 }, panel = { 0.050, 0.065, 0.095, 0.98 },
     panel2 = { 0.070, 0.090, 0.128, 0.98 }, border = { 0.15, 0.20, 0.29, 1 },
@@ -39,48 +40,53 @@ local function getItemIcon(itemID)
 end
 
 function MainWindow:CreateClassButton(parent, token, index)
-    local value = CreateFrame("Button", nil, parent); value:SetSize(52, 52)
-    value:SetPoint("TOPLEFT", 14 + ((index - 1) % 3) * 62, -50 - math.floor((index - 1) / 3) * 73)
-    local border = value:CreateTexture(nil, "BACKGROUND"); border:SetPoint("TOPLEFT", -2, 2); border:SetPoint("BOTTOMRIGHT", 2, -2); border:SetColorTexture(unpack(C.border)); value.border = border
-    local icon = value:CreateTexture(nil, "ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
-    local coords = CLASS_COORDS[token]; if coords then icon:SetTexCoord(unpack(coords)) end
-    local name = label(value, "GameFontNormalSmall", ns.BisData.classes[token].name, C.muted); name:SetPoint("TOP", value, "BOTTOM", 0, -3)
-    value:SetScript("OnClick", function() ns.Database:SetSelectedClass(token); MainWindow:RebuildSlotButtons(); MainWindow:RefreshGear() end)
-    value:SetScript("OnEnter", function() border:SetColorTexture(unpack(C.accent)) end)
-    value:SetScript("OnLeave", function() MainWindow:RefreshClassButtons() end)
-    value.token = token; self.classButtons[token] = value
+    local value = CreateFrame("Button", nil, parent); value:SetSize(52,52)
+    value:SetPoint("TOPLEFT",14+((index-1)%3)*62,-50-math.floor((index-1)/3)*73)
+    local border=value:CreateTexture(nil,"BACKGROUND"); border:SetPoint("TOPLEFT",-2,2); border:SetPoint("BOTTOMRIGHT",2,-2); border:SetColorTexture(unpack(C.border)); value.border=border
+    local icon=value:CreateTexture(nil,"ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
+    local coords=CLASS_COORDS[token]; if coords then icon:SetTexCoord(unpack(coords)) end
+    local name=label(value,"GameFontNormalSmall",ns.BisData.classes[token].name,C.muted); name:SetPoint("TOP",value,"BOTTOM",0,-3)
+    value:SetScript("OnClick",function() ns.Database:SetSelectedClass(token); MainWindow:RefreshGear(true) end)
+    value:SetScript("OnEnter",function() border:SetColorTexture(unpack(C.accent)) end)
+    value:SetScript("OnLeave",function() MainWindow:RefreshClassButtons() end)
+    self.classButtons[token]=value
 end
 
-function MainWindow:CreateSlotButton(parent, slot, index)
-    local value = CreateFrame("Button", nil, parent); value:SetSize(146, 30); value:SetPoint("TOPLEFT", 12, -46 - (index - 1) * 32)
-    local bg = value:CreateTexture(nil, "BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.065, 0.08, 0.115, 1); value.bg = bg
-    local accent = value:CreateTexture(nil, "ARTWORK"); accent:SetPoint("TOPLEFT"); accent:SetPoint("BOTTOMLEFT"); accent:SetWidth(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent = accent
-    local title = label(value, "GameFontNormalSmall", string.upper(ns.BisData.slotNames[slot]), C.muted); title:SetPoint("LEFT", 10, 0); value.title = title
-    value:SetScript("OnClick", function() ns.Database:SetSelectedSlot(slot); MainWindow:RefreshGear() end)
-    value:SetScript("OnEnter", function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
-    value:SetScript("OnLeave", function() MainWindow:RefreshSlotButtons() end)
-    value.slot = slot; value:Show(); return value
+function MainWindow:CreateItemCell(parent, tier, column)
+    local cell=CreateFrame("Button",nil,parent); cell:SetSize(222,ROW_HEIGHT); cell:SetPoint("LEFT",110+(column-1)*226,0)
+    local hover=cell:CreateTexture(nil,"BACKGROUND"); hover:SetAllPoints(); hover:SetColorTexture(0.10,0.14,0.20,0); cell.hover=hover
+    local tierColor=C.tier[tier]
+    local iconBorder=cell:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(44,44); iconBorder:SetPoint("LEFT",4,0); iconBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72)
+    local icon=cell:CreateTexture(nil,"ARTWORK"); icon:SetSize(40,40); icon:SetPoint("CENTER",iconBorder); icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark"); icon:SetTexCoord(0.07,0.93,0.07,0.93); cell.icon=icon
+    local name=label(cell,"GameFontNormalSmall","Item",C.text); name:SetPoint("TOPLEFT",56,-9); name:SetWidth(160); name:SetHeight(16); name:SetJustifyH("LEFT"); cell.name=name
+    local note=label(cell,"GameFontNormalSmall","",C.muted); note:SetPoint("TOPLEFT",56,-28); note:SetWidth(160); note:SetHeight(15); note:SetJustifyH("LEFT"); cell.note=note
+    cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
+    cell:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
+    return cell
 end
 
-function MainWindow:CreateTierCard(parent, tier, index)
-    local card = frame(parent); card:SetSize(194, 330); card:SetPoint("TOPLEFT", 14 + (index - 1) * 204, -94); skin(card, C.panel)
-    local tierColor = C.tier[tier]
-    local top = card:CreateTexture(nil, "ARTWORK"); top:SetPoint("TOPLEFT"); top:SetPoint("TOPRIGHT"); top:SetHeight(3); top:SetColorTexture(unpack(tierColor))
-    local tierText = label(card, "GameFontNormalHuge", "TIER " .. tier, tierColor); tierText:SetPoint("TOP", 0, -20)
-    local iconBorder = card:CreateTexture(nil, "BACKGROUND"); iconBorder:SetSize(112,112); iconBorder:SetPoint("TOP", 0, -65); iconBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.78)
-    local iconButton = CreateFrame("Button", nil, card); iconButton:SetSize(104,104); iconButton:SetPoint("CENTER", iconBorder)
-    local icon = iconButton:CreateTexture(nil, "ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark"); icon:SetTexCoord(0.07,0.93,0.07,0.93); card.icon = icon
-    local name = label(card, "GameFontNormalLarge", "Item", C.text); name:SetPoint("TOP", iconButton, "BOTTOM", 0, -16); name:SetWidth(170); name:SetJustifyH("CENTER"); card.name = name
-    local note = label(card, "GameFontNormalSmall", "", C.muted); note:SetPoint("TOP", name, "BOTTOM", 0, -12); note:SetWidth(166); note:SetJustifyH("CENTER"); card.note = note
-    local itemID = label(card, "GameFontNormalSmall", "", {0.34,0.42,0.53,1}); itemID:SetPoint("BOTTOM", 0, 15); card.itemIDText = itemID
-    iconButton:SetScript("OnEnter", function(self) if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
-    iconButton:SetScript("OnLeave", function() GameTooltip:Hide() end); card.iconButton = iconButton
-    self.tierCards[tier] = card
+function MainWindow:CreateGearRow(parent,index)
+    local row=CreateFrame("Frame",nil,parent); row:SetSize(800,ROW_HEIGHT); row:SetPoint("TOPLEFT",0,-(index-1)*ROW_HEIGHT)
+    local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(index%2==0 and 0.040 or 0.055,index%2==0 and 0.052 or 0.070,index%2==0 and 0.078 or 0.102,0.92)
+    local slot=label(row,"GameFontNormalSmall","SLOT",C.muted); slot:SetPoint("LEFT",12,0); slot:SetWidth(88); slot:SetJustifyH("LEFT"); row.slot=slot
+    local divider=row:CreateTexture(nil,"ARTWORK"); divider:SetPoint("BOTTOMLEFT"); divider:SetPoint("BOTTOMRIGHT"); divider:SetHeight(1); divider:SetColorTexture(0.14,0.18,0.25,0.55)
+    row.cells={}
+    for column,tier in ipairs({"S","A","B"}) do row.cells[tier]=self:CreateItemCell(row,tier,column) end
+    self.rows[index]=row; return row
+end
+
+function MainWindow:CreateScrollBar(parent,scrollFrame)
+    local bar=CreateFrame("Slider",nil,parent); bar:SetOrientation("VERTICAL"); bar:SetWidth(7); bar:SetPoint("TOPRIGHT",-4,-104); bar:SetPoint("BOTTOMRIGHT",-4,12); bar:SetMinMaxValues(0,0); bar:SetValueStep(ROW_HEIGHT); bar:SetValue(0)
+    local track=parent:CreateTexture(nil,"BACKGROUND"); track:SetWidth(2); track:SetPoint("TOP",bar,"TOP"); track:SetPoint("BOTTOM",bar,"BOTTOM"); track:SetColorTexture(0.14,0.18,0.26,0.7)
+    bar:SetThumbTexture("Interface\\Buttons\\WHITE8X8"); local thumb=bar:GetThumbTexture(); thumb:SetSize(7,42); thumb:SetColorTexture(unpack(C.accent))
+    bar:SetScript("OnValueChanged",function(_,value) scrollFrame:SetVerticalScroll(value) end)
+    scrollFrame:EnableMouseWheel(true); scrollFrame:SetScript("OnMouseWheel",function(_,delta) bar:SetValue(math.max(0,math.min(MainWindow.maxScroll or 0,bar:GetValue()-delta*ROW_HEIGHT*2))) end)
+    self.scrollBar=bar
 end
 
 function MainWindow:Create()
     if self.frame then return self.frame end
-    local saved = ns.Database:Get(); local root = frame(UIParent, "TwinkTrackerMainFrame")
+    local saved=ns.Database:Get(); local root=frame(UIParent,"TwinkTrackerMainFrame")
     root:SetSize(1100,700); root:SetPoint(saved.frame.point,UIParent,saved.frame.point,saved.frame.x,saved.frame.y); root:SetFrameStrata("DIALOG")
     root:SetMovable(true); root:EnableMouse(true); root:RegisterForDrag("LeftButton"); root:SetScript("OnDragStart",root.StartMoving)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
@@ -95,24 +101,17 @@ function MainWindow:Create()
     local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("TOPLEFT",14,-16)
     for i,token in ipairs(ns.BisData.classOrder) do self:CreateClassButton(classes,token,i) end
 
-    local slots=frame(content); slots:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); slots:SetPoint("BOTTOMLEFT",classes,"BOTTOMRIGHT",10,0); slots:SetWidth(170); skin(slots,C.panel); self.slotPanel=slots
-    local slotTitle=label(slots,"GameFontNormal","SELECT SLOT",C.muted); slotTitle:SetPoint("TOPLEFT",12,-16)
+    local gear=frame(content); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
+    self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
+    self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
+    local header=frame(gear); header:SetPoint("TOPLEFT",10,-65); header:SetPoint("TOPRIGHT",-14,-65); header:SetHeight(34); skin(header,C.panel2)
+    local slotHeader=label(header,"GameFontNormalSmall","SLOT",C.muted); slotHeader:SetPoint("LEFT",12,0); slotHeader:SetWidth(88); slotHeader:SetJustifyH("LEFT")
+    for column,tier in ipairs({"S","A","B"}) do local title=label(header,"GameFontNormal","TIER "..tier,C.tier[tier]); title:SetPoint("LEFT",122+(column-1)*226,0) end
 
-    local detail=frame(content); detail:SetPoint("TOPLEFT",slots,"TOPRIGHT",10,0); detail:SetPoint("BOTTOMRIGHT"); skin(detail,C.window); self.detail=detail
-    self.className=label(detail,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-15)
-    self.classRole=label(detail,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-5)
-    self.slotName=label(detail,"GameFontNormalLarge","HEAD",C.accent); self.slotName:SetPoint("TOPRIGHT",-16,-22)
-    for i,tier in ipairs({"S","A","B"}) do self:CreateTierCard(detail,tier,i) end
-    local footer=frame(detail); footer:SetPoint("TOPLEFT",14,-438); footer:SetPoint("BOTTOMRIGHT",-14,14); skin(footer,C.panel2)
-    local footerTitle=label(footer,"GameFontNormal","TIER NOTES",C.muted); footerTitle:SetPoint("TOPLEFT",14,-13)
-    self.footerText=label(footer,"GameFontNormalSmall","",C.muted); self.footerText:SetPoint("TOPLEFT",14,-40); self.footerText:SetWidth(590); self.footerText:SetJustifyH("LEFT")
-    self:RebuildSlotButtons(); self:RefreshGear(); return root
-end
-
-function MainWindow:RebuildSlotButtons()
-    for _,value in ipairs(self.slotButtons) do value:Hide() end; self.slotButtons={}
-    local profile=ns.BisData.classes[ns.Database:Get().selectedClass]
-    for index,slot in ipairs(profile.slotOrder) do self.slotButtons[index]=self:CreateSlotButton(self.slotPanel,slot,index) end
+    local scroll=CreateFrame("ScrollFrame",nil,gear); scroll:SetPoint("TOPLEFT",10,-103); scroll:SetPoint("BOTTOMRIGHT",-16,12); self.scrollFrame=scroll
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(800,ROW_HEIGHT); scroll:SetScrollChild(child); self.scrollChild=child
+    for index=1,17 do self:CreateGearRow(child,index) end
+    self:CreateScrollBar(gear,scroll); self:RefreshGear(true); return root
 end
 
 function MainWindow:RefreshClassButtons()
@@ -120,22 +119,26 @@ function MainWindow:RefreshClassButtons()
     for token,value in pairs(self.classButtons) do value.border:SetColorTexture(token==selected and 0.20 or 0.15,token==selected and 0.62 or 0.20,token==selected and 1.00 or 0.29,1) end
 end
 
-function MainWindow:RefreshSlotButtons()
-    local selected=ns.Database:Get().selectedSlot
-    for _,value in ipairs(self.slotButtons) do local active=value.slot==selected; value.bg:SetColorTexture(active and 0.10 or 0.065,active and 0.17 or 0.08,active and 0.25 or 0.115,1); value.accent:SetColorTexture(0.2,0.62,1,active and 1 or 0); value.title:SetTextColor(active and 0.50 or 0.53,active and 0.80 or 0.60,active and 1.00 or 0.70,1) end
-end
-
-function MainWindow:RefreshGear()
-    local saved=ns.Database:Get(); local profile=ns.BisData.classes[saved.selectedClass]; local slot=saved.selectedSlot
-    if not profile.slots[slot] then slot=profile.slotOrder[1]; ns.Database:SetSelectedSlot(slot) end
-    self.className:SetText(string.upper(profile.name)); self.classRole:SetText(profile.role); self.slotName:SetText(string.upper(ns.BisData.slotNames[slot])); self:RefreshClassButtons(); self:RefreshSlotButtons()
-    for _,tier in ipairs({"S","A","B"}) do local data=profile.slots[slot][tier]; local card=self.tierCards[tier]; card.icon:SetTexture(getItemIcon(data.id)); card.name:SetText(data.name); card.note:SetText(data.note or ""); card.iconButton.itemID=data.id; card.itemIDText:SetText(data.id and ("ITEM "..data.id) or "NO VERIFIED ITEM")
-        if data.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(data.id) end
+function MainWindow:RefreshGear(resetScroll)
+    local profile=ns.BisData.classes[ns.Database:Get().selectedClass]
+    self.className:SetText(string.upper(profile.name)); self.classRole:SetText(profile.role); self:RefreshClassButtons()
+    for index,row in ipairs(self.rows) do
+        local slot=profile.slotOrder[index]; row:SetShown(slot~=nil)
+        if slot then
+            row.slot:SetText(string.upper(ns.BisData.slotNames[slot]))
+            for _,tier in ipairs({"S","A","B"}) do
+                local data=profile.slots[slot][tier]; local cell=row.cells[tier]; cell.itemID=data.id; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name); cell.note:SetText(data.note or "")
+                if data.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(data.id) end
+            end
+        end
     end
-    self.footerText:SetText("S is the primary competitive recommendation. A and B are role, faction, availability or budget alternatives. Random-suffix items require the named suffix. Verify acquisition and restrictions in the current Classic Era client before investing gold or XP.")
+    local contentHeight=#profile.slotOrder*ROW_HEIGHT; self.scrollChild:SetHeight(contentHeight)
+    local viewport=self.scrollFrame:GetHeight(); if not viewport or viewport<=0 then viewport=495 end
+    self.maxScroll=math.max(0,contentHeight-viewport); self.scrollBar:SetMinMaxValues(0,self.maxScroll)
+    if resetScroll then self.scrollBar:SetValue(0) elseif self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
 end
 
-function MainWindow:RefreshItemIcons() if self.frame and self.frame:IsShown() then self:RefreshGear() end end
-function MainWindow:Toggle() local root=self:Create(); if root:IsShown() then root:Hide() else root:Show(); self:RefreshGear() end end
-function MainWindow:Show() local root=self:Create(); root:Show(); self:RefreshGear() end
+function MainWindow:RefreshItemIcons() if self.frame and self.frame:IsShown() then self:RefreshGear(false) end end
+function MainWindow:Toggle() local root=self:Create(); if root:IsShown() then root:Hide() else root:Show(); self:RefreshGear(false) end end
+function MainWindow:Show() local root=self:Create(); root:Show(); self:RefreshGear(false) end
 function MainWindow:Hide() if self.frame then self.frame:Hide() end end

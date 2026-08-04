@@ -14,8 +14,8 @@ game action.
   equipment slot.
 - **Tiers** — one S, A and B recommendation per class and slot, including
   faction, role, availability and budget context.
-- **Item cards** — cropped game icons without the Blizzard quick-slot overlay,
-  item IDs and native WoW tooltips.
+- **Gear table** — the complete class build is visible as slot rows with compact
+  40px item icons and S/A/B columns; mouse over any item for its native tooltip.
 
 The reference is intentionally a starting dataset derived from the supplied
 research. Exact availability, required levels, faction routes and current Era

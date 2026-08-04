@@ -17,3 +17,5 @@ All notable changes are documented here.
 - Added slot-by-slot S/A/B recommendations for every class and applicable slot.
 - Removed the Blizzard quick-slot overlay and cropped item icons cleanly.
 - Removed header taglines, build labels and live-character status text.
+- Replaced oversized item cards with a compact scrollable slot-by-tier table.
+- Reduced item icons to 40px so Classic textures render close to native size.
