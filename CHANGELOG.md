@@ -21,3 +21,5 @@ All notable changes are documented here.
 - Reduced item icons to 40px so Classic textures render close to native size.
 - Integrated the supplied TwinkTracker logo into the window header and deploy.
 - Fixed Classic texture loading by using the extensionless addon asset path.
+- Added a 1024x512 TGA runtime texture and a visible text fallback for clients
+  that fail to load the original PNG asset.
