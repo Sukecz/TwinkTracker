@@ -4,6 +4,7 @@
 ## Author: msminipc
 ## Version: 0.1.0-pilot
 ## SavedVariablesPerCharacter: TwinkTrackerDB
+## IconTexture: Interface\AddOns\TwinkTracker\assets\logo
 ## X-Flavor: Vanilla
 ## AllowLoadGameType: vanilla
 

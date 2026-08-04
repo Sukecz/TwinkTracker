@@ -33,6 +33,7 @@ test -f tools/windows/Deploy-WoW-Addons.cmd
 test -f tools/windows/Deploy-WoW-Addons.ps1
 test -f assets/logo.png
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
-grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.png' MainWindow.lua
+grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo' MainWindow.lua
+grep -Fqx '## IconTexture: Interface\AddOns\TwinkTracker\assets\logo' TwinkTracker.toc
 
 echo "All TwinkTracker Lua 5.1 and TOC checks passed."

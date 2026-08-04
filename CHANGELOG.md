@@ -20,3 +20,4 @@ All notable changes are documented here.
 - Replaced oversized item cards with a compact scrollable slot-by-tier table.
 - Reduced item icons to 40px so Classic textures render close to native size.
 - Integrated the supplied TwinkTracker logo into the window header and deploy.
+- Fixed Classic texture loading by using the extensionless addon asset path.
