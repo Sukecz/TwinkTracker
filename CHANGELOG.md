@@ -36,3 +36,5 @@ All notable changes are documented here.
   missing role, faction, caster off-hand, wand and class-insignia choices.
 - Corrected Pulsating Hydra Heart and Antipodean Rod item identities, and moved
   caster off-hands out of the wand recommendations.
+- Replaced the smaller alternative icon with a second full-size 40px icon and
+  equal name styling so same-tier choices have no implied priority.

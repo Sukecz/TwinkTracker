@@ -15,8 +15,8 @@ game action.
 - **Tiers** — S, A and B recommendations per class and slot, with up to one
   additional role, faction or budget variant inside each tier.
 - **Gear table** — the complete class build is visible as slot rows with compact
-  40px primary icons and S/A/B columns. A smaller `+` icon and second item name
-  expose an available same-tier variant; mouse over either icon for its tooltip.
+  40px icons and S/A/B columns. Equal same-tier choices use two identically sized
+  icons and matching item-name styling; mouse over either icon for its tooltip.
 - **Live equipment status** — matching equipped items receive a green highlight
   and update immediately after an equipment change. Random-suffix alternatives
   are matched by their full item name when one base item ID represents several tiers.

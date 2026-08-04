@@ -70,11 +70,10 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local name=label(cell,"GameFontNormalSmall","Item",C.text); name:SetPoint("TOPLEFT",56,-9); name:SetWidth(160); name:SetHeight(16); name:SetJustifyH("LEFT"); cell.name=name
     local note=label(cell,"GameFontNormalSmall","",C.muted); note:SetPoint("TOPLEFT",56,-28); note:SetWidth(160); note:SetHeight(15); note:SetJustifyH("LEFT"); cell.note=note
     local status=label(cell,"GameFontNormalSmall","EQUIPPED",C.equipped); status:SetPoint("TOPRIGHT",-6,-28); status:Hide(); cell.status=status
-    local alternative=CreateFrame("Button",nil,cell); alternative:SetSize(30,38); alternative:SetPoint("RIGHT",-4,0); alternative:Hide(); cell.alternative=alternative
+    local alternative=CreateFrame("Button",nil,cell); alternative:SetSize(44,44); alternative:SetPoint("RIGHT",-4,0); alternative:Hide(); cell.alternative=alternative
     local altBorder=alternative:CreateTexture(nil,"BACKGROUND"); altBorder:SetAllPoints(); altBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); alternative.border=altBorder
-    local altIcon=alternative:CreateTexture(nil,"ARTWORK"); altIcon:SetSize(26,34); altIcon:SetPoint("CENTER"); altIcon:SetTexCoord(0.07,0.93,0.07,0.93); alternative.icon=altIcon
-    local altMark=label(alternative,"GameFontNormalSmall","+",C.text); altMark:SetPoint("TOPLEFT",-1,3)
-    local altFactionBg=alternative:CreateTexture(nil,"OVERLAY"); altFactionBg:SetSize(12,12); altFactionBg:SetPoint("BOTTOMRIGHT",1,-1); alternative.factionBg=altFactionBg
+    local altIcon=alternative:CreateTexture(nil,"ARTWORK"); altIcon:SetSize(40,40); altIcon:SetPoint("CENTER"); altIcon:SetTexCoord(0.07,0.93,0.07,0.93); alternative.icon=altIcon
+    local altFactionBg=alternative:CreateTexture(nil,"OVERLAY"); altFactionBg:SetSize(16,16); altFactionBg:SetPoint("BOTTOMRIGHT",1,-1); alternative.factionBg=altFactionBg
     local altFactionText=label(alternative,"GameFontNormalSmall","",C.text); altFactionText:SetPoint("CENTER",altFactionBg,"CENTER",0,1); alternative.factionText=altFactionText
     alternative:SetScript("OnEnter",function(self) cell.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
     alternative:SetScript("OnLeave",function() cell.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
@@ -160,7 +159,7 @@ function MainWindow:Create()
     local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
     self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
     self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
-    local legend=label(gear,"GameFontNormalSmall","|cff40d96eEQUIPPED|r   + VARIANT   |cff5ca9ffA  ALLIANCE|r   |cffff505cH  HORDE|r",C.muted); legend:SetPoint("TOPRIGHT",-18,-22)
+    local legend=label(gear,"GameFontNormalSmall","|cff40d96eEQUIPPED|r   |cff5ca9ffA  ALLIANCE|r   |cffff505cH  HORDE|r",C.muted); legend:SetPoint("TOPRIGHT",-18,-22)
     local header=frame(gear); header:SetPoint("TOPLEFT",10,-65); header:SetPoint("TOPRIGHT",-14,-65); header:SetHeight(34); skin(header,C.panel2)
     local slotHeader=label(header,"GameFontNormalSmall","SLOT",C.muted); slotHeader:SetPoint("LEFT",12,0); slotHeader:SetWidth(88); slotHeader:SetJustifyH("LEFT")
     for column,tier in ipairs({"S","A","B"}) do local title=label(header,"GameFontNormal","TIER "..tier,C.tier[tier]); title:SetPoint("LEFT",122+(column-1)*226,0); self.tierHeaders[tier]=title end
@@ -194,7 +193,7 @@ function MainWindow:Layout()
         for column,tier in ipairs({"S","A","B"}) do
             local cell=row.cells[tier]; cell:ClearAllPoints(); cell:SetPoint("LEFT",110+(column-1)*tierWidth,0); cell:SetWidth(tierWidth-4)
             local textWidth=math.max(90,tierWidth-62); cell.textWidth=textWidth
-            local altSpace=cell.hasAlternative and 34 or 0; cell.name:SetWidth(math.max(45,textWidth-altSpace)); cell.note:SetWidth(math.max(35,textWidth-altSpace-(cell.equipped and 62 or 0)))
+            local altSpace=cell.hasAlternative and 48 or 0; cell.name:SetWidth(math.max(45,textWidth-altSpace)); cell.note:SetWidth(math.max(45,textWidth-altSpace-(cell.equipped and not cell.hasAlternative and 62 or 0)))
         end
     end
     for column,tier in ipairs({"S","A","B"}) do local title=self.tierHeaders[tier]; title:ClearAllPoints(); title:SetPoint("LEFT",122+(column-1)*tierWidth,0) end
@@ -221,10 +220,11 @@ function MainWindow:RefreshGear(resetScroll)
             for _,tier in ipairs({"S","A","B"}) do
                 local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
                 cell.itemID=data.id; cell.equipped=isEquipped; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name)
-                cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and 0.16 or 0)
+                cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and not alternative and 0.16 or 0)
                 local borderColor=isEquipped and C.equipped or C.tier[tier]; cell.iconBorder:SetColorTexture(borderColor[1],borderColor[2],borderColor[3],isEquipped and 1 or 0.72)
-                cell.hasAlternative=alternative~=nil; cell.status:SetShown(isEquipped); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",alternative and -40 or -6,-28)
-                local altSpace=alternative and 34 or 0; cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-altSpace)); cell.note:SetWidth(math.max(35,(cell.textWidth or 160)-altSpace-(isEquipped and 62 or 0)))
+                cell.hasAlternative=alternative~=nil; cell.status:SetShown(isEquipped and not alternative); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",-6,-28)
+                cell.name:SetTextColor(unpack(isEquipped and C.equipped or C.text))
+                local altSpace=alternative and 48 or 0; cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-altSpace)); cell.note:SetWidth(math.max(45,(cell.textWidth or 160)-altSpace-(isEquipped and not alternative and 62 or 0)))
                 local factionColor=getFactionColor(data.faction)
                 cell.factionBg:SetShown(factionColor~=nil); cell.factionText:SetShown(factionColor~=nil)
                 if factionColor then cell.factionBg:SetColorTexture(unpack(factionColor)); cell.factionText:SetText(string.sub(data.faction,1,1)) end
@@ -233,7 +233,7 @@ function MainWindow:RefreshGear(resetScroll)
                 if alternative then
                     local altEquipped=ns.GearStatus:IsEquipped(alternative,equipped,profileCounts); local altColor=altEquipped and C.equipped or C.tier[tier]
                     cell.alternative.itemID=alternative.id; cell.alternative.icon:SetTexture(getItemIcon(alternative.id)); cell.alternative.border:SetColorTexture(altColor[1],altColor[2],altColor[3],altEquipped and 1 or 0.72)
-                    cell.note:SetText("+ "..alternative.name); cell.note:SetTextColor(unpack(altEquipped and C.equipped or C.muted))
+                    cell.note:SetText(alternative.name); cell.note:SetTextColor(unpack(altEquipped and C.equipped or C.text))
                     local altFactionColor=getFactionColor(alternative.faction); cell.alternative.factionBg:SetShown(altFactionColor~=nil); cell.alternative.factionText:SetShown(altFactionColor~=nil)
                     if altFactionColor then cell.alternative.factionBg:SetColorTexture(unpack(altFactionColor)); cell.alternative.factionText:SetText(string.sub(alternative.faction,1,1)) end
                     if alternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(alternative.id) end

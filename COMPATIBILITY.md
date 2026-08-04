@@ -19,7 +19,7 @@ Before a release, verify in a current Era client:
    random-suffix variants do not highlight a different alternative with the
    same base item ID.
 7. Blue Alliance and red Horde badges remain readable at minimum window size.
-8. Every visible `+` variant shows its own icon, item name, faction badge,
-   equipped state and native tooltip without covering the primary item.
+8. Same-tier choices use two equally sized icons and equal name styling; each
+   keeps its own faction badge, equipped state and native tooltip.
 9. Gear, enchant and consumable availability is checked against the intended
    Era realm/faction and current client data.
