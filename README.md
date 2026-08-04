@@ -12,10 +12,11 @@ game action.
 
 - **Gear** — permanent selectors for all nine classes and every applicable
   equipment slot.
-- **Tiers** — one S, A and B recommendation per class and slot, including
-  faction, role, availability and budget context.
+- **Tiers** — S, A and B recommendations per class and slot, with up to one
+  additional role, faction or budget variant inside each tier.
 - **Gear table** — the complete class build is visible as slot rows with compact
-  40px item icons and S/A/B columns; mouse over any item for its native tooltip.
+  40px primary icons and S/A/B columns. A smaller `+` icon and second item name
+  expose an available same-tier variant; mouse over either icon for its tooltip.
 - **Live equipment status** — matching equipped items receive a green highlight
   and update immediately after an equipment change. Random-suffix alternatives
   are matched by their full item name when one base item ID represents several tiers.
@@ -31,9 +32,10 @@ game action.
   window header through a Classic-safe power-of-two TGA runtime texture and is
   included by the shared deployment tool.
 
-The reference is intentionally a starting dataset derived from the supplied
-research. Exact availability, required levels, faction routes and current Era
-validity still require live-client confirmation before a public release.
+The reference is intentionally a starting dataset derived primarily from the
+bundled Horde, Alliance, P3 and Warrior Extended workbook sheets. Exact
+availability, required levels, faction routes and current Era validity still
+require live-client confirmation before a public release.
 
 ## Usage
 

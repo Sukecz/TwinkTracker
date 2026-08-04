@@ -28,9 +28,9 @@ assert(not ns.GearStatus:IsEquipped({ id=9999, name="Missing" }, equipped, { [99
 
 local profile = {
     slotOrder = { "HEAD" },
-    slots = { HEAD = { S={id=1}, A={id=1}, B={id=2} } },
+    slots = { HEAD = { S={{id=1},{id=3}}, A={{id=1}}, B={{id=2}} } },
 }
 local counts = ns.GearStatus:CountProfileItemIDs(profile)
-assert(counts[1] == 2 and counts[2] == 1)
+assert(counts[1] == 2 and counts[2] == 1 and counts[3] == 1)
 
 print("test_gear_status.lua: ok")

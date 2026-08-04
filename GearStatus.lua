@@ -27,8 +27,10 @@ function GearStatus:CountProfileItemIDs(profile)
     local counts = {}
     for _, slot in ipairs(profile.slotOrder) do
         for _, tier in ipairs({ "S", "A", "B" }) do
-            local itemID = profile.slots[slot][tier].id
-            if itemID then counts[itemID] = (counts[itemID] or 0) + 1 end
+            for _, itemData in ipairs(profile.slots[slot][tier]) do
+                local itemID = itemData.id
+                if itemID then counts[itemID] = (counts[itemID] or 0) + 1 end
+            end
         end
     end
     return counts

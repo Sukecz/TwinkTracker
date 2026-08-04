@@ -30,3 +30,9 @@ All notable changes are documented here.
 - Added live green highlighting for recommendations currently equipped by the
   player, including safe matching of duplicated random-suffix item IDs.
 - Added Alliance and Horde badges to faction-specific gear recommendations.
+- Extended S/A/B tiers with 31 compact same-tier alternatives curated from the
+  bundled Horde, Alliance, P3 and Warrior Extended workbook sheets.
+- Added Venomstrike as a Tier S Warrior ranged variant and filled several
+  missing role, faction, caster off-hand, wand and class-insignia choices.
+- Corrected Pulsating Hydra Heart and Antipodean Rod item identities, and moved
+  caster off-hands out of the wand recommendations.
