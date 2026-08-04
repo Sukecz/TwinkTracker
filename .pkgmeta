@@ -4,6 +4,7 @@ ignore:
   - AGENTS.md
   - CHANGELOG.md
   - COMPATIBILITY.md
+  - DATA_SOURCES.md
   - LICENSE
   - README.md
   - tests

@@ -50,8 +50,10 @@ function Database:Initialize(saved)
     if not ns.BisData.classes[self.data.selectedClass] then
         self.data.selectedClass = defaults.selectedClass
     end
-    if not validTabs[self.data.selectedTab] then
-        self.data.selectedTab = defaults.selectedTab
+    self.data.selectedTab = "BIS"
+    local profile = ns.BisData.classes[self.data.selectedClass]
+    if type(self.data.selectedSlot) ~= "string" or not profile.slots[self.data.selectedSlot] then
+        self.data.selectedSlot = defaults.selectedSlot
     end
     if type(self.data.xpLockdown) ~= "boolean" then
         self.data.xpLockdown = defaults.xpLockdown
@@ -83,6 +85,16 @@ function Database:SetSelectedClass(classToken)
         return false
     end
     self.data.selectedClass = classToken
+    if not ns.BisData.classes[classToken].slots[self.data.selectedSlot] then
+        self.data.selectedSlot = ns.BisData.classes[classToken].slotOrder[1]
+    end
+    return true
+end
+
+function Database:SetSelectedSlot(slot)
+    local profile = ns.BisData.classes[self.data.selectedClass]
+    if not profile.slots[slot] then return false end
+    self.data.selectedSlot = slot
     return true
 end
 

@@ -7,7 +7,8 @@ ns.Defaults = {
         y = 0,
     },
     selectedClass = "DRUID",
-    selectedTab = "CHECKLIST",
+    selectedTab = "BIS",
+    selectedSlot = "HEAD",
     xpLockdown = false,
     checklist = {},
 }

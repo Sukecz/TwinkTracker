@@ -13,3 +13,7 @@ All notable changes are documented here.
 - Rebuilt the pilot UI as an English-only modern dashboard with class icons,
   structured item cards, game item icons and tier-colored columns.
 - Replaced the single-addon deployment helper with the shared four-addon tool.
+- Focused the pilot on Gear and temporarily hid Checklist and XP Tracker.
+- Added slot-by-slot S/A/B recommendations for every class and applicable slot.
+- Removed the Blizzard quick-slot overlay and cropped item icons cleanly.
+- Removed header taglines, build labels and live-character status text.

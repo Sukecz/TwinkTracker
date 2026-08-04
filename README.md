@@ -1,9 +1,8 @@
 # TwinkTracker
 
 TwinkTracker is a local planning companion for **WoW Classic Era / Hardcore
-level-19 twinks**. This is a pilot build: it gives one compact window for a
-preparation checklist, live XP awareness and an initial class-by-class BiS,
-enchant and consumable reference.
+level-19 twinks**. The current pilot focuses exclusively on the Gear section;
+Checklist and XP Tracker are hidden until their next design pass.
 
 It is deliberately informational. It does not equip items, accept or turn in
 quests, stop XP gain, target players, queue battlegrounds, or perform any other
@@ -11,15 +10,12 @@ game action.
 
 ## Pilot features
 
-- **Checklist** — persistent per-character preparation steps; XP-dangerous work
-  is explicitly called out.
-- **XP** — reads the live value from `UnitXP()` and `UnitXPMax()`, calculates
-  remaining XP and uses configurable product thresholds (60/80/92%).
-- **XP Lockdown** — a local caution mode for level 19. It is not an in-game XP
-  lock and cannot prevent XP gain.
-- **Gear & Loadout** — a permanent nine-class icon selector, visual item cards
-  with live WoW icons/tooltips, TIER S/A/B alternatives, enchants and
-  consumables for every Classic Era class.
+- **Gear** — permanent selectors for all nine classes and every applicable
+  equipment slot.
+- **Tiers** — one S, A and B recommendation per class and slot, including
+  faction, role, availability and budget context.
+- **Item cards** — cropped game icons without the Blizzard quick-slot overlay,
+  item IDs and native WoW tooltips.
 
 The reference is intentionally a starting dataset derived from the supplied
 research. Exact availability, required levels, faction routes and current Era
