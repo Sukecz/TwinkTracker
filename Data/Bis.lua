@@ -1,7 +1,13 @@
 local addonName, ns = ...
 
-local function item(id, name, note)
-    return { id = id, name = name, note = note }
+local function item(id, name, note, faction)
+    if not faction and note then
+        local alliance = string.find(note, "Alliance", 1, true)
+        local horde = string.find(note, "Horde", 1, true)
+        if alliance and not horde then faction = "ALLIANCE" end
+        if horde and not alliance then faction = "HORDE" end
+    end
+    return { id = id, name = name, note = note, faction = faction }
 end
 
 local function tiers(s, a, b)
@@ -85,7 +91,7 @@ local melee = {
     SHOULDERS = tiers(item(6579, "Defender Spaulders", "Mail physical staple"), item(5404, "Serpent's Shoulders", "Leather alternative"), item(10657, "Talbar Mantle", "Quest alternative")),
     BACK = tiers(item(15526, "Sentry's Cape of Strength", "Strength suffix"), item(2059, "Sentry Cloak", "All-round alternative"), item(12979, "Firebane Cloak", "Survival alternative")),
     CHEST = tiers(item(10399, "Blackened Defias Armor", "Physical build staple"), item(2041, "Tunic of Westfall", "Alliance quest alternative"), item(1486, "Tree Bark Jacket", "Survival alternative")),
-    WRISTS = tiers(item(9811, "Fortified Bracers of Strength", "Strength suffix"), item(4534, "Steel-clasped Bracers", "Fixed-stat alternative"), item(7003, "Beetle Clasps", "Quest alternative")),
+    WRISTS = tiers(item(9811, "Fortified Bracers of Strength", "Strength suffix"), item(4534, "Steel-clasped Bracers", "Horde quest alternative"), item(7003, "Beetle Clasps", "Alliance quest alternative")),
     HANDS = tiers(item(12994, "Thorbia's Gauntlets", "Physical staple"), item(6467, "Deviate Scale Gloves", "Leatherworking alternative"), item(6586, "Scouting Gloves of the Monkey", "Agility alternative")),
     WAIST = tiers(item(6460, "Cobrahn's Grasp", "Physical staple"), item(6468, "Deviate Scale Belt", "Leather alternative"), item(16987, "Screecher Belt", "Agility alternative")),
     LEGS = tiers(item(6087, "Chausses of Westfall", "Alliance physical option"), item(10410, "Leggings of the Fang", "Leather alternative"), item(15511, "Grunt's Legguards of the Bear", "Random-suffix option")),
@@ -96,7 +102,7 @@ local staffWeapons = tiers(item(890, "Twisted Chanter's Staff", "Balanced caster
 local physicalOneHand = tiers(item(1482, "Shadowfang", "Premium one-hand"), item(5191, "Cruel Barb", "Dungeon alternative"), item(1935, "Assassin's Blade", "Dagger alternative"))
 local casterOneHand = tiers(item(935, "Night Watch Shortsword", "Caster one-hand"), item(2567, "Evocator's Blade", "Caster alternative"), item(3184, "Hook Dagger", "Dagger alternative"))
 local physicalTwoHand = tiers(item(5815, "Glacial Stone", "Premium two-hand"), item(1318, "Night Reaver", "Two-hand alternative"), item(3822, "Runic Darkblade", "Budget two-hand"))
-local shields = tiers(item(12997, "Redbeard Crest", "Premium shield"), item(7002, "Arctic Buckler", "Quest shield"), item(3761, "Deadskull Shield", "Horde quest shield"))
+local shields = tiers(item(12997, "Redbeard Crest", "Premium shield"), item(7002, "Arctic Buckler", "Alliance quest shield"), item(3761, "Deadskull Shield", "Horde quest shield"))
 local function trinkets(insigniaID, faction)
     return tiers(item(19024, "Arena Grand Master", "Premium survival trinket"), item(4381, "Minor Recombobulator", "Engineering utility"), item(insigniaID, "Insignia of the " .. faction, faction .. " class-specific PvP trinket"))
 end
@@ -107,7 +113,7 @@ ns.BisData = {
     classes = {
         DRUID = profile("Druid", "Flag Carrier / Midfield / Healer", leather, {
             TRINKET = trinkets(18853, "Horde"),
-            BACK = tiers(item(12979, "Firebane Cloak", "Flag carrier survival"), item(20427, "Battle Healer's Cloak", "Healing alternative"), item(2059, "Sentry Cloak", "Physical alternative")),
+            BACK = tiers(item(12979, "Firebane Cloak", "Flag carrier survival"), item(20427, "Battle Healer's Cloak", "Horde healing alternative"), item(2059, "Sentry Cloak", "Physical alternative")),
             ONE_HAND = tiers(item(1483, "Face Smasher", "Flag carrier one-hand"), item(2567, "Evocator's Blade", "Caster one-hand"), item(935, "Night Watch Shortsword", "Survival one-hand")),
             TWO_HAND = staffWeapons,
             OFF_HAND = tiers(item(16768, "Furbolg Medicine Pouch", "Premium survival off-hand"), item(7001, "Gravestone Scepter", "Caster utility option"), item(nil, "Two-hand weapon setup", "No off-hand equipped")),

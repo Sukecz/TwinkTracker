@@ -32,10 +32,16 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
             assert(type(item.id) == "number" and item.id > 0)
             end
             assert(type(item.name) == "string" and item.name ~= "")
+            assert(item.faction == nil or item.faction == "ALLIANCE" or item.faction == "HORDE")
         end
     end
     assert(hasOneHand, classToken .. " missing 1H weapon tiers")
     assert(hasTwoHand == (classToken ~= "ROGUE"), classToken .. " has incorrect 2H weapon support")
 end
+
+assert(ns.BisData.classes.DRUID.slots.NECK.S.faction == "ALLIANCE")
+assert(ns.BisData.classes.DRUID.slots.NECK.A.faction == "HORDE")
+assert(ns.BisData.classes.WARRIOR.slots.WRISTS.A.faction == "HORDE")
+assert(ns.BisData.classes.WARRIOR.slots.WRISTS.B.faction == "ALLIANCE")
 
 print("test_data.lua: ok")

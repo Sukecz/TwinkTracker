@@ -27,3 +27,6 @@ All notable changes are documented here.
   for every class that supports the corresponding weapon category.
 - Added a compact, read-only Twink Basics page with essential planning advice.
 - Made the main window resizable with a responsive gear table and persisted size.
+- Added live green highlighting for recommendations currently equipped by the
+  player, including safe matching of duplicated random-suffix item IDs.
+- Added Alliance and Horde badges to faction-specific gear recommendations.

@@ -15,6 +15,7 @@ Data\Checklist.lua
 Data\Bis.lua
 Data\Consumables.lua
 Data\Guide.lua
+GearStatus.lua
 XPTracker.lua
 MainWindow.lua
 SlashCommands.lua

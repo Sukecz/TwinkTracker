@@ -16,6 +16,11 @@ game action.
   faction, role, availability and budget context.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px item icons and S/A/B columns; mouse over any item for its native tooltip.
+- **Live equipment status** — matching equipped items receive a green highlight
+  and update immediately after an equipment change. Random-suffix alternatives
+  are matched by their full item name when one base item ID represents several tiers.
+- **Faction badges** — a blue `A` or red `H` on the item icon identifies
+  Alliance- and Horde-specific recommendations.
 - **Weapon choices** — separate 1H and 2H rows, with S/A/B recommendations for
   every class that can use the corresponding weapon type.
 - **Twink Basics** — a short, read-only guide to XP planning, gear order,

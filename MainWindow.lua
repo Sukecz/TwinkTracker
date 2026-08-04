@@ -9,6 +9,7 @@ local C = {
     panel2 = { 0.070, 0.090, 0.128, 0.98 }, border = { 0.15, 0.20, 0.29, 1 },
     accent = { 0.20, 0.62, 1.00, 1 }, text = { 0.92, 0.95, 1.00, 1 },
     muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.67,0.70,0.78,1} },
+    equipped = { 0.25, 0.85, 0.43, 1 }, alliance = { 0.36, 0.66, 1.00, 1 }, horde = { 1.00, 0.31, 0.36, 1 },
 }
 
 local CLASS_COORDS = CLASS_ICON_TCOORDS or {
@@ -54,12 +55,16 @@ end
 
 function MainWindow:CreateItemCell(parent, tier, column)
     local cell=CreateFrame("Button",nil,parent); cell:SetSize(222,ROW_HEIGHT); cell:SetPoint("LEFT",110+(column-1)*226,0)
+    local state=cell:CreateTexture(nil,"BACKGROUND"); state:SetAllPoints(); state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); cell.state=state
     local hover=cell:CreateTexture(nil,"BACKGROUND"); hover:SetAllPoints(); hover:SetColorTexture(0.10,0.14,0.20,0); cell.hover=hover
     local tierColor=C.tier[tier]
-    local iconBorder=cell:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(44,44); iconBorder:SetPoint("LEFT",4,0); iconBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72)
+    local iconBorder=cell:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(44,44); iconBorder:SetPoint("LEFT",4,0); iconBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); cell.iconBorder=iconBorder; cell.tier=tier
     local icon=cell:CreateTexture(nil,"ARTWORK"); icon:SetSize(40,40); icon:SetPoint("CENTER",iconBorder); icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark"); icon:SetTexCoord(0.07,0.93,0.07,0.93); cell.icon=icon
+    local factionBg=cell:CreateTexture(nil,"OVERLAY"); factionBg:SetSize(16,16); factionBg:SetPoint("BOTTOMRIGHT",icon,"BOTTOMRIGHT",1,-1); factionBg:Hide(); cell.factionBg=factionBg
+    local factionText=label(cell,"GameFontNormalSmall","",C.text); factionText:SetPoint("CENTER",factionBg,"CENTER",0,1); factionText:Hide(); cell.factionText=factionText
     local name=label(cell,"GameFontNormalSmall","Item",C.text); name:SetPoint("TOPLEFT",56,-9); name:SetWidth(160); name:SetHeight(16); name:SetJustifyH("LEFT"); cell.name=name
     local note=label(cell,"GameFontNormalSmall","",C.muted); note:SetPoint("TOPLEFT",56,-28); note:SetWidth(160); note:SetHeight(15); note:SetJustifyH("LEFT"); cell.note=note
+    local status=label(cell,"GameFontNormalSmall","EQUIPPED",C.equipped); status:SetPoint("TOPRIGHT",-6,-28); status:Hide(); cell.status=status
     cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
     cell:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     return cell
@@ -142,6 +147,7 @@ function MainWindow:Create()
     local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
     self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
     self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
+    local legend=label(gear,"GameFontNormalSmall","|cff40d96eEQUIPPED|r   |cff5ca9ffA  ALLIANCE|r   |cffff505cH  HORDE|r",C.muted); legend:SetPoint("TOPRIGHT",-18,-22)
     local header=frame(gear); header:SetPoint("TOPLEFT",10,-65); header:SetPoint("TOPRIGHT",-14,-65); header:SetHeight(34); skin(header,C.panel2)
     local slotHeader=label(header,"GameFontNormalSmall","SLOT",C.muted); slotHeader:SetPoint("LEFT",12,0); slotHeader:SetWidth(88); slotHeader:SetJustifyH("LEFT")
     for column,tier in ipairs({"S","A","B"}) do local title=label(header,"GameFontNormal","TIER "..tier,C.tier[tier]); title:SetPoint("LEFT",122+(column-1)*226,0); self.tierHeaders[tier]=title end
@@ -174,7 +180,7 @@ function MainWindow:Layout()
         row:SetWidth(rowWidth)
         for column,tier in ipairs({"S","A","B"}) do
             local cell=row.cells[tier]; cell:ClearAllPoints(); cell:SetPoint("LEFT",110+(column-1)*tierWidth,0); cell:SetWidth(tierWidth-4)
-            cell.name:SetWidth(math.max(90,tierWidth-62)); cell.note:SetWidth(math.max(90,tierWidth-62))
+            local textWidth=math.max(90,tierWidth-62); cell.textWidth=textWidth; cell.name:SetWidth(textWidth); cell.note:SetWidth(math.max(40,textWidth-(cell.equipped and 62 or 0)))
         end
     end
     for column,tier in ipairs({"S","A","B"}) do local title=self.tierHeaders[tier]; title:ClearAllPoints(); title:SetPoint("LEFT",122+(column-1)*tierWidth,0) end
@@ -192,13 +198,21 @@ end
 
 function MainWindow:RefreshGear(resetScroll)
     local profile=ns.BisData.classes[ns.Database:Get().selectedClass]
+    local equipped=ns.GearStatus:Collect(); local profileCounts=ns.GearStatus:CountProfileItemIDs(profile)
     self.className:SetText(string.upper(profile.name)); self.classRole:SetText(profile.role); self:RefreshClassButtons()
     for index,row in ipairs(self.rows) do
         local slot=profile.slotOrder[index]; row:SetShown(slot~=nil)
         if slot then
             row.slot:SetText(string.upper(ns.BisData.slotNames[slot]))
             for _,tier in ipairs({"S","A","B"}) do
-                local data=profile.slots[slot][tier]; local cell=row.cells[tier]; cell.itemID=data.id; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name); cell.note:SetText(data.note or "")
+                local data=profile.slots[slot][tier]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
+                cell.itemID=data.id; cell.equipped=isEquipped; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name); cell.note:SetText(data.note or "")
+                cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and 0.16 or 0)
+                local borderColor=isEquipped and C.equipped or C.tier[tier]; cell.iconBorder:SetColorTexture(borderColor[1],borderColor[2],borderColor[3],isEquipped and 1 or 0.72)
+                cell.status:SetShown(isEquipped); cell.note:SetWidth(math.max(40,(cell.textWidth or 160)-(isEquipped and 62 or 0)))
+                local factionColor=data.faction=="ALLIANCE" and C.alliance or data.faction=="HORDE" and C.horde
+                cell.factionBg:SetShown(factionColor~=nil); cell.factionText:SetShown(factionColor~=nil)
+                if factionColor then cell.factionBg:SetColorTexture(unpack(factionColor)); cell.factionText:SetText(string.sub(data.faction,1,1)) end
                 if data.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(data.id) end
             end
         end
@@ -210,6 +224,9 @@ function MainWindow:RefreshGear(resetScroll)
 end
 
 function MainWindow:RefreshItemIcons()
+    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then self:RefreshGear(false) end
+end
+function MainWindow:RefreshEquipment()
     if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then self:RefreshGear(false) end
 end
 function MainWindow:Toggle()
