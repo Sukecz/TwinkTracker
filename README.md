@@ -16,6 +16,8 @@ game action.
   faction, role, availability and budget context.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px item icons and S/A/B columns; mouse over any item for its native tooltip.
+- **Custom branding** — the supplied TwinkTracker artwork is integrated into the
+  window header and included by the shared deployment tool.
 
 The reference is intentionally a starting dataset derived from the supplied
 research. Exact availability, required levels, faction routes and current Era

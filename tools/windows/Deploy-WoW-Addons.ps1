@@ -15,7 +15,7 @@ $addons = @(
     [pscustomobject]@{ DisplayName="Simple Scrolling Loot"; ProjectDirectory="ssl"; AddonName="SimpleScrollingLoot"; PrimaryToc="SimpleScrollingLoot.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleScrollingLoot.toc","SimpleScrollingLoot_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\ssl.png") },
     [pscustomobject]@{ DisplayName="Better Loot Rolls"; ProjectDirectory="blr"; AddonName="BetterLootRolls"; PrimaryToc="BetterLootRolls.toc"; Directories=@("Locales","assets"); RequiredFiles=@("BetterLootRolls.toc","BetterLootRolls_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
     [pscustomobject]@{ DisplayName="Simple Arsenal Swap"; ProjectDirectory="sas"; AddonName="SimpleArsenalSwap"; PrimaryToc="SimpleArsenalSwap.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleArsenalSwap.toc","SimpleArsenalSwap_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
-    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data"); RequiredFiles=@("TwinkTracker.toc","Core.lua","MainWindow.lua","XPTracker.lua","Locales\enUS.lua","Data\Bis.lua") }
+    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","Core.lua","MainWindow.lua","XPTracker.lua","Locales\enUS.lua","Data\Bis.lua","assets\logo.png") }
 )
 
 function Invoke-NativeCommand {

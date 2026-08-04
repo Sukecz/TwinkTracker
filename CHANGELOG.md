@@ -19,3 +19,4 @@ All notable changes are documented here.
 - Removed header taglines, build labels and live-character status text.
 - Replaced oversized item cards with a compact scrollable slot-by-tier table.
 - Reduced item icons to 40px so Classic textures render close to native size.
+- Integrated the supplied TwinkTracker logo into the window header and deploy.

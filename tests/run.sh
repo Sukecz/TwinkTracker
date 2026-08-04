@@ -31,6 +31,8 @@ grep -qx '## X-Flavor: Vanilla' TwinkTracker.toc
 grep -qx '## AllowLoadGameType: vanilla' TwinkTracker.toc
 test -f tools/windows/Deploy-WoW-Addons.cmd
 test -f tools/windows/Deploy-WoW-Addons.ps1
+test -f assets/logo.png
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.png' MainWindow.lua
 
 echo "All TwinkTracker Lua 5.1 and TOC checks passed."
