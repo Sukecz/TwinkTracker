@@ -1,0 +1,15 @@
+# Local editor and operating-system files
+.DS_Store
+*.swp
+*.swo
+
+# Locally generated addon packages
+dist/
+release/
+*.zip
+
+# Supplied local research material; it is input to the pilot, not addon runtime data.
+tmp/
+
+# WoW runtime state is deliberately not versioned
+WTF/

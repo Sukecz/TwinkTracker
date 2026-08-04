@@ -1,0 +1,19 @@
+## Interface: 11509
+## Title: TwinkTracker
+## Notes: Level 19 Twink progress, XP safety and BiS reference for Classic Era
+## Author: msminipc
+## Version: 0.1.0-pilot
+## SavedVariablesPerCharacter: TwinkTrackerDB
+## X-Flavor: Vanilla
+## AllowLoadGameType: vanilla
+
+Locales\enUS.lua
+Defaults.lua
+Database.lua
+Data\Checklist.lua
+Data\Bis.lua
+Data\Consumables.lua
+XPTracker.lua
+MainWindow.lua
+SlashCommands.lua
+Core.lua

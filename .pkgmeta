@@ -1,0 +1,13 @@
+package-as: TwinkTracker
+
+ignore:
+  - AGENTS.md
+  - CHANGELOG.md
+  - COMPATIBILITY.md
+  - LICENSE
+  - README.md
+  - tests
+  - tools
+  - tmp
+  - .gitignore
+  - .pkgmeta
