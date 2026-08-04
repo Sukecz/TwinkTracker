@@ -46,11 +46,16 @@ function Database:Initialize(saved)
     end
     self.data.frame.x = clamp(self.data.frame.x, -5000, 5000)
     self.data.frame.y = clamp(self.data.frame.y, -5000, 5000)
+    self.data.frame.width = type(self.data.frame.width) == "number" and clamp(self.data.frame.width, 980, 1500) or defaults.frame.width
+    self.data.frame.height = type(self.data.frame.height) == "number" and clamp(self.data.frame.height, 620, 950) or defaults.frame.height
 
     if not ns.BisData.classes[self.data.selectedClass] then
         self.data.selectedClass = defaults.selectedClass
     end
     self.data.selectedTab = "BIS"
+    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" then
+        self.data.selectedPage = defaults.selectedPage
+    end
     local profile = ns.BisData.classes[self.data.selectedClass]
     if type(self.data.selectedSlot) ~= "string" or not profile.slots[self.data.selectedSlot] then
         self.data.selectedSlot = defaults.selectedSlot
@@ -98,6 +103,12 @@ function Database:SetSelectedSlot(slot)
     return true
 end
 
+function Database:SetSelectedPage(page)
+    if page ~= "GEAR" and page ~= "BASICS" then return false end
+    self.data.selectedPage = page
+    return true
+end
+
 function Database:SetSelectedTab(tab)
     if not validTabs[tab] then
         return false
@@ -120,8 +131,15 @@ function Database:SetFramePosition(point, x, y)
     self.data.frame.y = clamp(y, -5000, 5000)
 end
 
+function Database:SetFrameSize(width, height)
+    self.data.frame.width = clamp(width, 980, 1500)
+    self.data.frame.height = clamp(height, 620, 950)
+end
+
 function Database:ResetFramePosition()
     self.data.frame.point = ns.Defaults.frame.point
     self.data.frame.x = ns.Defaults.frame.x
     self.data.frame.y = ns.Defaults.frame.y
+    self.data.frame.width = ns.Defaults.frame.width
+    self.data.frame.height = ns.Defaults.frame.height
 end

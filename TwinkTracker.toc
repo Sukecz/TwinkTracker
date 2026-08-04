@@ -14,6 +14,7 @@ Database.lua
 Data\Checklist.lua
 Data\Bis.lua
 Data\Consumables.lua
+Data\Guide.lua
 XPTracker.lua
 MainWindow.lua
 SlashCommands.lua

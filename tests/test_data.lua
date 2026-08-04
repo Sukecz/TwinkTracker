@@ -8,15 +8,22 @@ end
 loadModule("Data/Checklist.lua")
 loadModule("Data/Bis.lua")
 loadModule("Data/Consumables.lua")
+loadModule("Data/Guide.lua")
 
 assert(#ns.ChecklistData >= 8)
 assert(#ns.BisData.classOrder == 9)
 assert(#ns.ConsumablesData >= 5)
+assert(#ns.GuideData == 8)
 for _, classToken in ipairs(ns.BisData.classOrder) do
     local profile = assert(ns.BisData.classes[classToken])
     assert(type(profile.name) == "string")
     assert(#profile.slotOrder >= 13)
+    local hasOneHand = false
+    local hasTwoHand = false
     for _, slot in ipairs(profile.slotOrder) do
+        assert(slot ~= "WEAPON", classToken .. " still uses the combined weapon slot")
+        if slot == "ONE_HAND" then hasOneHand = true end
+        if slot == "TWO_HAND" then hasTwoHand = true end
         assert(type(profile.slots[slot]) == "table", classToken .. " missing slot " .. slot)
         for _, tier in ipairs({ "S", "A", "B" }) do
             local item = profile.slots[slot][tier]
@@ -27,6 +34,8 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
             assert(type(item.name) == "string" and item.name ~= "")
         end
     end
+    assert(hasOneHand, classToken .. " missing 1H weapon tiers")
+    assert(hasTwoHand == (classToken ~= "ROGUE"), classToken .. " has incorrect 2H weapon support")
 end
 
 print("test_data.lua: ok")

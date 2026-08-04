@@ -23,3 +23,7 @@ All notable changes are documented here.
 - Fixed Classic texture loading by using the extensionless addon asset path.
 - Added a 1024x512 TGA runtime texture and a visible text fallback for clients
   that fail to load the original PNG asset.
+- Split weapon recommendations into separate 1H and 2H rows with S/A/B tiers
+  for every class that supports the corresponding weapon category.
+- Added a compact, read-only Twink Basics page with essential planning advice.
+- Made the main window resizable with a responsive gear table and persisted size.

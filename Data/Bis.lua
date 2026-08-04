@@ -27,7 +27,7 @@ local function profile(name, role, base, overrides, extraSlots)
     slots.TRINKET = nil
     local order = {
         "HEAD", "NECK", "SHOULDERS", "BACK", "CHEST", "WRISTS", "HANDS",
-        "WAIST", "LEGS", "FEET", "FINGER_1", "FINGER_2", "TRINKET_1", "TRINKET_2", "WEAPON",
+        "WAIST", "LEGS", "FEET", "FINGER_1", "FINGER_2", "TRINKET_1", "TRINKET_2",
     }
     for _, slot in ipairs(extraSlots or {}) do order[#order + 1] = slot end
     return { name = name, role = role, slotOrder = order, slots = slots }
@@ -94,33 +94,37 @@ local melee = {
 
 local staffWeapons = tiers(item(890, "Twisted Chanter's Staff", "Balanced caster weapon"), item(2271, "Staff of the Blessed Seer", "Caster alternative"), item(3415, "Staff of the Friar", "Spirit alternative"))
 local physicalOneHand = tiers(item(1482, "Shadowfang", "Premium one-hand"), item(5191, "Cruel Barb", "Dungeon alternative"), item(1935, "Assassin's Blade", "Dagger alternative"))
+local casterOneHand = tiers(item(935, "Night Watch Shortsword", "Caster one-hand"), item(2567, "Evocator's Blade", "Caster alternative"), item(3184, "Hook Dagger", "Dagger alternative"))
+local physicalTwoHand = tiers(item(5815, "Glacial Stone", "Premium two-hand"), item(1318, "Night Reaver", "Two-hand alternative"), item(3822, "Runic Darkblade", "Budget two-hand"))
 local shields = tiers(item(12997, "Redbeard Crest", "Premium shield"), item(7002, "Arctic Buckler", "Quest shield"), item(3761, "Deadskull Shield", "Horde quest shield"))
 local function trinkets(insigniaID, faction)
     return tiers(item(19024, "Arena Grand Master", "Premium survival trinket"), item(4381, "Minor Recombobulator", "Engineering utility"), item(insigniaID, "Insignia of the " .. faction, faction .. " class-specific PvP trinket"))
 end
 
 ns.BisData = {
-    slotNames = { HEAD="Head", NECK="Neck", SHOULDERS="Shoulders", BACK="Back", CHEST="Chest", WRISTS="Wrists", HANDS="Hands", WAIST="Waist", LEGS="Legs", FEET="Feet", FINGER_1="Ring 1", FINGER_2="Ring 2", TRINKET_1="Trinket 1", TRINKET_2="Trinket 2", WEAPON="Weapon", OFF_HAND="Off Hand", RANGED="Ranged / Wand" },
+    slotNames = { HEAD="Head", NECK="Neck", SHOULDERS="Shoulders", BACK="Back", CHEST="Chest", WRISTS="Wrists", HANDS="Hands", WAIST="Waist", LEGS="Legs", FEET="Feet", FINGER_1="Ring 1", FINGER_2="Ring 2", TRINKET_1="Trinket 1", TRINKET_2="Trinket 2", ONE_HAND="1H Weapon", TWO_HAND="2H Weapon", OFF_HAND="Off Hand", RANGED="Ranged / Wand" },
     classOrder = { "DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR" },
     classes = {
         DRUID = profile("Druid", "Flag Carrier / Midfield / Healer", leather, {
             TRINKET = trinkets(18853, "Horde"),
             BACK = tiers(item(12979, "Firebane Cloak", "Flag carrier survival"), item(20427, "Battle Healer's Cloak", "Healing alternative"), item(2059, "Sentry Cloak", "Physical alternative")),
-            WEAPON = tiers(item(1483, "Face Smasher", "Flag carrier one-hand"), item(890, "Twisted Chanter's Staff", "Midfield caster option"), item(2271, "Staff of the Blessed Seer", "Healing option")),
+            ONE_HAND = tiers(item(1483, "Face Smasher", "Flag carrier one-hand"), item(2567, "Evocator's Blade", "Caster one-hand"), item(935, "Night Watch Shortsword", "Survival one-hand")),
+            TWO_HAND = staffWeapons,
             OFF_HAND = tiers(item(16768, "Furbolg Medicine Pouch", "Premium survival off-hand"), item(7001, "Gravestone Scepter", "Caster utility option"), item(nil, "Two-hand weapon setup", "No off-hand equipped")),
-        }, { "OFF_HAND" }),
+        }, { "ONE_HAND", "TWO_HAND", "OFF_HAND" }),
         HUNTER = profile("Hunter", "Ranged Pressure / Defense / Midfield", leather, {
             TRINKET = trinkets(18846, "Horde"),
-            WEAPON = tiers(item(890, "Twisted Chanter's Staff", "Balanced melee stat stick"), item(3415, "Staff of the Friar", "Spirit alternative"), item(6504, "Wingblade", "One-hand alternative")),
+            ONE_HAND = tiers(item(6504, "Wingblade", "One-hand stat option"), item(5191, "Cruel Barb", "Physical alternative"), item(1483, "Face Smasher", "Stamina alternative")),
+            TWO_HAND = tiers(item(890, "Twisted Chanter's Staff", "Balanced stat stick"), item(3415, "Staff of the Friar", "Spirit alternative"), item(1318, "Night Reaver", "Physical alternative")),
             RANGED = tiers(item(6469, "Venomstrike", "Wailing Caverns ranged staple"), item(2825, "Bow of Searing Arrows", "World-drop alternative"), item(3021, "Ranger Bow", "Budget ranged option")),
-        }, { "RANGED" }),
-        MAGE = profile("Mage", "Control / Midfield / Burst", caster, { TRINKET=trinkets(18850,"Horde"), WEAPON=staffWeapons, RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(5183,"Antipodean Rod","Elemental alternative"),item(2567,"Evocator's Blade","One-hand swap option")) }, {"RANGED"}),
-        PALADIN = profile("Paladin", "Support / Defense / Melee", melee, { TRINKET=trinkets(18864,"Alliance"), WEAPON=tiers(item(1482,"Shadowfang","One-hand support setup"),item(5815,"Glacial Stone","Two-hand damage option"),item(1318,"Night Reaver","Two-hand alternative")), OFF_HAND=shields }, {"OFF_HAND"}),
-        PRIEST = profile("Priest", "Healer / Support / Shadow", caster, { TRINKET=trinkets(18851,"Horde"), WEAPON=tiers(item(15223,"Jagged Star of Healing","Healing one-hand"),item(890,"Twisted Chanter's Staff","Balanced staff"),item(2271,"Staff of the Blessed Seer","Caster alternative")), OFF_HAND=tiers(item(16768,"Furbolg Medicine Pouch","Survival off-hand"),item(7001,"Gravestone Scepter","Caster alternative"),item(nil,"Two-hand weapon setup","No off-hand equipped")), RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(2567,"Evocator's Blade","Weapon swap alternative"),item(3415,"Staff of the Friar","Spirit swap")) }, {"OFF_HAND","RANGED"}),
-        ROGUE = profile("Rogue", "Burst / Flag Return / Defense", leather, { TRINKET=trinkets(18849,"Horde"), WEAPON=physicalOneHand, OFF_HAND=tiers(item(1935,"Assassin's Blade","Premium off-hand dagger"),item(5191,"Cruel Barb","Sword alternative"),item(1482,"Shadowfang","Premium dual-sword option")), RANGED=tiers(item(3107,"Keen Throwing Knife","Thrown weapon staple"),item(20437,"Outrider's Bow","Horde WSG alternative"),item(20438,"Outrunner's Bow","Alliance WSG alternative")) }, {"OFF_HAND","RANGED"}),
-        SHAMAN = profile("Shaman", "Midfield / Support / Melee", leather, { TRINKET=trinkets(18845,"Horde"), WEAPON=tiers(item(2567,"Evocator's Blade","Caster one-hand"),item(1482,"Shadowfang","Physical one-hand"),item(890,"Twisted Chanter's Staff","Two-hand caster option")), OFF_HAND=shields }, {"OFF_HAND"}),
-        WARLOCK = profile("Warlock", "Survival / Shadow Pressure / Control", caster, { TRINKET=trinkets(18852,"Horde"), WEAPON=tiers(item(890,"Twisted Chanter's Staff","Balanced caster weapon"),item(1484,"Witching Stave","Shadow-focused alternative"),item(3415,"Staff of the Friar","Spirit alternative")), RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(5183,"Antipodean Rod","Damage alternative"),item(2567,"Evocator's Blade","Weapon swap alternative")) }, {"RANGED"}),
-        WARRIOR = profile("Warrior", "Frontline / Defense / Flag Carrier", melee, { TRINKET=trinkets(18834,"Horde"), WEAPON=tiers(item(5815,"Glacial Stone","Two-hand pressure"),item(1318,"Night Reaver","Two-hand alternative"),item(1482,"Shadowfang","One-hand setup")), OFF_HAND=shields, RANGED=tiers(item(3107,"Keen Throwing Knife","Thrown weapon staple"),item(20437,"Outrider's Bow","Horde WSG alternative"),item(20438,"Outrunner's Bow","Alliance WSG alternative")) }, {"OFF_HAND","RANGED"}),
+        }, { "ONE_HAND", "TWO_HAND", "RANGED" }),
+        MAGE = profile("Mage", "Control / Midfield / Burst", caster, { TRINKET=trinkets(18850,"Horde"), ONE_HAND=casterOneHand, TWO_HAND=staffWeapons, RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(5183,"Antipodean Rod","Elemental alternative"),item(2567,"Evocator's Blade","One-hand swap option")) }, {"ONE_HAND","TWO_HAND","RANGED"}),
+        PALADIN = profile("Paladin", "Support / Defense / Melee", melee, { TRINKET=trinkets(18864,"Alliance"), ONE_HAND=physicalOneHand, TWO_HAND=physicalTwoHand, OFF_HAND=shields }, {"ONE_HAND","TWO_HAND","OFF_HAND"}),
+        PRIEST = profile("Priest", "Healer / Support / Shadow", caster, { TRINKET=trinkets(18851,"Horde"), ONE_HAND=tiers(item(15223,"Jagged Star of Healing","Healing one-hand"),item(935,"Night Watch Shortsword","Caster one-hand"),item(2567,"Evocator's Blade","Caster alternative")), TWO_HAND=staffWeapons, OFF_HAND=tiers(item(16768,"Furbolg Medicine Pouch","Survival off-hand"),item(7001,"Gravestone Scepter","Caster alternative"),item(nil,"Two-hand weapon setup","No off-hand equipped")), RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(2567,"Evocator's Blade","Weapon swap alternative"),item(3415,"Staff of the Friar","Spirit swap")) }, {"ONE_HAND","TWO_HAND","OFF_HAND","RANGED"}),
+        ROGUE = profile("Rogue", "Burst / Flag Return / Defense", leather, { TRINKET=trinkets(18849,"Horde"), ONE_HAND=physicalOneHand, OFF_HAND=tiers(item(1935,"Assassin's Blade","Premium off-hand dagger"),item(5191,"Cruel Barb","Sword alternative"),item(1482,"Shadowfang","Premium dual-sword option")), RANGED=tiers(item(3107,"Keen Throwing Knife","Thrown weapon staple"),item(20437,"Outrider's Bow","Horde WSG alternative"),item(20438,"Outrunner's Bow","Alliance WSG alternative")) }, {"ONE_HAND","OFF_HAND","RANGED"}),
+        SHAMAN = profile("Shaman", "Midfield / Support / Melee", leather, { TRINKET=trinkets(18845,"Horde"), ONE_HAND=tiers(item(2567,"Evocator's Blade","Caster one-hand"),item(1482,"Shadowfang","Physical one-hand"),item(1483,"Face Smasher","Survival one-hand")), TWO_HAND=staffWeapons, OFF_HAND=shields }, {"ONE_HAND","TWO_HAND","OFF_HAND"}),
+        WARLOCK = profile("Warlock", "Survival / Shadow Pressure / Control", caster, { TRINKET=trinkets(18852,"Horde"), ONE_HAND=casterOneHand, TWO_HAND=tiers(item(890,"Twisted Chanter's Staff","Balanced caster weapon"),item(1484,"Witching Stave","Shadow-focused alternative"),item(3415,"Staff of the Friar","Spirit alternative")), RANGED=tiers(item(7001,"Gravestone Scepter","Wand staple"),item(5183,"Antipodean Rod","Damage alternative"),item(2567,"Evocator's Blade","Weapon swap alternative")) }, {"ONE_HAND","TWO_HAND","RANGED"}),
+        WARRIOR = profile("Warrior", "Frontline / Defense / Flag Carrier", melee, { TRINKET=trinkets(18834,"Horde"), ONE_HAND=physicalOneHand, TWO_HAND=physicalTwoHand, OFF_HAND=shields, RANGED=tiers(item(3107,"Keen Throwing Knife","Thrown weapon staple"),item(20437,"Outrider's Bow","Horde WSG alternative"),item(20438,"Outrunner's Bow","Alliance WSG alternative")) }, {"ONE_HAND","TWO_HAND","OFF_HAND","RANGED"}),
     },
     sources = {
         "Supplied Horde/Alliance Classic Era workbook", "Wowhead Classic level-19 class guides",

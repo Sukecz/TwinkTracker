@@ -1,8 +1,8 @@
 # TwinkTracker
 
 TwinkTracker is a local planning companion for **WoW Classic Era / Hardcore
-level-19 twinks**. The current pilot focuses exclusively on the Gear section;
-Checklist and XP Tracker are hidden until their next design pass.
+level-19 twinks**. The current pilot focuses on Gear and a compact Twink Basics
+reference; Checklist and XP Tracker are hidden until their next design pass.
 
 It is deliberately informational. It does not equip items, accept or turn in
 quests, stop XP gain, target players, queue battlegrounds, or perform any other
@@ -16,6 +16,12 @@ game action.
   faction, role, availability and budget context.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px item icons and S/A/B columns; mouse over any item for its native tooltip.
+- **Weapon choices** — separate 1H and 2H rows, with S/A/B recommendations for
+  every class that can use the corresponding weapon type.
+- **Twink Basics** — a short, read-only guide to XP planning, gear order,
+  professions and the final level-19 audit, without checklist controls.
+- **Resizable layout** — drag the lower-right corner to resize the window; its
+  size and the selected page are saved per character.
 - **Custom branding** — the supplied TwinkTracker artwork is integrated into the
   window header through a Classic-safe power-of-two TGA runtime texture and is
   included by the shared deployment tool.
@@ -29,11 +35,11 @@ validity still require live-client confirmation before a public release.
 - `/twinktracker`, `/tt` or `/twink` — open or close TwinkTracker
 - `/tt show` — open it
 - `/tt hide` — close it
-- `/tt reset` — reset only the saved window position
+- `/tt reset` — reset the saved window position and size
 - `/tt help` — show command help
 
 Click an item name with an available item ID to open its normal WoW tooltip.
-Checklist progress, the chosen class and XP Lockdown are saved per character.
+The chosen class, page, window position and window size are saved per character.
 
 ## Development
 

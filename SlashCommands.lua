@@ -17,8 +17,10 @@ function ns:RegisterSlashCommands()
             if ns.MainWindow.frame then
                 ns.MainWindow.frame:ClearAllPoints()
                 ns.MainWindow.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+                ns.MainWindow.frame:SetSize(ns.Defaults.frame.width, ns.Defaults.frame.height)
+                ns.MainWindow:Layout()
             end
-            print("TwinkTracker: window position reset.")
+            print("TwinkTracker: window position and size reset.")
         else
             print("TwinkTracker: /tt [show|hide|reset|help]")
         end

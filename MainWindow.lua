@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-local MainWindow = { classButtons = {}, rows = {} }
+local MainWindow = { classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, tierHeaders = {} }
 ns.MainWindow = MainWindow
 
 local ROW_HEIGHT = 52
@@ -84,35 +84,105 @@ function MainWindow:CreateScrollBar(parent,scrollFrame)
     self.scrollBar=bar
 end
 
+function MainWindow:CreatePageButton(parent,key,text,x)
+    local value=CreateFrame("Button",nil,parent); value:SetSize(122,30); value:SetPoint("TOPLEFT",x,-35)
+    local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
+    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
+    local title=label(value,"GameFontNormalSmall",text,C.muted); title:SetPoint("CENTER"); value.title=title
+    value:SetScript("OnClick",function() MainWindow:SelectPage(key) end)
+    value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
+    value:SetScript("OnLeave",function() MainWindow:RefreshPageButtons() end)
+    self.pageButtons[key]=value
+end
+
+function MainWindow:CreateBasicsPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.BASICS=page
+    local heading=label(page,"GameFontNormalHuge","TWINK BASICS",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","The short version: finish every XP-risk task before the final level-19 lock-in.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    for index,entry in ipairs(ns.GuideData) do
+        local card=frame(page); card:SetHeight(92); skin(card,C.panel); self.guideCards[index]=card
+        local number=label(card,"GameFontNormalLarge",string.format("%02d",index),C.accent); number:SetPoint("TOPLEFT",14,-14)
+        local title=label(card,"GameFontNormal",entry.title,C.text); title:SetPoint("TOPLEFT",52,-14)
+        local text=label(card,"GameFontNormalSmall",entry.text,C.muted); text:SetPoint("TOPLEFT",52,-38); text:SetJustifyH("LEFT"); card.body=text
+    end
+end
+
+function MainWindow:CreateResizeGrip(root)
+    local grip=CreateFrame("Button",nil,root); grip:SetSize(22,22); grip:SetPoint("BOTTOMRIGHT",-3,3)
+    grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+    grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+    grip:SetScript("OnMouseDown",function(_,mouseButton) if mouseButton=="LeftButton" then root:StartSizing("BOTTOMRIGHT") end end)
+    grip:SetScript("OnMouseUp",function() root:StopMovingOrSizing(); ns.Database:SetFrameSize(root:GetWidth(),root:GetHeight()); MainWindow:Layout() end)
+    self.resizeGrip=grip
+end
+
 function MainWindow:Create()
     if self.frame then return self.frame end
     local saved=ns.Database:Get(); local root=frame(UIParent,"TwinkTrackerMainFrame")
-    root:SetSize(1100,700); root:SetPoint(saved.frame.point,UIParent,saved.frame.point,saved.frame.x,saved.frame.y); root:SetFrameStrata("DIALOG")
+    root:SetSize(saved.frame.width,saved.frame.height); root:SetPoint(saved.frame.point,UIParent,saved.frame.point,saved.frame.x,saved.frame.y); root:SetFrameStrata("DIALOG")
+    root:SetResizable(true)
+    if root.SetResizeBounds then root:SetResizeBounds(980,620,1500,950) else root:SetMinResize(980,620); root:SetMaxResize(1500,950) end
     root:SetMovable(true); root:EnableMouse(true); root:RegisterForDrag("LeftButton"); root:SetScript("OnDragStart",root.StartMoving)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
     skin(root,C.window,C.border); root:Hide(); self.frame=root
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
     local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
+    self:CreatePageButton(root,"GEAR","GEAR",20); self:CreatePageButton(root,"BASICS","TWINK BASICS",150)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
     close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
 
-    local content=frame(root); content:SetPoint("TOPLEFT",20,-108); content:SetPoint("BOTTOMRIGHT",-20,20)
-    local classes=frame(content); classes:SetPoint("TOPLEFT"); classes:SetPoint("BOTTOMLEFT"); classes:SetWidth(208); skin(classes,C.panel)
+    local content=frame(root); content:SetPoint("TOPLEFT",20,-108); content:SetPoint("BOTTOMRIGHT",-20,20); self.content=content
+    local gearPage=frame(content); gearPage:SetAllPoints(); self.pages.GEAR=gearPage
+    local classes=frame(gearPage); classes:SetPoint("TOPLEFT"); classes:SetPoint("BOTTOMLEFT"); classes:SetWidth(208); skin(classes,C.panel)
     local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("TOPLEFT",14,-16)
     for i,token in ipairs(ns.BisData.classOrder) do self:CreateClassButton(classes,token,i) end
 
-    local gear=frame(content); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
+    local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
     self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
     self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
     local header=frame(gear); header:SetPoint("TOPLEFT",10,-65); header:SetPoint("TOPRIGHT",-14,-65); header:SetHeight(34); skin(header,C.panel2)
     local slotHeader=label(header,"GameFontNormalSmall","SLOT",C.muted); slotHeader:SetPoint("LEFT",12,0); slotHeader:SetWidth(88); slotHeader:SetJustifyH("LEFT")
-    for column,tier in ipairs({"S","A","B"}) do local title=label(header,"GameFontNormal","TIER "..tier,C.tier[tier]); title:SetPoint("LEFT",122+(column-1)*226,0) end
+    for column,tier in ipairs({"S","A","B"}) do local title=label(header,"GameFontNormal","TIER "..tier,C.tier[tier]); title:SetPoint("LEFT",122+(column-1)*226,0); self.tierHeaders[tier]=title end
 
     local scroll=CreateFrame("ScrollFrame",nil,gear); scroll:SetPoint("TOPLEFT",10,-103); scroll:SetPoint("BOTTOMRIGHT",-16,12); self.scrollFrame=scroll
     local child=CreateFrame("Frame",nil,scroll); child:SetSize(800,ROW_HEIGHT); scroll:SetScrollChild(child); self.scrollChild=child
-    for index=1,17 do self:CreateGearRow(child,index) end
-    self:CreateScrollBar(gear,scroll); self:RefreshGear(true); return root
+    for index=1,18 do self:CreateGearRow(child,index) end
+    self:CreateScrollBar(gear,scroll); self:CreateBasicsPage(content); self:CreateResizeGrip(root)
+    root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
+    self:Layout(); self:RefreshGear(true); self:SelectPage(saved.selectedPage); return root
+end
+
+function MainWindow:RefreshPageButtons()
+    local selected=ns.Database:Get().selectedPage
+    for key,value in pairs(self.pageButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.10 or 0.06,active and 0.17 or 0.08,active and 0.25 or 0.12,1); value.accent:SetColorTexture(0.2,0.62,1,active and 1 or 0); value.title:SetTextColor(active and 0.50 or 0.53,active and 0.80 or 0.60,active and 1.00 or 0.70,1) end
+end
+
+function MainWindow:SelectPage(page)
+    ns.Database:SetSelectedPage(page)
+    for key,value in pairs(self.pages) do value:SetShown(key==page) end
+    self:RefreshPageButtons()
+    if page=="GEAR" then self:RefreshGear(false) end
+end
+
+function MainWindow:Layout()
+    if not self.gear then return end
+    local rowWidth=math.max(660,self.gear:GetWidth()-26); local tierWidth=(rowWidth-110)/3
+    self.scrollChild:SetWidth(rowWidth)
+    for _,row in ipairs(self.rows) do
+        row:SetWidth(rowWidth)
+        for column,tier in ipairs({"S","A","B"}) do
+            local cell=row.cells[tier]; cell:ClearAllPoints(); cell:SetPoint("LEFT",110+(column-1)*tierWidth,0); cell:SetWidth(tierWidth-4)
+            cell.name:SetWidth(math.max(90,tierWidth-62)); cell.note:SetWidth(math.max(90,tierWidth-62))
+        end
+    end
+    for column,tier in ipairs({"S","A","B"}) do local title=self.tierHeaders[tier]; title:ClearAllPoints(); title:SetPoint("LEFT",122+(column-1)*tierWidth,0) end
+    local guideWidth=math.max(390,(self.content:GetWidth()-18)/2)
+    for index,card in ipairs(self.guideCards) do local column=(index-1)%2; local row=math.floor((index-1)/2); card:ClearAllPoints(); card:SetPoint("TOPLEFT",6+column*(guideWidth+6),-62-row*100); card:SetWidth(guideWidth); card.body:SetWidth(guideWidth-68) end
+    local profile=ns.BisData.classes[ns.Database:Get().selectedClass]; local contentHeight=#profile.slotOrder*ROW_HEIGHT
+    local viewport=self.scrollFrame:GetHeight(); if not viewport or viewport<=0 then viewport=455 end
+    self.maxScroll=math.max(0,contentHeight-viewport); self.scrollBar:SetMinMaxValues(0,self.maxScroll); if self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
 end
 
 function MainWindow:RefreshClassButtons()
@@ -139,7 +209,14 @@ function MainWindow:RefreshGear(resetScroll)
     if resetScroll then self.scrollBar:SetValue(0) elseif self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
 end
 
-function MainWindow:RefreshItemIcons() if self.frame and self.frame:IsShown() then self:RefreshGear(false) end end
-function MainWindow:Toggle() local root=self:Create(); if root:IsShown() then root:Hide() else root:Show(); self:RefreshGear(false) end end
-function MainWindow:Show() local root=self:Create(); root:Show(); self:RefreshGear(false) end
+function MainWindow:RefreshItemIcons()
+    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then self:RefreshGear(false) end
+end
+function MainWindow:Toggle()
+    local root=self:Create()
+    if root:IsShown() then root:Hide() else root:Show(); self:SelectPage(ns.Database:Get().selectedPage) end
+end
+function MainWindow:Show()
+    local root=self:Create(); root:Show(); self:SelectPage(ns.Database:Get().selectedPage)
+end
 function MainWindow:Hide() if self.frame then self.frame:Hide() end end

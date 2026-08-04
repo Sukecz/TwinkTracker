@@ -10,10 +10,10 @@ presence. They do not prove client UI layout or current item availability.
 
 Before a release, verify in a current Era client:
 
-1. `/tt` opens, moves and closes the main window.
-2. Checklist entries persist through `/reload`.
-3. XP values match Blizzard's experience bar at levels below and at 19.
+1. `/tt` opens, moves, resizes and closes the main window.
+2. Window position, size, selected page and class persist through `/reload`.
+3. Gear and Twink Basics switch cleanly at minimum and maximum window sizes.
 4. Each of the nine class profiles renders and can show item tooltips.
-5. XP Lockdown is visibly described as a local warning mode, not an XP stop.
+5. Every applicable class shows separate 1H and 2H S/A/B weapon rows.
 6. Gear, enchant and consumable availability is checked against the intended
    Era realm/faction and current client data.
