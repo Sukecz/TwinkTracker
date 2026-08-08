@@ -41,6 +41,20 @@ file assets/minimap-icon.tga | grep -q '256 x 256 x 32'
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.tga' MainWindow.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
+grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
+grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
+grep -Fq '"exploration:"..self.faction..":"..self.zone.mapID' MainWindow.lua
+grep -Fq 'row.checkFill:SetShown(done)' MainWindow.lua
+grep -Fq 'XP CANNOT BE LOCKED' Data/Basics.lua
+grep -Fq '"GEAR","GEAR"' MainWindow.lua
+grep -Fq '"ENCHANTS","ENCHANTS"' MainWindow.lua
+grep -Fq '"CONSUMABLES","CONSUMABLES"' MainWindow.lua
+grep -Fq 'section.key=="CONSUMABLES"' MainWindow.lua
+grep -Fq 'GetItemInfoInstant(itemID)' MainWindow.lua
+grep -Fq 'assets\\twinkortreat.tga' MainWindow.lua
+test -s assets/twinkortreat.tga
+grep -Fq '"TWINK FACTORY"' MainWindow.lua
+grep -Fq 'Whisper Sparre for an invite.' MainWindow.lua
 grep -Fqx '## IconTexture: Interface\AddOns\TwinkTracker\assets\logo.tga' TwinkTracker.toc
 grep -qx 'manual-changelog: CHANGELOG.md' .pkgmeta
 grep -qx '  - CURSEFORGE_DESCRIPTION.md' .pkgmeta

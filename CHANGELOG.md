@@ -2,6 +2,56 @@
 
 All notable changes are documented here.
 
+## Unreleased
+
+### Added
+
+- Added a remembered `Gear / Enchants / Consumables` switch inside the Gear
+  page without changing the existing S/A/B gear table.
+- Added normalized, source-audited enchant profiles for all nine classes,
+  rendered only under relevant equipment slots with role and restriction notes.
+- Added class-specific consumable tables grouped by bandages, food and drink,
+  potions, elixirs, scrolls, Engineering, weapon consumables and class resources.
+- Added tooltips, Shift-click chat links and copy-ready Wowhead Classic links to
+  the new item-based reference rows.
+- Added native item icons to every Consumables row and a compact Twink or Treat
+  guild logo to the Horde community card.
+- Expanded every class to at least five potion and five scroll choices, with
+  broader defensive, mobility, primary-stat, regeneration and resistance sets.
+- Added three focused HEAD and LEGS Arcanum/Libram choices for every class and
+  capped every enchant slot at its top three role-distinct options.
+- Added regression checks for profile/catalog references, exact Wowhead URL
+  shapes, level-19 limits and known level-20+ exclusions.
+- Added a dedicated Exploration tab with separate Horde and Alliance routes to
+  reveal by level 18, including recommended world-PvP and enemy-territory zones.
+- Added a persistent per-character manual checklist to every Exploration route.
+- Added Swamp of Sorrows to the Horde routes for its shortcut toward Redridge.
+- Added the Alliance guild Twink Factory on the Firemaw Cluster with Sparre as
+  the in-game invite contact.
+- Reworked Twink Basics into verified, read-only XP-safety rules without WSG
+  advice, numbered steps or checklist controls.
+
+### Fixed
+
+- Corrected several historical guide traps while building the new reference:
+  Free Action Potion and Minor Mana Oil require level 20, Razor Arrow and Solid
+  Shot require level 25, and 2H Major Intellect is +9 rather than +22.
+- Corrected the Warrior weapon-enchant profile to include Lifestealing, Fiery
+  Weapon, Crusader, deterministic weapon damage, Agility and Icy Chill instead
+  of presenting only two of those competing setups.
+- Fixed Consumables icons on uncached items by preferring the immediate Classic
+  item-info API before cache-dependent icon lookups.
+- Restored green equipped highlighting independently for both items displayed
+  inside a same-tier two-item choice.
+- Split the top navigation evenly around the logo so Community no longer
+  overlaps the branding.
+- Removed misleading automatic Exploration progress values; Classic Era does
+  not expose the reliable total needed for a true completion percentage.
+- Replaced the unsupported check-mark font glyph with a Classic-safe solid
+  green completion square in Exploration.
+- Feathered the header logo into transparency on every outer edge so it blends
+  into the window instead of showing a hard rectangular crop.
+
 ## 0.1.0 - 2026-08-08
 
 ### Added

@@ -20,4 +20,5 @@ ignore:
   - assets/logo.png
   - assets/minimap-icon-source.png
   - assets/logo1-1.png
+  - assets/twinkortreat.webp
   - "*.code-workspace"

@@ -1,6 +1,6 @@
 ## Interface: 11509
 ## Title: TwinkTracker
-## Notes: Level 19 Twink progress, XP safety and BiS reference for Classic Era
+## Notes: Level 19 gear, enchants, consumables and XP-safe planning for Classic Era
 ## Author: msminipc
 ## Version: 0.1.0
 ## SavedVariablesPerCharacter: TwinkTrackerDB
@@ -12,10 +12,11 @@
 Locales\enUS.lua
 Defaults.lua
 Database.lua
-Data\Checklist.lua
+Data\Basics.lua
 Data\Bis.lua
+Data\Enchants.lua
 Data\Consumables.lua
-Data\Guide.lua
+Data\Exploration.lua
 GearStatus.lua
 XPTracker.lua
 MainWindow.lua

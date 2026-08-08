@@ -5,19 +5,28 @@ local function loadModule(path)
     chunk("TwinkTracker", ns)
 end
 
-loadModule("Data/Checklist.lua")
+loadModule("Data/Basics.lua")
 loadModule("Data/Bis.lua")
+loadModule("Data/Enchants.lua")
 loadModule("Data/Consumables.lua")
-loadModule("Data/Guide.lua")
 
-assert(#ns.ChecklistData >= 8)
+assert(#ns.BasicsData == 7)
+assert(ns.BasicsData[1].title == "XP CANNOT BE LOCKED")
 assert(#ns.BisData.classOrder == 9)
-assert(#ns.ConsumablesData >= 5)
-assert(#ns.GuideData == 8)
+assert(type(ns.EnchantsData.catalog) == "table")
+assert(type(ns.ConsumablesData.catalog) == "table")
 local alternativeCount = 0
 local linkedItemCount = 0
 for _, classToken in ipairs(ns.BisData.classOrder) do
     local profile = assert(ns.BisData.classes[classToken])
+    local enchantProfile = assert(ns.EnchantsData.classes[classToken])
+    local consumableProfile = assert(ns.ConsumablesData.classes[classToken])
+    assert(#enchantProfile.slotOrder > 0, classToken .. " has no enchant profile")
+    assert(#enchantProfile.slots.HEAD == 3, classToken .. " does not have three top head enchants")
+    assert(#enchantProfile.slots.LEGS == 3, classToken .. " does not have three top leg enchants")
+    assert(#consumableProfile.categoryOrder > 0, classToken .. " has no consumable profile")
+    assert(#consumableProfile.categories.POTIONS >= 5, classToken .. " has fewer than five potion choices")
+    assert(#consumableProfile.categories.SCROLLS >= 5, classToken .. " has fewer than five scroll choices")
     assert(type(profile.name) == "string")
     assert(#profile.slotOrder >= 13)
     local hasOneHand = false
@@ -47,6 +56,66 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     end
     assert(hasOneHand, classToken .. " missing 1H weapon tiers")
     assert(hasTwoHand == (classToken ~= "ROGUE"), classToken .. " has incorrect 2H weapon support")
+end
+
+local warriorEnchants = ns.EnchantsData.classes.WARRIOR.slots
+local function slotHasEnchant(slot, key)
+    for _, recommendation in ipairs(warriorEnchants[slot] or {}) do
+        if recommendation.key == key then return true end
+    end
+    return false
+end
+for _, key in ipairs({ "fiery", "lifestealing", "crusader", "twoHandImpact" }) do
+    assert(slotHasEnchant("ONE_HAND", key) or slotHasEnchant("TWO_HAND", key), "Warrior is missing enchant option " .. key)
+end
+
+for key, entry in pairs(ns.EnchantsData.catalog) do
+    assert(type(entry.name) == "string" and entry.name ~= "", "invalid enchant name " .. key)
+    assert(type(entry.effect) == "string" and entry.effect ~= "", "invalid enchant effect " .. key)
+    if entry.spellID then
+        assert(entry.wowhead == "https://www.wowhead.com/classic/spell=" .. entry.spellID, "invalid enchant spell link " .. key)
+    else
+        assert(type(entry.itemID) == "number" and entry.itemID > 0, "enchant has no tooltip ID " .. key)
+        assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. entry.itemID, "invalid enchant item link " .. key)
+    end
+end
+
+for itemID, entry in pairs(ns.ConsumablesData.catalog) do
+    assert(type(itemID) == "number" and itemID > 0)
+    assert(type(entry.name) == "string" and entry.name ~= "")
+    assert(type(entry.effect) == "string" and entry.effect ~= "")
+    assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. itemID, "invalid consumable link " .. itemID)
+    assert(not entry.requiredLevel or entry.requiredLevel <= 19, entry.name .. " exceeds level 19")
+end
+
+for _, classToken in ipairs(ns.BisData.classOrder) do
+    local enchantProfile = ns.EnchantsData.classes[classToken]
+    for _, slot in ipairs(enchantProfile.slotOrder) do
+        assert(type(enchantProfile.slots[slot]) == "table" and #enchantProfile.slots[slot] > 0 and #enchantProfile.slots[slot] <= 3, classToken .. " " .. slot .. " is not a focused top-three list")
+        for _, recommendation in ipairs(enchantProfile.slots[slot]) do
+            assert(ns.EnchantsData.catalog[recommendation.key], classToken .. " references unknown enchant " .. tostring(recommendation.key))
+        end
+    end
+    local consumableProfile = ns.ConsumablesData.classes[classToken]
+    for _, category in ipairs(consumableProfile.categoryOrder) do
+        assert(type(consumableProfile.categories[category]) == "table" and #consumableProfile.categories[category] > 0)
+        for _, recommendation in ipairs(consumableProfile.categories[category]) do
+            assert(ns.ConsumablesData.catalog[recommendation.itemID], classToken .. " references unknown consumable " .. tostring(recommendation.itemID))
+        end
+    end
+end
+
+for _, excludedItemID in ipairs({ 5634, 20745, 3030, 3033 }) do
+    assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes a level-20+ consumable " .. excludedItemID)
+end
+for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumRapidity" }) do
+    local entry = assert(ns.EnchantsData.catalog[requiredKey], "missing head/leg Arcanum " .. requiredKey)
+    assert(entry.restrictions and string.find(entry.restrictions,"verify",1,true), requiredKey .. " lacks live-application warning")
+end
+for _, raidShoulderID in ipairs({ 23545, 23547, 23549 }) do
+    for _, entry in pairs(ns.EnchantsData.catalog) do
+        assert(entry.itemID ~= raidShoulderID, "normal enchant catalog includes an unverified raid shoulder augment")
+    end
 end
 
 local expectedInsignias = {

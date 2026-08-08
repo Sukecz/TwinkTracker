@@ -12,6 +12,7 @@ ns.Defaults = {
     selectedTab = "BIS",
     selectedSlot = "HEAD",
     selectedPage = "GEAR",
+    selectedGearSection = "GEAR",
     minimapAngle = 225,
     xpLockdown = false,
     checklist = {},
