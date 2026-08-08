@@ -57,6 +57,7 @@ local catalog = {
 }
 
 for itemID, entry in pairs(catalog) do
+    entry.itemID = itemID
     entry.wowhead = "https://www.wowhead.com/classic/item=" .. itemID
 end
 

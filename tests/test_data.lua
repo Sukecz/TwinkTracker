@@ -82,6 +82,7 @@ end
 
 for itemID, entry in pairs(ns.ConsumablesData.catalog) do
     assert(type(itemID) == "number" and itemID > 0)
+    assert(entry.itemID == itemID, "consumable is missing its runtime item ID " .. itemID)
     assert(type(entry.name) == "string" and entry.name ~= "")
     assert(type(entry.effect) == "string" and entry.effect ~= "")
     assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. itemID, "invalid consumable link " .. itemID)
