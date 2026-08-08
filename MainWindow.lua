@@ -203,7 +203,6 @@ function MainWindow:RefreshReferenceSection(sectionKey,profile,catalog,order,gro
                 row.tooltipType=entry.itemID and "item" or (entry.spellID and "spell" or nil); row.tooltipID=entry.itemID or entry.spellID
                 if row.icon and sectionKey=="CONSUMABLES" then
                     row.icon:SetTexture(getItemIcon(entry.itemID))
-                    if entry.itemID and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(entry.itemID) end
                 end
             end
         end

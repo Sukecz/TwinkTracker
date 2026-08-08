@@ -2,12 +2,17 @@
 
 All notable changes are documented here.
 
+## 0.2.2 - 2026-08-08
+
+### Fixed
+
+- Removed a recursive item-data refresh loop introduced in 0.2.1 that could freeze the Classic client when opening the Consumables view.
+
 ## 0.2.1 - 2026-08-08
 
 ### Fixed
 
 - Fixed Consumables rows passing an empty item ID to the icon, tooltip and chat-link APIs, which caused every consumable to display the question-mark texture.
-- Refresh Consumables icons when asynchronous Classic item data finishes loading.
 
 ## 0.2.0 - 2026-08-08
 
