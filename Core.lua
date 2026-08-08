@@ -16,6 +16,7 @@ eventFrame:SetScript("OnEvent", function(_, event, loadedAddon)
     elseif event == "PLAYER_LOGIN" then
         ns:RegisterSlashCommands()
         ns.MainWindow:Create()
+        ns.MinimapButton:Create()
     elseif event == "GET_ITEM_INFO_RECEIVED" and ns.MainWindow.frame then
         ns.MainWindow:RefreshItemIcons()
     elseif event == "PLAYER_EQUIPMENT_CHANGED" and ns.MainWindow.frame then

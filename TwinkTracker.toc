@@ -2,9 +2,10 @@
 ## Title: TwinkTracker
 ## Notes: Level 19 Twink progress, XP safety and BiS reference for Classic Era
 ## Author: msminipc
-## Version: 0.1.0-pilot
+## Version: 0.1.0
 ## SavedVariablesPerCharacter: TwinkTrackerDB
 ## IconTexture: Interface\AddOns\TwinkTracker\assets\logo.tga
+## X-Curse-Project-ID: 1644210
 ## X-Flavor: Vanilla
 ## AllowLoadGameType: vanilla
 
@@ -18,5 +19,6 @@ Data\Guide.lua
 GearStatus.lua
 XPTracker.lua
 MainWindow.lua
+MinimapButton.lua
 SlashCommands.lua
 Core.lua

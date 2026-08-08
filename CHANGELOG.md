@@ -2,7 +2,7 @@
 
 All notable changes are documented here.
 
-## Unreleased
+## 0.1.0 - 2026-08-08
 
 ### Added
 
@@ -38,3 +38,31 @@ All notable changes are documented here.
   caster off-hands out of the wand recommendations.
 - Replaced the smaller alternative icon with a second full-size 40px icon and
   equal name styling so same-tier choices have no implied priority.
+- Stacked same-tier choices vertically in dynamically taller slot rows instead
+  of squeezing their icons and names beside each other.
+- Removed auxiliary build-description labels from gear rows and added standard
+  Shift-click insertion of item links into an open chat message.
+- Added `/twt` as a collision-safe short command and report when another loaded
+  addon already uses the character-dependent `/tt` alias.
+- Added a draggable minimap button with a generated TwinkTracker icon, persisted
+  its position per character and kept the implementation dependency-free.
+- Added a Community page for guild links, starting with the Horde guild Twink or
+  Treat on the EU PvP Classic Era Firemaw Cluster and its Discord invite.
+- Added mandatory Wowhead Classic URLs to all item-ID gear data and a copy-ready
+  link row shown by left-clicking an item.
+- Kept Horde and Alliance class PvP insignias together in the same tier for all
+  classes instead of ranking faction-equivalent trinkets differently.
+- Completed the first class-wide gear audit for Warrior: aligned faction
+  equivalents, corrected WSG rings and ranged weapons, promoted the faction
+  quest bracers, added role-specific waist and leg choices, and expanded the
+  validated shield and two-hand alternatives.
+- Completed independent full-slot audits for all nine classes using class guides
+  plus individual Wowhead Classic item records, with a maintained source index.
+- Removed class-incompatible armor and weapons, including Mage/Priest leather
+  belts, Druid daggers, invalid faction-only Paladin/Shaman rewards and
+  level-19 Shaman two-hand axes or maces.
+- Removed Hunter bows requiring levels 20 and 37 and rejected five additional
+  proposed alternatives after their individual Classic pages showed required
+  levels above 19.
+- Replaced automatic Ring 2 and Trinket 2 tier rotation with explicit loadout
+  recommendations and added regression checks for the critical audit findings.

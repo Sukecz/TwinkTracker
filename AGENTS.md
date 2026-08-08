@@ -26,6 +26,17 @@ TIER S/A/B alternatives per slot/role and mark data that still needs live Era
 validation. Do not present a recommendation as a verified current fact merely
 because it appears in an old guide.
 
+Every real gear item must have a positive item ID and its exact Wowhead Classic
+URL (`https://www.wowhead.com/classic/item=<ID>`). Create or change item data
+only through the shared `item()` helper in `Data/Bis.lua`, and keep the
+Wowhead-link test passing. Reference placeholders without an item ID are the
+only allowed entries without a Wowhead URL.
+
+Follow `DATA_SOURCES.md` for gear audits. In particular, verify required level,
+level-19 class proficiency, faction versus acquisition route and random suffix
+claims. Keep true faction equivalents in one tier and define the second ring and
+trinket slots explicitly instead of rotating tiers.
+
 ## Development workflow
 
 - Inspect `git status` before editing.

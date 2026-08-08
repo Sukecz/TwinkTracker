@@ -53,9 +53,10 @@ function Database:Initialize(saved)
         self.data.selectedClass = defaults.selectedClass
     end
     self.data.selectedTab = "BIS"
-    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" then
+    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "COMMUNITY" then
         self.data.selectedPage = defaults.selectedPage
     end
+    self.data.minimapAngle = type(self.data.minimapAngle) == "number" and clamp(self.data.minimapAngle, 0, 360) or defaults.minimapAngle
     local profile = ns.BisData.classes[self.data.selectedClass]
     if type(self.data.selectedSlot) ~= "string" or not profile.slots[self.data.selectedSlot] then
         self.data.selectedSlot = defaults.selectedSlot
@@ -104,7 +105,7 @@ function Database:SetSelectedSlot(slot)
 end
 
 function Database:SetSelectedPage(page)
-    if page ~= "GEAR" and page ~= "BASICS" then return false end
+    if page ~= "GEAR" and page ~= "BASICS" and page ~= "COMMUNITY" then return false end
     self.data.selectedPage = page
     return true
 end
@@ -134,6 +135,10 @@ end
 function Database:SetFrameSize(width, height)
     self.data.frame.width = clamp(width, 980, 1500)
     self.data.frame.height = clamp(height, 620, 950)
+end
+
+function Database:SetMinimapAngle(angle)
+    self.data.minimapAngle = clamp(angle,0,360)
 end
 
 function Database:ResetFramePosition()

@@ -1,14 +1,23 @@
 package-as: TwinkTracker
+manual-changelog: CHANGELOG.md
 
 ignore:
+  - .git
+  - .github
+  - .release
+  - .env
+  - .env.*
   - AGENTS.md
-  - CHANGELOG.md
   - COMPATIBILITY.md
+  - CURSEFORGE_DESCRIPTION.md
   - DATA_SOURCES.md
-  - LICENSE
   - README.md
   - tests
   - tools
   - tmp
   - .gitignore
   - .pkgmeta
+  - assets/logo.png
+  - assets/minimap-icon-source.png
+  - assets/logo1-1.png
+  - "*.code-workspace"
