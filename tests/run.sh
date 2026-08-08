@@ -25,7 +25,7 @@ while IFS= read -r toc_file; do
 done <<< "$toc_files"
 
 grep -qx '## Interface: 11509' TwinkTracker.toc
-grep -qx '## Version: 0.1.0' TwinkTracker.toc
+grep -Eq '^## Version: [0-9]+\.[0-9]+\.[0-9]+$' TwinkTracker.toc
 grep -qx '## X-Curse-Project-ID: 1644210' TwinkTracker.toc
 grep -qx '## SavedVariablesPerCharacter: TwinkTrackerDB' TwinkTracker.toc
 grep -qx '## X-Flavor: Vanilla' TwinkTracker.toc

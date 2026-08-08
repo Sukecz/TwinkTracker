@@ -1,44 +1,60 @@
 # TwinkTracker
 
-TwinkTracker is a lightweight planning addon for level 19 twinks in World of
-Warcraft Classic Era. It brings XP information, preparation references and
-curated class gear recommendations into one compact in-game window. Progress
-and settings are stored separately for each character.
+TwinkTracker is a lightweight planning addon for level 19 characters in World
+of Warcraft Classic Era and Classic Hardcore. It combines curated gear,
+enchant and consumable references with essential XP-safety guidance and a
+manual exploration checklist in one compact in-game window.
+
+All settings and checklist progress are stored separately for each character.
 
 ## Features
 
 - Curated Tier S, A and B gear recommendations for all nine Classic Era classes
-- A remembered Gear / Enchants / Consumables switch for every class
-- Slot-aware enchant recommendations with exact effects and restrictions
-- Three focused HEAD and LEGS Arcanum/Libram choices per class
-- Consumables grouped by bandages, food, potions, elixirs, scrolls,
-  Engineering, weapon supplies and class resources, all with native item icons
-- At least five legal potion and five legal scroll options for every class
-- Alliance, Horde and role-specific item alternatives
-- Live highlighting of matching equipped items
-- Normal item tooltips and Shift-click insertion into an open chat message
-- Copy-ready Wowhead Classic links for every real item
+- Alliance, Horde, role-specific and budget item alternatives
+- Separate Gear, Enchants and Consumables views for every class
+- Focused enchant recommendations for relevant equipment slots
+- Three role-aware HEAD and LEGS Arcanum/Libram choices per class
+- Consumables grouped into bandages, food and drink, potions, elixirs, scrolls,
+  Engineering items, weapon supplies and class resources
+- At least five level-19-legal potion and scroll options for every class
+- Native item icons and normal in-game item or spell tooltips
+- Live green highlighting for matching equipped gear
+- Shift-click insertion of item links into an open chat message
+- Copy-ready Wowhead Classic links for every real item and enchant
 - Essential Classic Era XP-safety rules, including the absence of XP locking
-- Separate Horde and Alliance exploration routes to reveal by level 18,
-  including world-PvP destinations and persistent manual completion
-- Draggable, resizable window and movable minimap button
-- Per-character progress, window position and settings
-- Community page for the Horde guild Twink or Treat and Alliance guild Twink
-  Factory on the EU PvP Classic Era Firemaw Cluster
-- No external libraries or dependencies
+- Separate Horde and Alliance exploration routes to complete by level 18
+- Persistent manual exploration checklist saved per character
+- Contested and enemy-territory routes useful for travel and world PvP
+- Resizable and movable window with remembered size, position and selected view
+- Draggable minimap button with a custom TwinkTracker icon
+- No external libraries or required dependencies
 
-## Gear, enchant and consumable reference
+## Gear, enchants and consumables
 
-The catalog is a practical level 19 reference rather than a single universal
-BiS list. Tier placement may depend on faction, role, survivability, damage,
-healing, availability or a specific random suffix. Current realm availability,
-random-suffix rolls and selected vendor, event or quest details may still need
-verification in the live Classic Era client.
+The bundled reference is curated for level 19 rather than presented as one
+universal mathematical BiS list. Recommendations can differ by faction, role,
+survivability, damage type, healing needs, weapon setup, availability or random
+suffix.
 
-Classic HEAD/LEGS Arcanums are included with explicit high-level Libram turn-in
-and Firemaw application warnings. Unverified raid shoulder augments remain
-excluded. Consumables requiring level 20 or higher are excluded, and uncertain
-stacking, proc or realm-availability details are labeled for live verification.
+Enchant slots are deliberately limited to the strongest role-distinct choices.
+Classic HEAD and LEGS Arcanums are included with clear high-level Libram
+turn-in and live-application warnings. Unverified raid shoulder augments and
+consumables requiring level 20 or higher are excluded.
+
+Realm-specific availability, exact random-suffix rolls, buff stacking, proc
+rates and selected vendor, quest, event or drop details may still require
+confirmation in the live Classic Era client.
+
+## Exploration and XP safety
+
+Classic Era does not provide an XP-locking service. TwinkTracker therefore
+emphasizes finishing important travel and exploration before level 19 and
+avoiding mob, quest, dungeon and exploration XP after reaching the target
+level.
+
+The Exploration page uses a manual checklist because the Classic Era map API
+does not expose a reliable denominator for a true zone-completion percentage.
+TwinkTracker never claims that this checklist disables or prevents XP gain.
 
 ## Commands
 
@@ -54,15 +70,6 @@ stacking, proc or realm-availability details are labeled for live verification.
 If another addon already owns `/tt`, TwinkTracker reports the conflict and
 `/twt` remains available.
 
-## Community
-
-Twink or Treat is a Horde guild on the EU PvP Classic Era Firemaw Cluster.
-
-Discord: https://discord.gg/BdABEghf3M
-
-Twink Factory is an Alliance guild on the same cluster. Whisper Sparre in game
-for an invite.
-
 ## Compatibility and safety
 
 - World of Warcraft Classic Era
@@ -71,4 +78,5 @@ for an invite.
 - No required dependencies
 
 TwinkTracker is strictly informational. It never automates movement, combat,
-targeting, equipment changes, quest turn-ins or battleground queues.
+targeting, equipment changes, quest actions, experience gain or battleground
+queues.
