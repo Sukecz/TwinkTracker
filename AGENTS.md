@@ -47,6 +47,14 @@ trinket slots explicitly instead of rotating tiers.
 - Generated packages must have exactly one top-level `TwinkTracker` directory.
 - The shared Windows deployment tool validates and deploys all four local WoW
   addons together; it must preserve SavedVariables.
+- After completing any code, data, or UI change and after this project's tests
+  pass, automatically run `/home/msminipc/bin/deploy-wow-addons-pc` to sync all
+  four local WoW addons to the Windows Classic Era client. Skip deployment for
+  read-only analysis, failed tests, or when the user explicitly says not to
+  deploy. If the PC is unavailable, keep the local changes and report the
+  deployment failure. This narrow permission does not authorize a commit, push,
+  tag, CurseForge upload, or any other publication, and the deploy must preserve
+  SavedVariables.
 
 ## Style
 

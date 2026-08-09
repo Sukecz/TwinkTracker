@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-local MainWindow = { classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
+local MainWindow = { bracketButtons = {}, classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
 ns.MainWindow = MainWindow
 
 local ROW_HEIGHT = 52
@@ -165,6 +165,34 @@ function MainWindow:CreatePageButton(parent,key,text,anchor,x)
     value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
     value:SetScript("OnLeave",function() MainWindow:RefreshPageButtons() end)
     self.pageButtons[key]=value
+end
+
+function MainWindow:CreateBracketButton(parent,level,index)
+    local profile=ns.Brackets.profiles[level]
+    local value=CreateFrame("Button",nil,parent); value:SetSize(34,34); value:SetPoint("TOP",(index-2)*40,-72); value.level=level; value.available=profile.available
+    local icon=value:CreateTexture(nil,"ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\bracket-"..level..".tga"); value.icon=icon
+    value:SetScript("OnClick",function(self)
+        if ns.Database:SetSelectedBracket(self.level) then MainWindow:RefreshBracketButtons() end
+    end)
+    value:SetScript("OnEnter",function(self)
+        if not self.available then
+            GameTooltip:SetOwner(self,"ANCHOR_BOTTOM")
+            GameTooltip:AddLine("Level "..self.level.." bracket",0.92,0.95,1.00)
+            GameTooltip:AddLine("Coming soon",0.53,0.60,0.70)
+            GameTooltip:Show()
+        end
+    end)
+    value:SetScript("OnLeave",function() GameTooltip:Hide(); MainWindow:RefreshBracketButtons() end)
+    self.bracketButtons[level]=value
+end
+
+function MainWindow:RefreshBracketButtons()
+    local selected=ns.Database:Get().selectedBracket
+    for level,value in pairs(self.bracketButtons) do
+        local active=level==selected and value.available
+        value.icon:SetDesaturated(not value.available)
+        if active then value.icon:SetVertexColor(1,1,1,1) else value.icon:SetVertexColor(0.52,0.55,0.60,0.82) end
+    end
 end
 
 function MainWindow:CreateGearSectionButton(parent,key,text,x)
@@ -506,6 +534,8 @@ function MainWindow:Create()
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
     local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
+    for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end
+    self:RefreshBracketButtons()
     self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",236)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-172); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-64)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)

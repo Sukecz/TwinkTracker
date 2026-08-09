@@ -36,10 +36,26 @@ test -f assets/logo.png
 test -f assets/logo.tga
 test -f assets/minimap-icon-source.png
 test -f assets/minimap-icon.tga
+for bracket in 19 29 39; do
+    test -f "assets/bracket-${bracket}-source.png"
+    test -f "assets/bracket-${bracket}.tga"
+    file "assets/bracket-${bracket}.tga" | grep -q '256 x 256 x 24'
+done
 file assets/logo.tga | grep -q '1024 x 512 x 32'
 file assets/minimap-icon.tga | grep -q '256 x 256 x 32'
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\Brackets.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'tar -czf' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.tga' MainWindow.lua
+grep -Fq 'for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end' MainWindow.lua
+grep -Fq 'assets\\bracket-"..level..".tga' MainWindow.lua
+grep -Fq 'value.icon:SetDesaturated(not value.available)' MainWindow.lua
+grep -Fq 'GameTooltip:AddLine("Coming soon"' MainWindow.lua
+grep -Fq 'selectedBracket = 19' Defaults.lua
+grep -Fq '[29] = { level = 29, available = false }' Data/Brackets.lua
+grep -Fq '[39] = { level = 39, available = false }' Data/Brackets.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
 grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua

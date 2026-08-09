@@ -9,6 +9,7 @@ ns.Defaults = {
         height = 700,
     },
     selectedClass = "DRUID",
+    selectedBracket = 19,
     selectedTab = "BIS",
     selectedSlot = "HEAD",
     selectedPage = "GEAR",

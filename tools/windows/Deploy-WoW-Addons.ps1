@@ -7,15 +7,20 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$stageRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("wow-addons-deploy-" + [guid]::NewGuid().ToString("N"))
+$deploymentId = [guid]::NewGuid().ToString("N")
+$stageRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("wow-addons-deploy-" + $deploymentId)
+$archiveName = "wow-addons-deploy-$deploymentId.tar.gz"
+$localArchive = Join-Path $stageRoot $archiveName
+$remoteArchive = "/tmp/$archiveName"
 $exitCode = 0
 $versions = @{}
+$ssh = $null
 
 $addons = @(
     [pscustomobject]@{ DisplayName="Simple Scrolling Loot"; ProjectDirectory="ssl"; AddonName="SimpleScrollingLoot"; PrimaryToc="SimpleScrollingLoot.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleScrollingLoot.toc","SimpleScrollingLoot_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\ssl.png") },
     [pscustomobject]@{ DisplayName="Better Loot Rolls"; ProjectDirectory="blr"; AddonName="BetterLootRolls"; PrimaryToc="BetterLootRolls.toc"; Directories=@("Locales","assets"); RequiredFiles=@("BetterLootRolls.toc","BetterLootRolls_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
     [pscustomobject]@{ DisplayName="Simple Arsenal Swap"; ProjectDirectory="sas"; AddonName="SimpleArsenalSwap"; PrimaryToc="SimpleArsenalSwap.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleArsenalSwap.toc","SimpleArsenalSwap_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
-    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","Locales\enUS.lua","Data\Bis.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga") }
+    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","Locales\enUS.lua","Data\Bis.lua","Data\Brackets.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga","assets\bracket-19.tga","assets\bracket-29.tga","assets\bracket-39.tga") }
 )
 
 function Invoke-NativeCommand {
@@ -27,26 +32,31 @@ function Invoke-NativeCommand {
 try {
     $ssh = (Get-Command "ssh.exe" -ErrorAction Stop).Source
     $scp = (Get-Command "scp.exe" -ErrorAction Stop).Source
+    $tar = (Get-Command "tar.exe" -ErrorAction Stop).Source
     $robocopy = (Get-Command "robocopy.exe" -ErrorAction Stop).Source
     if (-not (Test-Path -LiteralPath $WowAddOnsPath -PathType Container)) { throw "WoW AddOns folder does not exist: $WowAddOnsPath" }
 
-    Write-Host "1/3 Testing all addons on MINIPC..." -ForegroundColor Cyan
+    Write-Host "1/3 Testing and preparing all addons on MINIPC..." -ForegroundColor Cyan
+    $testCommands = @()
+    $archiveArguments = @()
     foreach ($addon in $addons) {
         $project = "$ProjectsRoot/$($addon.ProjectDirectory)"
-        Write-Host "  Testing $($addon.DisplayName)..." -ForegroundColor DarkCyan
-        Invoke-NativeCommand $ssh @($Server, "cd '$project' && bash tests/run.sh") "$($addon.DisplayName) tests failed. Nothing was copied."
+        $testCommands += "echo 'Testing $($addon.DisplayName)...' && (cd '$project' && bash tests/run.sh)"
+        $archiveArguments += "--transform='s,^$($addon.ProjectDirectory)/,$($addon.AddonName)/,'"
+        $archiveArguments += "$($addon.ProjectDirectory)/*.lua"
+        $archiveArguments += "$($addon.ProjectDirectory)/*.toc"
+        foreach ($directory in $addon.Directories) { $archiveArguments += "$($addon.ProjectDirectory)/$directory" }
     }
+    $remoteCommand = ($testCommands -join " && ") + " && cd '$ProjectsRoot' && tar -czf '$remoteArchive' " + ($archiveArguments -join " ")
+    Invoke-NativeCommand $ssh @($Server, $remoteCommand) "Addon tests or runtime bundle preparation failed. Nothing was copied."
 
-    Write-Host "2/3 Downloading and validating runtime files..." -ForegroundColor Cyan
+    Write-Host "2/3 Downloading and validating one runtime bundle..." -ForegroundColor Cyan
     New-Item -ItemType Directory -Path $stageRoot -Force | Out-Null
+    Invoke-NativeCommand $scp @("$Server`:$remoteArchive", $localArchive) "Could not download the addon runtime bundle."
+    Invoke-NativeCommand $tar @("-xzf", $localArchive, "-C", $stageRoot) "Could not extract the addon runtime bundle."
+    Remove-Item -LiteralPath $localArchive -Force
     foreach ($addon in $addons) {
-        $project = "$ProjectsRoot/$($addon.ProjectDirectory)"
         $stageAddon = Join-Path $stageRoot $addon.AddonName
-        New-Item -ItemType Directory -Path $stageAddon -Force | Out-Null
-        Invoke-NativeCommand $scp @("$Server`:$project/*.lua", "$Server`:$project/*.toc", $stageAddon) "Could not download $($addon.DisplayName) Lua or TOC files."
-        foreach ($directory in $addon.Directories) {
-            Invoke-NativeCommand $scp @("-r", "$Server`:$project/$directory", $stageAddon) "Could not download $directory for $($addon.DisplayName)."
-        }
         foreach ($relativePath in $addon.RequiredFiles) {
             if (-not (Test-Path -LiteralPath (Join-Path $stageAddon $relativePath) -PathType Leaf)) { throw "$($addon.DisplayName) download is incomplete. Missing: $relativePath" }
         }
@@ -68,6 +78,9 @@ try {
     Write-Host "All four addons are up to date. Enter /reload in WoW." -ForegroundColor Green
 }
 catch { $exitCode = 1; Write-Host ""; Write-Host "Deployment failed: $($_.Exception.Message)" -ForegroundColor Red }
-finally { if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force } }
+finally {
+    if ($ssh) { & $ssh $Server "rm -f '$remoteArchive'" 2>$null | Out-Null }
+    if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force }
+}
 if (-not $NoPause -and $exitCode -ne 0) { Write-Host ""; Read-Host "Deployment failed. Press Enter to close" }
 exit $exitCode

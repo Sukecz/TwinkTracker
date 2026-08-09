@@ -52,6 +52,10 @@ function Database:Initialize(saved)
     if not ns.BisData.classes[self.data.selectedClass] then
         self.data.selectedClass = defaults.selectedClass
     end
+    local bracket = ns.Brackets.profiles[self.data.selectedBracket]
+    if not bracket or not bracket.available then
+        self.data.selectedBracket = defaults.selectedBracket
+    end
     self.data.selectedTab = "BIS"
     if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "GUIDES" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
         self.data.selectedPage = defaults.selectedPage
@@ -100,6 +104,15 @@ function Database:SetSelectedClass(classToken)
     if not ns.BisData.classes[classToken].slots[self.data.selectedSlot] then
         self.data.selectedSlot = ns.BisData.classes[classToken].slotOrder[1]
     end
+    return true
+end
+
+function Database:SetSelectedBracket(level)
+    local bracket = ns.Brackets.profiles[level]
+    if not bracket or not bracket.available then
+        return false
+    end
+    self.data.selectedBracket = level
     return true
 end
 

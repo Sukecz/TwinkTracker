@@ -1,79 +1,94 @@
 # TwinkTracker
 
-TwinkTracker is a lightweight planning addon for level 19 characters in World
-of Warcraft Classic Era and Classic Hardcore. It combines curated gear,
-enchant and consumable references with essential XP-safety guidance and a
-automatic exploration map progress in one compact in-game window.
+TwinkTracker is a compact planning companion for **World of Warcraft Classic
+Era and Classic Hardcore twinks**. The current profile is built for the
+**level-19 bracket**, bringing gear, enchants, consumables, preparation guides,
+XP-safety reminders and automatic exploration progress into one movable and
+resizable in-game window.
 
-All settings are stored separately for each character.
+The header is already prepared for multiple brackets:
 
-## Features
+- **19** — available now with the complete current reference
+- **29** — Coming soon
+- **39** — Coming soon
 
-- Curated Tier S, A and B gear recommendations for all nine Classic Era classes
-- Alliance, Horde, role-specific and budget item alternatives
-- Separate Gear, Enchants and Consumables views for every class
-- Focused enchant recommendations for relevant equipment slots
-- Role-aware HEAD and LEGS Arcanum/Libram choices for every class
-- Naxxramas shoulder augments with their white, non-binding item warning
+The 29 and 39 emblems are intentionally greyed out and cannot be selected yet.
+They are a preview of planned future bracket guides, not unfinished content
+presented as usable.
+
+## Current features
+
+### Gear
+
+- Curated Tier S, A and B choices for all nine Classic Era classes
+- Every applicable armor, weapon, ring and trinket slot
+- Equal-tier faction, role, survivability and budget alternatives
+- Blue `A` and red `H` badges for faction-specific recommendations
+- Live green highlighting when a recommended item is equipped
+- Normal item tooltips and Shift-click insertion into chat
+- Copy-ready Wowhead Classic links for every real item
+
+TwinkTracker presents a curated planning reference rather than claiming one
+universal mathematical BiS list. Recommendations may differ by faction, role,
+weapon setup, random suffix or availability.
+
+### Enchants and consumables
+
+- Class-specific enchant recommendations for relevant equipment slots
+- HEAD and LEGS Arcanum/Libram choices with their real acquisition cautions
+- Naxxramas shoulder augments with the white, non-binding shoulder requirement
 - Consumables grouped into bandages, food and drink, potions, elixirs, scrolls,
-  Engineering items, weapon supplies and class resources
-- At least five level-19-legal potion and scroll options for every class
-- Native item icons and normal in-game item or spell tooltips
-- Live green highlighting for matching equipped gear
-- Shift-click insertion of item links into an open chat message
-- Copy-ready Wowhead Classic links for every real item and enchant
-- Essential Classic Era XP-safety rules, including the absence of XP locking
-- Separate Horde and Alliance exploration routes to complete by level 18
-- Starting, faction-specific World PvP, and Travel & Twink Event groups
-- Automatic per-zone revealed-map-area counts, percentages and colored bars
-- Resizable and movable window with remembered size, position and selected view
-- Draggable minimap button with a custom TwinkTracker icon
-- No external libraries or required dependencies
+  Engineering, weapon supplies and class resources
+- Native item icons plus normal item or spell tooltips
+- Level-20-and-higher consumables excluded from the level-19 profile
 
-## Gear, enchants and consumables
+### Twink Basics and guides
 
-The bundled reference is curated for level 19 rather than presented as one
-universal mathematical BiS list. Recommendations can differ by faction, role,
-survivability, damage type, healing needs, weapon setup, availability or random
-suffix.
+- Clear Classic Era XP-safety reminders, including the absence of XP locking
+- Step-by-step First Aid preparation from skill 1 to 225
+- Fishing and Engineering preparation routes
+- Faction-specific trainers, vendors, coordinates and travel cautions
+- Interactive related-item icons, tooltips, chat links and Wowhead links
 
-Enchant slots are deliberately limited to the strongest role-distinct choices.
-Classic HEAD and LEGS Arcanums are included with clear high-level Libram
-turn-in and live-application warnings. Naxxramas shoulder augments document the
-level-60, white non-binding shoulder transfer route; Zul'Gurub Signets remain
-excluded because they bind the target to their high-level owner. Consumables
-requiring level 20 or higher are excluded.
+### Automatic Exploration progress
 
-Realm-specific availability, exact random-suffix rolls, buff stacking, proc
-rates and selected vendor, quest, event or drop details may still require
-confirmation in the live Classic Era client.
+Exploration is divided into faction-specific route groups:
 
-## Exploration and XP safety
+- Starting & Core Zones
+- World PvP Targets
+- Travel & Twink Events
 
-Classic Era does not provide an XP-locking service. TwinkTracker therefore
-emphasizes finishing important travel and exploration before level 19 and
-avoiding mob, quest, dungeon and exploration XP after reaching the target
-level.
+Each zone displays automatically detected visible-map progress as a colored
+bar, `x/x` explored areas and a percentage. Horde and Alliance receive
+different world-PvP destinations. Stranglethorn Vale is retained for Gurubashi
+Arena and Fishing Extravaganza activity, while Swamp of Sorrows remains part of
+the Horde mountain route into Redridge.
 
-The Exploration page compares the character's currently revealed map overlays
-with a complete Classic Era 1.15.9 overlay table and shows `x/x` plus a rounded
-percentage. Its World PvP group differs by faction: for example, Horde targets
-Redridge while Alliance targets the Barrens and Stonetalon. Stranglethorn Vale
-is grouped under Twink Events rather than ordinary world PvP. This measures
-visible map reveal only: even 100% does not prove that every invisible
-exploration-XP trigger has fired. TwinkTracker never claims that map progress
-disables or prevents XP gain.
+Progress is based on the Classic Era map API and a matching visible-overlay
+table. It updates from map-exploration events and is saved by the game for the
+character; there is no manual checklist. A displayed 100% means that all known
+visible map overlays were revealed. It does **not** guarantee that every hidden
+exploration-XP trigger has fired or that no exploration XP remains.
+
+### Community and interface
+
+- Community page for faction-specific Classic Era twink guild information
+- Compact bracket emblems below the TwinkTracker logo
+- Movable and resizable window with remembered position, size and selected page
+- Draggable minimap button with remembered position
+- Per-character settings
+- No external addon libraries or required dependencies
 
 ## Commands
 
-- `/twinktracker` - open or close TwinkTracker
-- `/twt` - collision-safe short command
-- `/tt` - short command when another addon does not already use it
-- `/twink` - alternative command
-- `/tt show` - open the window
-- `/tt hide` - close the window
-- `/tt reset` - reset the window position and size
-- `/tt help` - display command help
+- `/twinktracker` — open or close TwinkTracker
+- `/twt` — collision-safe short command
+- `/tt` — short command when another addon does not already use it
+- `/twink` — alternative command
+- `/tt show` — open the window
+- `/tt hide` — close the window
+- `/tt reset` — reset the saved window position and size
+- `/tt help` — display command help
 
 If another addon already owns `/tt`, TwinkTracker reports the conflict and
 `/twt` remains available.
@@ -81,10 +96,12 @@ If another addon already owns `/tt`, TwinkTracker reports the conflict and
 ## Compatibility and safety
 
 - World of Warcraft Classic Era
-- Classic Hardcore
+- World of Warcraft Classic Hardcore
 - Lua 5.1
 - No required dependencies
 
 TwinkTracker is strictly informational. It never automates movement, combat,
 targeting, equipment changes, quest actions, experience gain or battleground
-queues.
+queues. Realm-specific availability, exact random-suffix rolls and selected
+vendor, quest, event or drop details may still require confirmation in the live
+Classic Era client.

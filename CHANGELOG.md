@@ -2,6 +2,26 @@
 
 All notable changes are documented here.
 
+## 0.3.2 - 2026-08-09
+
+### Added
+
+- Added compact `19 / 29 / 39` bracket selectors below the header logo and
+  prepared per-character bracket persistence. Level 19 remains active, while
+  the future level 29 and 39 profiles are greyed out with a `Coming soon`
+  tooltip and cannot yet replace the level-19 data.
+
+### Changed
+
+- Added original bracket artwork with a full-color level-19 emblem and
+  desaturated level-29 and level-39 previews, positioned compactly below the
+  logo without touching the content panel.
+- Reduced Windows deployment overhead by testing and packaging all four addons
+  through one remote SSH run and downloading one combined runtime archive.
+- Rewrote the CurseForge description to match the current Gear, Enchants,
+  Consumables, Guides, Community and automatic Exploration functionality while
+  clearly identifying level 29 and 39 as future profiles.
+
 ## 0.3.1 - 2026-08-09
 
 ### Changed

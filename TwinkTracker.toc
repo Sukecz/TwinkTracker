@@ -2,7 +2,7 @@
 ## Title: TwinkTracker
 ## Notes: Level 19 gear, enchants, consumables and XP-safe planning for Classic Era
 ## Author: msminipc
-## Version: 0.3.1
+## Version: 0.3.2
 ## SavedVariablesPerCharacter: TwinkTrackerDB
 ## IconTexture: Interface\AddOns\TwinkTracker\assets\logo.tga
 ## X-Curse-Project-ID: 1644210
@@ -11,6 +11,7 @@
 
 Locales\enUS.lua
 Defaults.lua
+Data\Brackets.lua
 Database.lua
 Data\Basics.lua
 Data\Bis.lua

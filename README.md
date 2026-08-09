@@ -64,6 +64,10 @@ game action.
   that no exploration XP remains.
 - **Resizable layout** — drag the lower-right corner to resize the window; its
   size and the selected page are saved per character.
+- **Bracket-ready header** — compact `19 / 29 / 39` selectors sit below the
+  logo. Level 19 is the active profile; the greyed-out level 29 and 39 profiles
+  show `Coming soon` on hover. Bracket selection is stored per character once a
+  profile is available.
 - **Custom branding** — the supplied TwinkTracker artwork is integrated into the
   window header through a softly feathered, Classic-safe power-of-two TGA
   runtime texture and is included by the shared deployment tool.
@@ -102,9 +106,9 @@ another character-specific addon already owns `/tt`, TwinkTracker reports the
 collision and `/twt` remains the unambiguous short command.
 The chosen class, page, guide, window position and window size are saved per character.
 
-Exploration completion is deliberately manual and saved per character. Click a
-zone row to mark it done after checking the normal world map and any hidden
-subzones relevant to the route.
+Exploration progress is detected automatically from visible map overlays and
+updates from the Classic Era map API. It is not a manual checklist, and even a
+displayed 100% cannot prove that every hidden exploration-XP trigger has fired.
 
 ## Development
 
@@ -125,8 +129,9 @@ Copy these two files to Windows and double-click the `.cmd` file:
 - `tools/windows/Deploy-WoW-Addons.ps1`
 
 The shared tool uses the existing `ssh minipc` connection, validates Simple
-Scrolling Loot, Better Loot Rolls, Simple Arsenal Swap and TwinkTracker, stages
-their runtime files and mirrors all four addon folders into Classic Era.
+Scrolling Loot, Better Loot Rolls, Simple Arsenal Swap and TwinkTracker in one
+remote run, downloads one combined runtime bundle and mirrors all four addon
+folders into Classic Era. This avoids repeated SSH/SCP connection setup.
 SavedVariables live elsewhere and are not touched. Adjust `WowAddOnsPath` in
 PowerShell only if your WoW installation is in another location.
 

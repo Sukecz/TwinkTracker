@@ -19,6 +19,9 @@ ignore:
   - .pkgmeta
   - assets/logo.png
   - assets/minimap-icon-source.png
+  - assets/bracket-19-source.png
+  - assets/bracket-29-source.png
+  - assets/bracket-39-source.png
   - assets/logo1-1.png
   - assets/twinkortreat.webp
   - "*.code-workspace"
