@@ -147,10 +147,43 @@ routes and level ranges were cross-checked against:
 - [Wowhead level-19 Rogue preparation](https://www.wowhead.com/classic/guide/rogue-classic-level-19-twink)
 - [Warcraft Tavern Classic exploration ranges](https://www.warcrafttavern.com/wow-classic/guides/exploration/)
 - [Classic zone levels and territory](https://warcraft.wiki.gg/wiki/Zones_by_level_%28Classic%29)
+- [Current state of level-19 Era world PvP](https://xpoff.com/threads/current-state-of-twinking.99712/)
+- [Alliance level-19 world-PvP route discussion](https://www.reddit.com/r/classicwow/comments/fpgczg/alliance_19_twink/)
+- [Level-19 future exploration discussion](https://www.reddit.com/r/classicwow/comments/egrbjr/what_zones_should_i_fully_discover_before/)
+- [Stranglethorn Fishing Extravaganza](https://www.wowhead.com/classic/guide/wow-classic-stranglethorn-vale-fishing-extravaganza)
+- [Classic Redridge-Swamp mountain route](https://www.wowhead.com/classic/zone=44/redridge-mountains)
+- [Classic faction-territory PvP rules](https://us.forums.blizzard.com/en/wow/t/how-does-the-player-vs-player-option-work/352993)
+- [Arathi Basin minimum level](https://www.wowhead.com/classic/guide/arathi-basin-battleground-strategy-wow-classic)
+- [Classic Tidal Charm requirements](https://www.wowhead.com/classic/item=1404/tidal-charm)
 
-Classic Era exposes the character's revealed map overlays but not a reliable
-complete set of possible overlays. Dividing them by the rectangular map-art
-area produces misleading percentages for irregular maps, while counting the
-returned overlays has no useful completion denominator. Exploration therefore
-uses a persistent manual per-character checklist. The user marks a route done
-after checking the normal map and any invisible exploration-XP subzones.
+Routes are deliberately grouped from the selected character's perspective.
+The current Era community identifies Stonetalon for Alliance, Redridge for
+Horde and Hillsbrad for both as primary level-19 world-PvP destinations.
+Alliance also receives the Barrens and Ashenvale target routes; Horde receives
+Duskwood and Wetlands. A zone used mainly by the opposite faction for world PvP
+can therefore appear under Travel for the selected side rather than under its
+World PvP Targets. The Barrens and Silverpine remain Horde territory rather
+than contested territory: visiting Alliance is automatically flagged, while
+resident Horde must voluntarily flag or engage before becoming attackable.
+
+Stranglethorn Vale is included for the Gurubashi Arena and Fishing
+Extravaganza, not as a normal level-19 PvP target. Swamp of Sorrows is retained
+only for Horde because its northwestern mountain climb provides the intended
+shortcut into southwestern Redridge. Arathi Highlands was reviewed but remains
+excluded: Arathi Basin begins at level 20 and Tidal Charm requires level 36 in
+Classic Era, leaving no similarly strong level-19 route purpose.
+
+Classic Era exposes the character's revealed overlays through
+`C_MapExplorationInfo.GetExploredMapTextures`. TwinkTracker supplies the missing
+denominator from Blizzard's `UiMapXMapArt` and `WorldMapOverlay` DB2 tables for
+Classic Era build `1.15.9.69109`, exported through Wago.tools:
+
+- [UiMapXMapArt CSV](https://wago.tools/db2/UiMapXMapArt/csv?build=1.15.9.69109)
+- [WorldMapOverlay CSV](https://wago.tools/db2/WorldMapOverlay/csv?build=1.15.9.69109)
+
+Runtime overlays are matched by Blizzard's width, height and X/Y offset tuple.
+The resulting `x/x` and percentage are exact for visible map reveal against
+that client dataset, without estimating irregular map area. They are not a
+guarantee that every invisible exploration-XP subzone has fired; a future
+client build that changes overlay geometry requires refreshing the bundled
+table and live-client verification.

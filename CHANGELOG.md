@@ -2,6 +2,27 @@
 
 All notable changes are documented here.
 
+## 0.3.1 - 2026-08-09
+
+### Changed
+
+- Replaced the manual Exploration checklist with automatic per-zone map reveal
+  progress shown as `x/x` and a rounded percentage.
+- Added a Classic Era 1.15.9 visible-overlay denominator and event-driven
+  refresh through `MAP_EXPLORATION_UPDATED`, while retaining the warning that
+  100% map reveal does not guarantee zero remaining exploration XP.
+- Added the existing blue `A` / red `H` faction symbols to Exploration,
+  Community and faction-specific guide labels for faster scanning.
+- Redesigned Exploration into Starting & Core, faction-specific World PvP, and
+  Travel & Twink Event sections with compact color-coded progress bars.
+- Audited level-19 world-PvP routes, moved Horde Redridge and Alliance
+  Barrens/Stonetalon into their correct target groups, retained the Horde
+  Swamp of Sorrows mountain shortcut and added Stranglethorn Vale for its twink
+  arena and fishing events. Arathi Highlands remains excluded.
+- Replaced colored Exploration category accents with plain neutral headings so
+  they cannot be confused with completion colors, and changed the empty
+  fallback from `--/x · --%` to `0/x · 0%`.
+
 ## 0.3.0 - 2026-08-09
 
 ### Changed

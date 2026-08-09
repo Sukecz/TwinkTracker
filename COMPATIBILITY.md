@@ -42,11 +42,16 @@ Before a release, verify in a current Era client:
     an open chat input.
 15. In a tier containing two choices, equipping either the upper or lower item
     independently adds its green border, name and background highlight.
-16. Exploration displays Horde and Alliance columns, both scroll independently,
-    Redridge and Swamp of Sorrows are present in the Horde route and saved page
-    selection survives `/reload`.
-17. Click several Exploration rows. Confirm their solid green completion squares
-    and state persist through `/reload` independently on different characters.
+16. Exploration displays Horde and Alliance columns with Starting & Core,
+    World PvP Targets and Travel & Twink Events sections. Horde places Redridge
+    under World PvP and Swamp of Sorrows under Travel; Alliance places the
+    Barrens and Stonetalon under World PvP. Both place Stranglethorn Vale under
+    Travel & Twink Events, and saved page selection survives `/reload`.
+17. Exploration rows are read-only and show `revealed/total` plus a percentage.
+    Reveal part of a zone, confirm `MAP_EXPLORATION_UPDATED` refreshes its row,
+    and confirm the same values return after `/reload`. Progress bars and labels
+    move from red through gold and blue to green at 100%; the UI still warns
+    that 100% does not guarantee zero remaining exploration XP.
 18. Twink Basics is read-only, contains no numbered steps or WSG advice and
     clearly warns that XP cannot be locked in Classic Era.
 19. Gear remains the existing S/A/B table. Enchants replace it with only the

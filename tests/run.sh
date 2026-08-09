@@ -43,8 +43,32 @@ grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.tga' MainWindow.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
 grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
-grep -Fq '"exploration:"..self.faction..":"..self.zone.mapID' MainWindow.lua
-grep -Fq 'row.checkFill:SetShown(done)' MainWindow.lua
+grep -Fq '"H  HORDE ROUTES"' MainWindow.lua
+grep -Fq '"A  ALLIANCE ROUTES"' MainWindow.lua
+grep -Fq '"|cff5ca9ffA|r  ALLIANCE"' Data/Guides.lua
+grep -Fq '"|cffff505cH|r  HORDE"' Data/Guides.lua
+grep -Fq 'STARTING = "STARTING & CORE ZONES"' Data/Exploration.lua
+grep -Fq 'WORLD_PVP = "WORLD PVP TARGETS"' Data/Exploration.lua
+grep -Fq 'TRAVEL = "TRAVEL & TWINK EVENTS"' Data/Exploration.lua
+grep -Fq 'CreateFrame("StatusBar",nil,row)' MainWindow.lua
+grep -Fq 'getExplorationProgressColor(state.percent,true)' MainWindow.lua
+grep -Fq 'string.format("0/%d  ·  0%%",total)' MainWindow.lua
+grep -Fq 'string.format("0/%d  ·  0%%",initialTotal)' MainWindow.lua
+if grep -Fq 'EXPLORATION_GROUP_COLORS' MainWindow.lua; then
+    echo "Exploration categories still use separate semantic colors" >&2
+    exit 1
+fi
+grep -Fq 'ns.ExplorationCategories.labels[groupKey],C.secondary' MainWindow.lua
+if grep -Eq 'local (marker|stripe|line)=.*Exploration|EXPLORATION_SECTION_COLOR' MainWindow.lua; then
+    echo "Exploration category headings still contain decorative color accents" >&2
+    exit 1
+fi
+grep -Fq 'ns.ExplorationProgress:GetZoneProgress(row.zone.mapID)' MainWindow.lua
+grep -Fq 'eventFrame:RegisterEvent("MAP_EXPLORATION_UPDATED")' Core.lua
+if grep -Fq '"exploration:"..self.faction..":"..self.zone.mapID' MainWindow.lua; then
+    echo "Exploration still contains a manual checklist key" >&2
+    exit 1
+fi
 grep -Fq 'XP CANNOT BE LOCKED' Data/Basics.lua
 grep -Fq '"GEAR","GEAR"' MainWindow.lua
 grep -Fq '"ENCHANTS","ENCHANTS"' MainWindow.lua

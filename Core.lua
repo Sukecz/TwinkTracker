@@ -6,6 +6,7 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+eventFrame:RegisterEvent("MAP_EXPLORATION_UPDATED")
 
 eventFrame:SetScript("OnEvent", function(_, event, loadedAddon)
     if event == "ADDON_LOADED" then
@@ -21,5 +22,7 @@ eventFrame:SetScript("OnEvent", function(_, event, loadedAddon)
         ns.MainWindow:RefreshItemIcons()
     elseif event == "PLAYER_EQUIPMENT_CHANGED" and ns.MainWindow.frame then
         ns.MainWindow:RefreshEquipment()
+    elseif event == "MAP_EXPLORATION_UPDATED" and ns.MainWindow.frame then
+        ns.MainWindow:RefreshExploration()
     end
 end)

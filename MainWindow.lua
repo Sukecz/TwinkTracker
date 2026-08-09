@@ -49,6 +49,21 @@ local function getFactionColor(faction)
     if faction == "HORDE" then return C.horde end
 end
 
+local function addFactionSymbols(text)
+    if not text then return "" end
+    text = string.gsub(text,"Alliance","|cff5ca9ffA|r Alliance")
+    text = string.gsub(text,"Horde","|cffff505cH|r Horde")
+    return text
+end
+
+local function getExplorationProgressColor(percent, available)
+    if not available or percent <= 0 then return C.muted end
+    if percent >= 100 then return C.equipped end
+    if percent >= 70 then return C.alliance end
+    if percent >= 40 then return C.tier.S end
+    return C.horde
+end
+
 local function insertItemLink(itemID)
     if not itemID or not IsShiftKeyDown or not IsShiftKeyDown() then return end
     local itemLink = GetItemInfo and select(2,GetItemInfo(itemID))
@@ -355,8 +370,8 @@ function MainWindow:CreateCommunityPage(parent)
     local guildLogo=badge:CreateTexture(nil,"ARTWORK"); guildLogo:SetPoint("TOPLEFT",3,-3); guildLogo:SetPoint("BOTTOMRIGHT",-3,3); guildLogo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\twinkortreat.tga"); guildLogo:SetTexCoord(0,1,0,1)
 
     local guildName=label(card,"GameFontNormalLarge","TWINK OR TREAT",C.text); guildName:SetPoint("TOPLEFT",badge,"TOPRIGHT",14,-2)
-    local realm=label(card,"GameFontNormalSmall","HORDE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.horde); realm:SetPoint("TOPLEFT",guildName,"BOTTOMLEFT",0,-7)
-    local description=label(card,"GameFontNormalSmall","Horde guild on the EU PvP Classic Era Firemaw Cluster.",C.muted); description:SetPoint("TOPLEFT",16,-82)
+    local realm=label(card,"GameFontNormalSmall","H  HORDE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.horde); realm:SetPoint("TOPLEFT",guildName,"BOTTOMLEFT",0,-7)
+    local description=label(card,"GameFontNormalSmall","Level-19 twink guild on the EU PvP Classic Era Firemaw Cluster.",C.muted); description:SetPoint("TOPLEFT",16,-82)
 
     local discordLabel=label(card,"GameFontNormalSmall","DISCORD INVITE",C.muted); discordLabel:SetPoint("TOPLEFT",16,-112)
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
@@ -376,37 +391,64 @@ function MainWindow:CreateCommunityPage(parent)
     local allianceBadgeText=label(allianceBadge,"GameFontNormalHuge","A",C.alliance); allianceBadgeText:SetPoint("CENTER",0,1)
 
     local allianceName=label(allianceCard,"GameFontNormalLarge","TWINK FACTORY",C.text); allianceName:SetPoint("TOPLEFT",allianceBadge,"TOPRIGHT",14,-2)
-    local allianceRealm=label(allianceCard,"GameFontNormalSmall","ALLIANCE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.alliance); allianceRealm:SetPoint("TOPLEFT",allianceName,"BOTTOMLEFT",0,-7)
-    local allianceDescription=label(allianceCard,"GameFontNormalSmall","Alliance level-19 twink guild. Whisper Sparre for an invite.",C.muted); allianceDescription:SetPoint("TOPLEFT",16,-84)
+    local allianceRealm=label(allianceCard,"GameFontNormalSmall","A  ALLIANCE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.alliance); allianceRealm:SetPoint("TOPLEFT",allianceName,"BOTTOMLEFT",0,-7)
+    local allianceDescription=label(allianceCard,"GameFontNormalSmall","Level-19 twink guild. Whisper Sparre for an invite.",C.muted); allianceDescription:SetPoint("TOPLEFT",16,-84)
 end
 
 function MainWindow:CreateExplorationColumn(page, faction, titleText, color)
     local panel=frame(page); panel:SetPoint("TOPLEFT",6,-72); panel:SetPoint("BOTTOMLEFT",6,6); panel:SetWidth(440); skin(panel,C.panel,color); self.explorationPanels[faction]=panel
     local title=label(panel,"GameFontNormalLarge",titleText,color); title:SetPoint("TOPLEFT",14,-12)
-    local subtitle=label(panel,"GameFontNormalSmall","Recommended routes to reveal by level 18",C.muted); subtitle:SetPoint("TOPLEFT",14,-36)
+    local subtitle=label(panel,"GameFontNormalSmall","MAP REVEAL  •  RED > GOLD > BLUE > GREEN",C.muted); subtitle:SetPoint("TOPLEFT",14,-36)
     local scroll=CreateFrame("ScrollFrame",nil,panel,"UIPanelScrollFrameTemplate"); scroll:SetPoint("TOPLEFT",10,-60); scroll:SetPoint("BOTTOMRIGHT",-30,10)
-    local child=CreateFrame("Frame",nil,scroll); child:SetSize(390,#ns.ExplorationData[faction]*48); scroll:SetScrollChild(child); panel.scroll=scroll; panel.child=child
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(390,1); scroll:SetScrollChild(child); panel.scroll=scroll; panel.child=child
     self.explorationRows[faction]={}
-    for index,zone in ipairs(ns.ExplorationData[faction]) do
-        local row=CreateFrame("Button",nil,child); row:SetHeight(44); row:SetPoint("TOPLEFT",0,-(index-1)*48)
-        local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(index%2==0 and 0.055 or 0.070,index%2==0 and 0.070 or 0.086,index%2==0 and 0.100 or 0.120,0.95)
-        local check=frame(row); check:SetSize(22,22); check:SetPoint("LEFT",7,0); skin(check,C.panel2,C.border); row.check=check
-        local checkFill=check:CreateTexture(nil,"ARTWORK"); checkFill:SetPoint("TOPLEFT",3,-3); checkFill:SetPoint("BOTTOMRIGHT",-3,3); checkFill:SetColorTexture(unpack(C.equipped)); checkFill:Hide(); row.checkFill=checkFill
-        local zoneName=label(row,"GameFontNormal",zone.name,C.text); zoneName:SetPoint("TOPLEFT",36,-6); row.zoneName=zoneName
-        local meta=label(row,"GameFontNormalSmall",zone.levels,C.muted); meta:SetPoint("TOPLEFT",36,-25)
-        local progress=label(row,"GameFontNormalSmall","TO DO",C.muted); progress:SetPoint("RIGHT",-8,0); progress:SetWidth(56); progress:SetJustifyH("RIGHT"); row.progress=progress; row.zone=zone; row.faction=faction
-        row:SetScript("OnClick",function(self) local key="exploration:"..self.faction..":"..self.zone.mapID; ns.Database:SetChecklistDone(key,not ns.Database:IsChecklistDone(key)); MainWindow:RefreshExploration() end)
-        row:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:AddLine(self.zone.name,1,0.82,0.35); GameTooltip:AddLine(self.zone.note,0.85,0.88,0.95,true); GameTooltip:AddLine(" "); GameTooltip:AddLine("Click to update this character's manual checklist.",0.53,0.60,0.70,true); GameTooltip:Show() end); row:SetScript("OnLeave",function() GameTooltip:Hide() end)
-        self.explorationRows[faction][index]=row
+    local y=0
+    local rowIndex=0
+    for _,groupKey in ipairs(ns.ExplorationCategories.order) do
+        local header=CreateFrame("Frame",nil,child); header:SetHeight(26); header:SetPoint("TOPLEFT",0,-y); header:SetPoint("TOPRIGHT")
+        local groupTitle=label(header,"GameFontNormalSmall",ns.ExplorationCategories.labels[groupKey],C.secondary); groupTitle:SetPoint("LEFT",2,0)
+        y=y+28
+        for _,zone in ipairs(ns.ExplorationData[faction]) do
+            if zone.group==groupKey then
+                rowIndex=rowIndex+1
+                local row=CreateFrame("Button",nil,child); row:SetHeight(44); row:SetPoint("TOPLEFT",0,-y)
+                local shade=rowIndex%2==0 and {0.055,0.070,0.100,0.95} or {0.070,0.086,0.120,0.95}; row.baseColor=shade
+                local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(unpack(shade)); row.bg=bg
+                local zoneName=label(row,"GameFontNormal",zone.name,C.text); zoneName:SetPoint("TOPLEFT",11,-6); zoneName:SetPoint("TOPRIGHT",-126,-6); zoneName:SetJustifyH("LEFT"); row.zoneName=zoneName
+                local meta=label(row,"GameFontNormalSmall",zone.levels,C.muted); meta:SetPoint("TOPLEFT",11,-25)
+                local initialTotal=#(ns.ExplorationOverlayData[zone.mapID] or {})
+                local progress=label(row,"GameFontNormalSmall",string.format("0/%d  ·  0%%",initialTotal),C.muted); progress:SetPoint("RIGHT",-8,1); progress:SetWidth(112); progress:SetJustifyH("RIGHT"); row.progress=progress
+                local progressBar=CreateFrame("StatusBar",nil,row); progressBar:SetPoint("BOTTOMLEFT",3,1); progressBar:SetPoint("BOTTOMRIGHT",-1,1); progressBar:SetHeight(3); progressBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8"); progressBar:SetMinMaxValues(0,100); progressBar:SetValue(0); row.progressBar=progressBar
+                local progressTrack=progressBar:CreateTexture(nil,"BACKGROUND"); progressTrack:SetAllPoints(); progressTrack:SetColorTexture(0.13,0.17,0.24,0.85)
+                row.zone=zone
+                row:SetScript("OnEnter",function(self)
+                    self.bg:SetColorTexture(0.10,0.14,0.20,0.98)
+                    GameTooltip:SetOwner(self,"ANCHOR_RIGHT")
+                    GameTooltip:AddLine(self.zone.name,1,0.82,0.35)
+                    GameTooltip:AddLine(ns.ExplorationCategories.labels[self.zone.group],C.secondary[1],C.secondary[2],C.secondary[3])
+                    GameTooltip:AddLine(addFactionSymbols(self.zone.note),0.85,0.88,0.95,true)
+                    GameTooltip:AddLine(" ")
+                    local state=self.progressData
+                    if state and state.available then GameTooltip:AddLine(string.format("Map reveal: %d of %d map areas (%d%%).",state.explored,state.total,state.percent),0.53,0.73,0.95,true)
+                    else GameTooltip:AddLine("Map reveal data is currently unavailable.",0.53,0.60,0.70,true) end
+                    GameTooltip:AddLine("100% map reveal does not guarantee that no exploration XP remains.",1,0.72,0.30,true)
+                    GameTooltip:Show()
+                end)
+                row:SetScript("OnLeave",function(self) self.bg:SetColorTexture(unpack(self.baseColor)); GameTooltip:Hide() end)
+                self.explorationRows[faction][#self.explorationRows[faction]+1]=row
+                y=y+48
+            end
+        end
     end
+    child:SetHeight(math.max(1,y))
 end
 
 function MainWindow:CreateExplorationPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.EXPLORATION=page
     local heading=label(page,"GameFontNormalHuge","EXPLORATION",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","Manual per-character checklist for travel and world-PvP zones to reveal no later than level 18. Click a row to mark it done.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
-    self:CreateExplorationColumn(page,"HORDE","HORDE ROUTES",C.horde)
-    self:CreateExplorationColumn(page,"ALLIANCE","ALLIANCE ROUTES",C.alliance)
+    local intro=label(page,"GameFontNormalSmall","Automatic visible-map progress for this character. 100% map reveal does not guarantee that no exploration XP remains.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    self:CreateExplorationColumn(page,"HORDE","H  HORDE ROUTES",C.horde)
+    self:CreateExplorationColumn(page,"ALLIANCE","A  ALLIANCE ROUTES",C.alliance)
 end
 
 function MainWindow:CreateWowheadBar(parent)
@@ -621,12 +663,23 @@ function MainWindow:RefreshExploration()
     if not self.frame or not self.pages.EXPLORATION or not self.pages.EXPLORATION:IsShown() then return end
     for _,faction in ipairs({"HORDE","ALLIANCE"}) do
         for _,row in ipairs(self.explorationRows[faction] or {}) do
-            local done=ns.Database:IsChecklistDone("exploration:"..faction..":"..row.zone.mapID)
-            row.checkFill:SetShown(done)
-            row.check:SetBackdropBorderColor(unpack(done and C.equipped or C.border))
-            row.zoneName:SetTextColor(unpack(done and C.equipped or C.text))
-            row.progress:SetText(done and "DONE" or "TO DO")
-            row.progress:SetTextColor(unpack(done and C.equipped or C.muted))
+            local state=ns.ExplorationProgress:GetZoneProgress(row.zone.mapID)
+            row.progressData=state
+            if state and state.available then
+                local progressColor=getExplorationProgressColor(state.percent,true)
+                row.progress:SetText(string.format("%d/%d  ·  %d%%",state.explored,state.total,state.percent))
+                row.progress:SetTextColor(unpack(progressColor))
+                row.zoneName:SetTextColor(unpack(state.complete and C.equipped or C.text))
+                row.progressBar:SetStatusBarColor(progressColor[1],progressColor[2],progressColor[3],0.92)
+                row.progressBar:SetValue(state.percent)
+            else
+                local total=state and state.total or 0
+                row.progress:SetText(string.format("0/%d  ·  0%%",total))
+                row.progress:SetTextColor(unpack(C.muted))
+                row.zoneName:SetTextColor(unpack(C.text))
+                row.progressBar:SetStatusBarColor(C.muted[1],C.muted[2],C.muted[3],0.55)
+                row.progressBar:SetValue(0)
+            end
         end
     end
 end

@@ -23,8 +23,8 @@ ns.GuidesData = {
             tagline = "Universal combat recovery without spending a primary profession slot.",
             steps = {
                 step("TRAINERS",{
-                    line("ALLIANCE","Stormwind: Shaina Fuller (42.8, 26.6)  •  Ironforge: Nissa Firestone (54.8, 58.6)  •  Darnassus: Dannelor (51.6, 12.6)"),
-                    line("HORDE","Orgrimmar: Arnok (34.0, 84.4)  •  Undercity: Mary Edras (73.6, 55.6)  •  Thunder Bluff: Pand Stonebinder (29.6, 21.4)"),
+                    line("|cff5ca9ffA|r  ALLIANCE","Stormwind: Shaina Fuller (42.8, 26.6)  •  Ironforge: Nissa Firestone (54.8, 58.6)  •  Darnassus: Dannelor (51.6, 12.6)"),
+                    line("|cffff505cH|r  HORDE","Orgrimmar: Arnok (34.0, 84.4)  •  Undercity: Mary Edras (73.6, 55.6)  •  Thunder Bluff: Pand Stonebinder (29.6, 21.4)"),
                 }),
                 step("LEVEL 1-125",{
                     line("1-40","Craft Linen Bandage.",{1251}),
@@ -45,12 +45,12 @@ ns.GuidesData = {
                     line("SKILL 210","Read Manual: Mageweave Bandage.",{16113}),
                     line("ALTERNATIVE","All three books are BoE: mail them from a main or buy them from the Auction House.",{16084,16112,16113}),
                 }),
-                step("ALLIANCE BOOK VENDOR",{
+                step("|cff5ca9ffA|r  ALLIANCE BOOK VENDOR",{
                     line("WHO","Deneb Walker"),
                     line("WHERE","Stromgarde Keep, Arathi Highlands — beside the chapel and well at (27.2, 58.8)."),
                     line("SAFE ROUTE","Use an escort, or enter through the northwest wall breach near (23.2, 55.8) to avoid hostile elites."),
                 }),
-                step("HORDE BOOK VENDOR",{
+                step("|cffff505cH|r  HORDE BOOK VENDOR",{
                     line("WHO","Balai Lok'Wein"),
                     line("WHERE","Brackenwall Village, Dustwallow Marsh — between the north-side caravans at (36.4, 30.4)."),
                     line("TRAVEL","Use an escort for the first low-level trip and collect the Brackenwall flight path before leaving."),

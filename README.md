@@ -2,7 +2,7 @@
 
 TwinkTracker is a planning companion for **WoW Classic Era / Hardcore
 level-19 twinks**. The initial release focuses on Gear, essential XP-safety
-rules and a manual Exploration checklist; XP Tracker remains hidden until its
+rules and automatic Exploration map progress; XP Tracker remains hidden until its
 next design pass.
 
 It is deliberately informational. It does not equip items, accept or turn in
@@ -37,7 +37,8 @@ game action.
   and update immediately after an equipment change. Random-suffix alternatives
   are matched by their full item name when one base item ID represents several tiers.
 - **Faction badges** — a blue `A` or red `H` on the item icon identifies
-  Alliance- and Horde-specific recommendations.
+  Alliance- and Horde-specific recommendations. The same `A` / `H` convention
+  is used in faction headings and route references throughout the addon.
 - **Weapon choices** — separate 1H and 2H rows, with S/A/B recommendations for
   every class that can use the corresponding weapon type.
 - **Twink Basics** — verified, read-only Classic Era safety rules centered on
@@ -52,10 +53,15 @@ game action.
   Twink or Treat on the EU PvP Classic Era Firemaw Cluster, including a
   selectable Discord invite address and its supplied guild logo, plus the
   Alliance guild Twink Factory with Sparre as its in-game invite contact.
-- **Exploration** — separate Horde and Alliance routes to reveal by level 18,
-  including contested and enemy-territory world-PvP destinations. Each zone is
-  a persistent manual checklist entry so the addon never invents a completion
-  percentage that the Classic Era API cannot support reliably.
+- **Exploration** — faction-specific routes grouped into Starting & Core Zones,
+  World PvP Targets and Travel & Twink Events. Horde and Alliance receive
+  different PvP destinations, while Stranglethorn Vale is retained for the
+  Gurubashi Arena and Fishing Extravaganza and Swamp of Sorrows remains the
+  Horde mountain shortcut into Redridge. Each row shows revealed map areas as
+  a color-coded progress bar, `x/x` and a percentage from the Classic Era map
+  API. Categories use plain neutral headings without colored accents, so only
+  progress carries a completion color. This is visible-map progress, not proof
+  that no exploration XP remains.
 - **Resizable layout** — drag the lower-right corner to resize the window; its
   size and the selected page are saved per character.
 - **Custom branding** — the supplied TwinkTracker artwork is integrated into the

@@ -3,9 +3,9 @@
 TwinkTracker is a lightweight planning addon for level 19 characters in World
 of Warcraft Classic Era and Classic Hardcore. It combines curated gear,
 enchant and consumable references with essential XP-safety guidance and a
-manual exploration checklist in one compact in-game window.
+automatic exploration map progress in one compact in-game window.
 
-All settings and checklist progress are stored separately for each character.
+All settings are stored separately for each character.
 
 ## Features
 
@@ -24,8 +24,8 @@ All settings and checklist progress are stored separately for each character.
 - Copy-ready Wowhead Classic links for every real item and enchant
 - Essential Classic Era XP-safety rules, including the absence of XP locking
 - Separate Horde and Alliance exploration routes to complete by level 18
-- Persistent manual exploration checklist saved per character
-- Contested and enemy-territory routes useful for travel and world PvP
+- Starting, faction-specific World PvP, and Travel & Twink Event groups
+- Automatic per-zone revealed-map-area counts, percentages and colored bars
 - Resizable and movable window with remembered size, position and selected view
 - Draggable minimap button with a custom TwinkTracker icon
 - No external libraries or required dependencies
@@ -55,9 +55,14 @@ emphasizes finishing important travel and exploration before level 19 and
 avoiding mob, quest, dungeon and exploration XP after reaching the target
 level.
 
-The Exploration page uses a manual checklist because the Classic Era map API
-does not expose a reliable denominator for a true zone-completion percentage.
-TwinkTracker never claims that this checklist disables or prevents XP gain.
+The Exploration page compares the character's currently revealed map overlays
+with a complete Classic Era 1.15.9 overlay table and shows `x/x` plus a rounded
+percentage. Its World PvP group differs by faction: for example, Horde targets
+Redridge while Alliance targets the Barrens and Stonetalon. Stranglethorn Vale
+is grouped under Twink Events rather than ordinary world PvP. This measures
+visible map reveal only: even 100% does not prove that every invisible
+exploration-XP trigger has fired. TwinkTracker never claims that map progress
+disables or prevents XP gain.
 
 ## Commands
 
