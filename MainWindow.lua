@@ -544,6 +544,37 @@ function MainWindow:CreateResizeGrip(root)
     self.resizeGrip=grip
 end
 
+function MainWindow:CreateSettingsPanel(root)
+    local panel=frame(root); panel:SetSize(430,190); panel:SetPoint("CENTER"); panel:SetFrameLevel(root:GetFrameLevel()+20); skin(panel,C.panel,C.accent); panel:Hide(); self.settingsPanel=panel
+    local title=label(panel,"GameFontNormalLarge","SETTINGS",C.text); title:SetPoint("TOPLEFT",20,-18)
+    local subtitle=label(panel,"GameFontNormalSmall","Interface options for this character.",C.muted); subtitle:SetPoint("TOPLEFT",title,"BOTTOMLEFT",0,-5)
+
+    local close=CreateFrame("Button",nil,panel); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-10,-10)
+    local closeText=label(close,"GameFontNormalLarge","×",C.muted); closeText:SetPoint("CENTER",0,1)
+    close:SetScript("OnEnter",function() closeText:SetTextColor(1,0.3,0.3) end)
+    close:SetScript("OnLeave",function() closeText:SetTextColor(unpack(C.muted)) end)
+    close:SetScript("OnClick",function() panel:Hide() end)
+
+    local checkbox=CreateFrame("CheckButton",nil,panel,"UICheckButtonTemplate"); checkbox:SetSize(28,28); checkbox:SetPoint("TOPLEFT",20,-78); checkbox:SetChecked(ns.Database:Get().showMinimapIcon); self.showMinimapIconCheckbox=checkbox
+    local checkboxLabel=label(panel,"GameFontNormal","Show minimap icon",C.text); checkboxLabel:SetPoint("LEFT",checkbox,"RIGHT",8,1)
+    checkbox:SetScript("OnClick",function(self)
+        local shown=self:GetChecked() and true or false
+        ns.Database:SetShowMinimapIcon(shown)
+        ns.MinimapButton:SetShown(shown)
+    end)
+    local note=label(panel,"GameFontNormalSmall","When hidden, use /twinktracker to open the addon.",C.muted); note:SetPoint("TOPLEFT",56,-115)
+end
+
+function MainWindow:ToggleSettings()
+    if not self.settingsPanel then return end
+    if self.settingsPanel:IsShown() then
+        self.settingsPanel:Hide()
+    else
+        self.showMinimapIconCheckbox:SetChecked(ns.Database:Get().showMinimapIcon)
+        self.settingsPanel:Show()
+    end
+end
+
 function MainWindow:Create()
     if self.frame then return self.frame end
     local saved=ns.Database:Get(); local root=frame(UIParent,"TwinkTrackerMainFrame")
@@ -560,6 +591,10 @@ function MainWindow:Create()
     self:RefreshBracketButtons()
     self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",236)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-172); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-64)
+    local settings=CreateFrame("Button",nil,root); settings:SetSize(78,24); settings:SetPoint("TOPRIGHT",-52,-17); local settingsBg=settings:CreateTexture(nil,"BACKGROUND"); settingsBg:SetAllPoints(); settingsBg:SetColorTexture(0.06,0.08,0.12,0.95); local settingsText=label(settings,"GameFontNormalSmall","SETTINGS",C.muted); settingsText:SetPoint("CENTER")
+    settings:SetScript("OnEnter",function() settingsBg:SetColorTexture(0.10,0.14,0.20,1); settingsText:SetTextColor(unpack(C.text)) end)
+    settings:SetScript("OnLeave",function() settingsBg:SetColorTexture(0.06,0.08,0.12,0.95); settingsText:SetTextColor(unpack(C.muted)) end)
+    settings:SetScript("OnClick",function() MainWindow:ToggleSettings() end)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
     close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
 
@@ -585,7 +620,8 @@ function MainWindow:Create()
     self:CreateScrollBar(gear,scroll); self.gearViewFrames={header,scroll,self.scrollBar,self.gearLegend}
     self:CreateReferenceSection(gear,"ENCHANTS","ENCHANTS","Relevant equipment slots will replace the gear table here. Each class profile will reference a shared, source-verified enchant catalog.")
     self:CreateReferenceSection(gear,"CONSUMABLES","CONSUMABLES","A class-specific table grouped by bandages, food and drink, potions, elixirs, scrolls, Engineering, weapon consumables and class resources will appear here.")
-    self:CreateBasicsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root)
+    self:CreateBasicsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
+    root:SetScript("OnHide",function() if MainWindow.settingsPanel then MainWindow.settingsPanel:Hide() end end)
     root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
     self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectGuide(saved.selectedGuide); self:SelectPage(saved.selectedPage); return root
 end

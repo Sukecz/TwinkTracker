@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 0.3.5 - 2026-08-09
+
+### Added
+
+- Added a compact Settings button and per-character option to show or hide the
+  minimap icon immediately.
+
 ## 0.3.4 - 2026-08-09
 
 ### Added

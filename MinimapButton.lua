@@ -29,6 +29,10 @@ function MinimapButton:UpdateDragPosition()
     self:SetPosition(angle)
 end
 
+function MinimapButton:SetShown(shown)
+    if self.button then self.button:SetShown(shown and true or false) end
+end
+
 function MinimapButton:Create()
     if self.button then return self.button end
 
@@ -74,5 +78,6 @@ function MinimapButton:Create()
 
     self.button=button
     self:SetPosition(ns.Database:Get().minimapAngle)
+    self:SetShown(ns.Database:Get().showMinimapIcon)
     return button
 end

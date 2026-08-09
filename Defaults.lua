@@ -16,6 +16,7 @@ ns.Defaults = {
     selectedGearSection = "GEAR",
     selectedGuide = "FIRST_AID",
     minimapAngle = 225,
+    showMinimapIcon = true,
     xpLockdown = false,
     checklist = {},
 }

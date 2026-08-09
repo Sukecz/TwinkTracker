@@ -78,9 +78,12 @@ game action.
 - **Custom branding** — the supplied TwinkTracker artwork is integrated into the
   window header through a softly feathered, Classic-safe power-of-two TGA
   runtime texture and is included by the shared deployment tool.
+- **Settings** — a compact header button opens per-character interface options;
+  the initial setting can show or hide the minimap icon immediately.
 - **Minimap button** — a matching gold-and-blue `T` icon opens or closes the
-  addon with a left-click and can be dragged around the minimap; its position is
-  saved per character.
+  addon with a left-click and can be dragged around the minimap; its position
+  and visibility are saved per character. Use `/twinktracker` to reopen the
+  addon while the icon is hidden.
 
 The reference is intentionally curated rather than presented as a universal
 mathematical ranking. Exact random-suffix rolls and realm-specific vendor,

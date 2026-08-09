@@ -57,6 +57,9 @@ grep -Fq 'selectedBracket = 19' Defaults.lua
 grep -Fq '[29] = { level = 29, available = false }' Data/Brackets.lua
 grep -Fq '[39] = { level = 39, available = false }' Data/Brackets.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
+grep -Fq 'showMinimapIcon = true' Defaults.lua
+grep -Fq '"Show minimap icon"' MainWindow.lua
+grep -Fq 'ns.MinimapButton:SetShown(shown)' MainWindow.lua
 grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
 grep -Fq '"H  HORDE ROUTES"' MainWindow.lua

@@ -16,6 +16,7 @@ local db = ns.Database:Initialize({
     selectedClass = "INVALID",
     selectedTab = "INVALID",
     xpLockdown = "yes",
+    showMinimapIcon = "yes",
     checklist = "invalid",
 })
 
@@ -29,6 +30,7 @@ assert(db.selectedPage == "GEAR")
 assert(db.selectedGearSection == "GEAR")
 assert(db.selectedGuide == "FIRST_AID")
 assert(db.minimapAngle == 225)
+assert(db.showMinimapIcon == true)
 assert(db.selectedSlot == "HEAD")
 assert(db.xpLockdown == false)
 assert(type(db.checklist) == "table")
@@ -76,6 +78,10 @@ ns.Database:SetMinimapAngle(90)
 assert(ns.Database:Get().minimapAngle == 90)
 ns.Database:SetMinimapAngle(900)
 assert(ns.Database:Get().minimapAngle == 360)
+ns.Database:SetShowMinimapIcon(false)
+assert(ns.Database:Get().showMinimapIcon == false)
+ns.Database:SetShowMinimapIcon(true)
+assert(ns.Database:Get().showMinimapIcon == true)
 
 ns.Database:SetFramePosition("TOP", 10, 20)
 assert(ns.Database:Get().frame.point == "TOP")

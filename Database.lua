@@ -67,6 +67,9 @@ function Database:Initialize(saved)
         self.data.selectedGuide = defaults.selectedGuide
     end
     self.data.minimapAngle = type(self.data.minimapAngle) == "number" and clamp(self.data.minimapAngle, 0, 360) or defaults.minimapAngle
+    if type(self.data.showMinimapIcon) ~= "boolean" then
+        self.data.showMinimapIcon = defaults.showMinimapIcon
+    end
     local profile = ns.BisData.classes[self.data.selectedClass]
     if type(self.data.selectedSlot) ~= "string" or not profile.slots[self.data.selectedSlot] then
         self.data.selectedSlot = defaults.selectedSlot
@@ -170,6 +173,10 @@ end
 
 function Database:SetMinimapAngle(angle)
     self.data.minimapAngle = clamp(angle,0,360)
+end
+
+function Database:SetShowMinimapIcon(shown)
+    self.data.showMinimapIcon = shown and true or false
 end
 
 function Database:ResetFramePosition()
