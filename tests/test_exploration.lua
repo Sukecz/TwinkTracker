@@ -53,11 +53,15 @@ end
 local mapCount = 0
 for mapID, signatures in pairs(ns.ExplorationOverlayData) do
     assert(routeMaps[mapID])
+    local names = ns.ExplorationOverlayNames[mapID]
+    assert(type(names) == "table")
+    assert(#names == #signatures)
     local seen = {}
-    for _, signature in ipairs(signatures) do
+    for index, signature in ipairs(signatures) do
         assert(signature:match("^%d+:%d+:%d+:%d+$"))
         assert(not seen[signature])
         seen[signature] = true
+        assert(type(names[index]) == "string" and names[index] ~= "")
     end
     mapCount = mapCount + 1
 end
@@ -82,6 +86,9 @@ assert(progress.explored == 2)
 assert(progress.total == 11)
 assert(progress.percent == 18)
 assert(not progress.complete)
+assert(#progress.missing == 9)
+assert(progress.missing[1] == "Sen'jin Village")
+assert(progress.missing[9] == "Orgrimmar")
 
 local empty = ns.ExplorationProgress:GetZoneProgress(1412)
 assert(empty.available and empty.explored == 0 and empty.total == 14 and empty.percent == 0)
@@ -104,6 +111,7 @@ C_MapExplorationInfo.GetExploredMapTextures = function(mapID)
 end
 local complete = ns.ExplorationProgress:GetZoneProgress(1411)
 assert(complete.complete and complete.explored == 11 and complete.percent == 100)
+assert(#complete.missing == 0)
 
 C_MapExplorationInfo = nil
 local unavailable = ns.ExplorationProgress:GetZoneProgress(1411)

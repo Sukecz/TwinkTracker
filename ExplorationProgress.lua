@@ -11,8 +11,8 @@ local function getExpectedLookup(mapID, signatures)
     end
 
     local lookup = {}
-    for _, signature in ipairs(signatures) do
-        lookup[signature] = true
+    for index, signature in ipairs(signatures) do
+        lookup[signature] = index
     end
     expectedLookups[mapID] = lookup
     return lookup
@@ -57,11 +57,20 @@ function ExplorationProgress:GetZoneProgress(mapID)
         end
     end
 
+    local names = ns.ExplorationOverlayNames[mapID] or {}
+    local missing = {}
+    for index, signature in ipairs(expected) do
+        if not seen[signature] then
+            missing[#missing+1] = names[index] or "Unknown map area"
+        end
+    end
+
     local percent = total > 0 and math.floor((explored * 100 / total) + 0.5) or 0
     return {
         explored=explored,
         total=total,
         percent=percent,
+        missing=missing,
         available=true,
         complete=total > 0 and explored == total,
     }

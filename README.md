@@ -114,8 +114,10 @@ collision and `/twt` remains the unambiguous short command.
 The chosen class, page, guide, window position and window size are saved per character.
 
 Exploration progress is detected automatically from visible map overlays and
-updates from the Classic Era map API. It is not a manual checklist, and even a
-displayed 100% cannot prove that every hidden exploration-XP trigger has fired.
+updates from the Classic Era map API. Hovering an incomplete zone lists up to
+five missing named map areas, so a nearly complete value such as `11/12` shows
+exactly which area remains. It is not a manual checklist, and even a displayed
+100% cannot prove that every hidden exploration-XP trigger has fired.
 
 ## Development
 

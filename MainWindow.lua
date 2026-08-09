@@ -72,6 +72,19 @@ local function getExplorationProgressColor(percent, available)
     return C.horde
 end
 
+local function addMissingExplorationAreas(tooltip, missing)
+    if not missing or #missing == 0 then return end
+    tooltip:AddLine(" ")
+    tooltip:AddLine("Missing map areas:",1,0.82,0.35)
+    local visibleCount=math.min(#missing,5)
+    for index=1,visibleCount do
+        tooltip:AddLine("• "..missing[index],0.85,0.88,0.95,true)
+    end
+    if #missing>visibleCount then
+        tooltip:AddLine(string.format("...and %d more.",#missing-visibleCount),C.muted[1],C.muted[2],C.muted[3])
+    end
+end
+
 local function insertItemLink(itemID)
     if not itemID or not IsShiftKeyDown or not IsShiftKeyDown() then return end
     local itemLink = GetItemInfo and select(2,GetItemInfo(itemID))
@@ -467,6 +480,7 @@ function MainWindow:CreateExplorationColumn(page, faction, titleText, color)
                     local state=self.progressData
                     if state and state.available then GameTooltip:AddLine(string.format("Map reveal: %d of %d map areas (%d%%).",state.explored,state.total,state.percent),0.53,0.73,0.95,true)
                     else GameTooltip:AddLine("Map reveal data is currently unavailable.",0.53,0.60,0.70,true) end
+                    if state and state.available then addMissingExplorationAreas(GameTooltip,state.missing) end
                     GameTooltip:AddLine("100% map reveal does not guarantee that no exploration XP remains.",1,0.72,0.30,true)
                     GameTooltip:Show()
                 end)

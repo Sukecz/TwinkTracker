@@ -125,3 +125,123 @@ ns.ExplorationOverlayData = {
         "270:205:247:0", "288:355:457:282", "320:275:553:197",
     },
 }
+
+-- Human-readable AreaTable names for each overlay above, in matching order.
+-- Some Blizzard overlays reveal several adjacent named areas together.
+ns.ExplorationOverlayNames = {
+    [1411] = {
+        "Skull Rock", "Kolkar Crag", "Sen'jin Village", "Tiragarde Keep", "Thunder Ridge", "Echo Isles",
+        "Drygulch Ravine / Razorwind Canyon", "Valley of Trials", "Razor Hill", "Razormane Grounds",
+        "Orgrimmar",
+    },
+    [1412] = {
+        "Ravaged Caravan", "Thunderhorn Water Well", "Palemane Rock", "Winterhoof Water Well",
+        "Wildmane Water Well", "Windfury Ridge", "Red Rocks", "Bael'dun Digsite", "The Golden Plains",
+        "The Venture Co. Mine", "The Rolling Plains", "Bloodhoof Village", "Thunder Bluff",
+        "Red Cloud Mesa / Camp Narache",
+    },
+    [1413] = {
+        "The Merchant Coast", "Far Watch Post", "Raptor Grounds", "Boulder Lode Mine", "The Forgotten Pools",
+        "Grol'dom Farm", "Ratchet", "Bramblescar", "The Mor'shan Rampart", "Dreadmist Peak", "Honor's Stand",
+        "Razorfen Kraul", "Bael Modan", "Thorn Hill", "Camp Taurajo", "Northwatch Hold", "Razorfen Downs",
+        "Blackthorn Ridge", "The Stagnant Oasis", "The Crossroads", "The Sludge Fen", "Lushwater Oasis",
+        "The Dry Hills", "Agama'gor", "Field of Giants",
+    },
+    [1420] = {
+        "Brill", "Cold Hearth Manor", "Crusader Outpost", "Garren's Haunt", "Scarlet Watch Post",
+        "Stillwater Pond", "Brightwater Lake", "Whispering Gardens / Terrace of Repose", "Balnir Farmstead",
+        "The Bulwark", "Venomweb Vale", "Nightmare Vale", "Deathknell", "Solliden Farmstead",
+        "Agamand Mills", "Undercity",
+    },
+    [1421] = {
+        "Pyrewood Village", "Deep Elem Mine", "Olsen's Farthing", "The Dead Field", "North Tide's Hollow",
+        "The Decrepit Ferry", "The Skittering Dark", "The Sepulcher", "The Greymane Wall", "Shadowfang Keep",
+        "Beren's Peril", "Ambermill", "Fenris Isle / The Dawning Isles", "Malden's Orchard / The Ivar Patch",
+        "The Shining Strand / Valgan's Field",
+    },
+    [1424] = {
+        "Purgation Isle", "Azurelode Mine", "Darrow Hill", "Nethander Stead", "Tarren Mill",
+        "Eastern Strand", "Southshore", "Dun Garok", "Western Strand", "Southpoint Tower",
+        "Hillsbrad Fields", "Durnholde Keep",
+    },
+    [1426] = {
+        "Brewnall Village", "Frostmane Hold", "South Gate Outpost", "Amberstill Ranch", "Misty Pine Refuge",
+        "North Gate Outpost", "Iceflow Lake", "Shimmer Ridge", "Coldridge Pass", "The Tundrid Hills",
+        "Helm's Bed Lake / Ironband's Compound", "Gol'Bolar Quarry", "Chill Breeze Valley", "Gnomeregan",
+        "The Grizzled Den", "Kharanos / Steelgrill's Depot", "Coldridge Valley / Anvilmar",
+        "Gates of Ironforge",
+    },
+    [1429] = {
+        "Crystal Lake", "Goldshire", "Tower of Azora / Jasperlode Mine", "Eastvale Logging Camp",
+        "Jerod's Landing", "Fargodeep Mine / The Stonefield Farm / The Maclure Vineyards",
+        "Brackwell Pumpkin Patch", "Northshire Valley", "Forest's Edge / Westbrook Garrison",
+        "Ridgepoint Tower", "Stone Cairn Lake", "Stormwind City",
+    },
+    [1431] = {
+        "The Hushed Bank", "Raven Hill", "Manor Mistmantle", "Tranquil Gardens Cemetery", "Brightwood Grove",
+        "The Yorgen Farmstead", "The Rotting Orchard", "Vul'Gol Ogre Mound", "Addle's Stead",
+        "Darkshire / Beggar's Haunt", "Raven Hill Cemetery / Forlorn Rowe", "Twilight Grove",
+        "The Darkened Bank",
+    },
+    [1432] = {
+        "Valley of Kings", "North Gate Pass / Algaz Station", "Silver Stream Mine", "Stonesplinter Valley",
+        "Thelsamar", "Stonewrought Dam", "Grizzlepaw Ridge", "Mo'grosh Stronghold", "The Loch",
+        "Ironband's Excavation Site", "The Farstrider Lodge",
+    },
+    [1433] = {
+        "Alther's Mill", "Galardell Valley / Tower of Ilgalar", "Stonewatch / Stonewatch Tower",
+        "Render's Camp / Render's Rock", "Stonewatch Falls", "Lakeshire",
+        "Redridge Canyons / Rethban Caverns", "Three Corners", "Lakeridge Highway", "Render's Valley",
+        "Lake Everstill",
+    },
+    [1434] = {
+        "Bal'lal Ruins", "Nek'mani Wellspring", "Kal'ai Ruins", "Ruins of Aboraz", "Mizjah Ruins",
+        "Venture Co. Base Camp", "Grom'gol Base Camp", "Ruins of Jubuwal", "Balia'mah Ruins",
+        "Zuuldaia Ruins", "Crystalvein Mine", "Jaguero Isle", "Mistvale Valley", "Ruins of Zul'Kunda",
+        "Lake Nazferiti", "Ziata'jai Ruins", "Mosh'Ogg Ogre Mound", "Nesingwary's Expedition",
+        "Booty Bay / Janeiro's Point", "Kurzen's Compound", "Bloodsail Compound", "Wild Shore", "Rebel Camp",
+        "Ruins of Zul'Mamwe", "The Vile Reef", "Gurubashi Arena", "Zul'Gurub",
+    },
+    [1435] = {
+        "Sorrowmurk", "The Harborage", "Itharius's Cave", "Misty Valley",
+        "Misty Reed Strand / Misty Reed Post", "Splinterspear Junction", "Pool of Tears",
+        "The Shifting Mire", "Stagalbog", "Stonard", "Fallow Sanctuary",
+    },
+    [1436] = {
+        "The Jansen Stead", "Sentinel Hill", "Demont's Place", "The Dead Acre", "Furlbrow's Pumpkin Farm",
+        "Jangolode Mine", "Moonbrook / Stendel's Pond", "The Molsen Farm", "Saldean's Farm",
+        "Gold Coast Quarry", "The Dagger Hills", "Westfall Lighthouse", "The Dust Plains",
+        "Alexston Farmstead",
+    },
+    [1437] = {
+        "Menethil Harbor", "The Green Belt", "Raptor Ridge", "Whelgar's Excavation Site", "Ironbeard's Tomb",
+        "Saltspray Glen", "Dun Modr", "Mosshide Fen", "Angerfang Encampment", "Bluegill Marsh",
+        "Thelgen Rock / Dun Algaz", "Black Channel Marsh", "Direforge Hill", "Sundown Marsh",
+        "Dragonmaw Gates / Grim Batol",
+    },
+    [1438] = {
+        "Rut'theran Village", "Pools of Arlithrien", "Ban'ethil Hollow", "The Oracle Glade",
+        "Wellspring Lake / Wellspring River", "Gnarlpine Hold", "Dolanaar", "Starbreeze Village",
+        "Shadowglen", "Lake Al'Ameth", "Darnassus",
+    },
+    [1439] = {
+        "Auberdine", "Tower of Althalaxx", "The Master's Glaive", "Remtravel's Excavation", "Bashal'Aran",
+        "Ameth'Aran", "Ruins of Mathystra", "Grove of the Ancients", "Cliffspring River / Cliffspring Falls",
+    },
+    [1440] = {
+        "Lake Falathim", "Bough Shadow", "The Ruins of Stardust", "Fire Scar Shrine", "Raynewood Retreat",
+        "Warsong Lumber Camp", "Iris Lake", "Astranaar", "The Howling Vale", "Maestra's Post",
+        "The Shrine of Aessina", "Night Run / Splintertree Post",
+        "Fallen Sky Lake / The Dor'Danil Barrow Den", "The Zoram Strand", "Felfire Hill",
+        "Thistlefur Village", "Mystral Lake / Silverwind Refuge / Greenpaw Village", "Satyrnaar",
+    },
+    [1441] = {
+        "Highperch", "Darkcloud Pinnacle", "The Great Lift", "Freewind Post", "Splithoof Crag",
+        "Windbreak Canyon", "The Screeching Canyon", "Camp E'thok / Whitereach Post", "The Shimmering Flats",
+    },
+    [1442] = {
+        "Malaka'jin", "Sishir Canyon", "Boulderslide Ravine", "Sun Rock Retreat", "Camp Aparaje",
+        "Mirkfallon Lake", "Grimtotem Post", "The Charred Vale", "Stonetalon Peak", "Webwinder Path",
+        "Windshear Crag / The Talondeep Path",
+    },
+}

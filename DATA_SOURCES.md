@@ -186,8 +186,11 @@ Classic Era build `1.15.9.69109`, exported through Wago.tools:
 
 - [UiMapXMapArt CSV](https://wago.tools/db2/UiMapXMapArt/csv?build=1.15.9.69109)
 - [WorldMapOverlay CSV](https://wago.tools/db2/WorldMapOverlay/csv?build=1.15.9.69109)
+- [AreaTable CSV](https://wago.tools/db2/AreaTable/csv?build=1.15.9.69109)
 
 Runtime overlays are matched by Blizzard's width, height and X/Y offset tuple.
+Missing overlay labels use the AreaTable names referenced by each corresponding
+WorldMapOverlay row; one overlay may represent several adjacent named areas.
 The resulting `x/x` and percentage are exact for visible map reveal against
 that client dataset, without estimating irregular map area. They are not a
 guarantee that every invisible exploration-XP subzone has fired; a future

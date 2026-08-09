@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 0.3.4 - 2026-08-09
+
+### Added
+
+- Added missing-area names to incomplete Exploration tooltips, including the
+  exact remaining map area when a zone is one reveal short of completion.
+
 ## 0.3.3 - 2026-08-09
 
 ### Added
