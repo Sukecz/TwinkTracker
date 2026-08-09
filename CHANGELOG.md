@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 0.3.6 - 2026-08-09
+
+### Fixed
+
+- Replaced the wide Settings header label with a small square Blizzard options
+  icon beside the close button so it no longer overlaps the Community tab.
+
 ## 0.3.5 - 2026-08-09
 
 ### Added

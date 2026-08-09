@@ -60,6 +60,8 @@ grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButt
 grep -Fq 'showMinimapIcon = true' Defaults.lua
 grep -Fq '"Show minimap icon"' MainWindow.lua
 grep -Fq 'ns.MinimapButton:SetShown(shown)' MainWindow.lua
+grep -Fq 'settings:SetSize(16,16)' MainWindow.lua
+grep -Fq 'Interface\\Buttons\\UI-OptionsButton' MainWindow.lua
 grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
 grep -Fq '"H  HORDE ROUTES"' MainWindow.lua

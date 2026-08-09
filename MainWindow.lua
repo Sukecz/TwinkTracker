@@ -591,12 +591,12 @@ function MainWindow:Create()
     self:RefreshBracketButtons()
     self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",236)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-172); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-64)
-    local settings=CreateFrame("Button",nil,root); settings:SetSize(78,24); settings:SetPoint("TOPRIGHT",-52,-17); local settingsBg=settings:CreateTexture(nil,"BACKGROUND"); settingsBg:SetAllPoints(); settingsBg:SetColorTexture(0.06,0.08,0.12,0.95); local settingsText=label(settings,"GameFontNormalSmall","SETTINGS",C.muted); settingsText:SetPoint("CENTER")
-    settings:SetScript("OnEnter",function() settingsBg:SetColorTexture(0.10,0.14,0.20,1); settingsText:SetTextColor(unpack(C.text)) end)
-    settings:SetScript("OnLeave",function() settingsBg:SetColorTexture(0.06,0.08,0.12,0.95); settingsText:SetTextColor(unpack(C.muted)) end)
-    settings:SetScript("OnClick",function() MainWindow:ToggleSettings() end)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
     close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
+    local settings=CreateFrame("Button",nil,root); settings:SetSize(16,16); settings:SetPoint("RIGHT",close,"LEFT",-1,0); settings:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton"); settings:SetHighlightTexture("Interface\\Buttons\\UI-OptionsButton"); settings:GetHighlightTexture():SetAlpha(0.35)
+    settings:SetScript("OnClick",function() MainWindow:ToggleSettings() end)
+    settings:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_TOP"); GameTooltip:SetText("Settings"); GameTooltip:Show() end)
+    settings:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
     local content=frame(root); content:SetPoint("TOPLEFT",20,-108); content:SetPoint("BOTTOMRIGHT",-20,20); self.content=content
     local gearPage=frame(content); gearPage:SetAllPoints(); self.pages.GEAR=gearPage
