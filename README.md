@@ -49,6 +49,11 @@ game action.
   includes exact Alliance/Horde trainers, book vendors, coordinates, skill
   breakpoints and the complete route from 1 to 225. Compact interactive item
   icons appear directly inside the instruction line that mentions each item.
+  All three professions include level-19-specific shopping lists and sequential
+  skill ranges: First Aid reaches 225, while Fishing and Engineering stop at
+  150 because their Expert ranks require level 20.
+  Warm gold headings and neutral-grey descriptions keep guide structure
+  visually separate from the blue Alliance markers.
 - **Community** — a scalable guild directory beginning with the Horde guild
   Twink or Treat on the EU PvP Classic Era Firemaw Cluster, including a
   selectable Discord invite address and its supplied guild logo, plus the
@@ -63,7 +68,9 @@ game action.
   progress carries a completion color. This is visible-map progress, not proof
   that no exploration XP remains.
 - **Resizable layout** — drag the lower-right corner to resize the window; its
-  size and the selected page are saved per character.
+  size and the selected page are saved per character. Addon-rendered text uses
+  a one-pixel readability increase over the matching default Classic font
+  objects.
 - **Bracket-ready header** — compact `19 / 29 / 39` selectors sit below the
   logo. Level 19 is the active profile; the greyed-out level 29 and 39 profiles
   show `Coming soon` on hover. Bracket selection is stored per character once a

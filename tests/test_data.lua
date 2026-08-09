@@ -45,6 +45,17 @@ end
 assert(#ns.GuidesData.sections.FIRST_AID.steps >= 8)
 assert(#ns.GuidesData.sections.FIRST_AID.items >= 17)
 assert(ns.GuidesData.sections.FIRST_AID.steps[2].lines[1].itemIDs[1] == 1251)
+assert(#ns.GuidesData.sections.FISHING.steps >= 8)
+assert(#ns.GuidesData.sections.FISHING.items >= 12)
+assert(#ns.GuidesData.sections.ENGINEERING.steps >= 8)
+assert(#ns.GuidesData.sections.ENGINEERING.items >= 27)
+local engineeringText = ""
+for _, guideStep in ipairs(ns.GuidesData.sections.ENGINEERING.steps) do
+    for _, guideLine in ipairs(guideStep.lines) do engineeringText = engineeringText .. " " .. guideLine.text end
+end
+for _, requiredText in ipairs({ "60 Rough Stone", "66 Copper Bar", "50 Linen Cloth", "60 Coarse Stone", "5 Silver Bar", "60 Bronze Bar", "25 Weak Flux", "10 Moss Agate", "30 Heavy Stone", "5 Wool Cloth", "character level 20" }) do
+    assert(string.find(engineeringText, requiredText, 1, true), "Engineering progression is missing " .. requiredText)
+end
 local alternativeCount = 0
 local linkedItemCount = 0
 for _, classToken in ipairs(ns.BisData.classOrder) do

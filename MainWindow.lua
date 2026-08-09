@@ -11,6 +11,7 @@ local C = {
     accent = { 0.20, 0.62, 1.00, 1 }, text = { 0.92, 0.95, 1.00, 1 },
     secondary = { 0.72, 0.78, 0.88, 1 }, muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.67,0.70,0.78,1} },
     equipped = { 0.25, 0.85, 0.43, 1 }, alliance = { 0.36, 0.66, 1.00, 1 }, horde = { 1.00, 0.31, 0.36, 1 },
+    guideAccent = { 0.95, 0.68, 0.30, 1 }, guideText = { 0.82, 0.82, 0.79, 1 }, guideMuted = { 0.64, 0.64, 0.61, 1 },
 }
 
 local CLASS_COORDS = CLASS_ICON_TCOORDS or {
@@ -30,8 +31,15 @@ local function skin(box, color, border)
     box:SetBackdropColor(unpack(color or C.panel)); box:SetBackdropBorderColor(unpack(border or C.border))
 end
 
+local function increaseFontSize(value)
+    local fontPath, fontSize, fontFlags = value:GetFont()
+    if fontPath and fontSize then value:SetFont(fontPath, fontSize + 1, fontFlags) end
+    return value
+end
+
 local function label(parent, font, text, color)
     local value = parent:CreateFontString(nil, "OVERLAY", font or "GameFontNormal")
+    increaseFontSize(value)
     value:SetText(text or ""); value:SetTextColor(unpack(color or C.text)); return value
 end
 
@@ -283,7 +291,7 @@ function MainWindow:CreateGuideButton(parent,key,index)
     local data=ns.GuidesData.sections[key]
     local value=CreateFrame("Button",nil,parent); value:SetSize(142,30); value:SetPoint("TOPLEFT",8+(index-1)*148,-55)
     local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
-    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
+    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0); value.accent=accent
     local title=label(value,"GameFontNormalSmall",string.upper(data.name),C.muted); title:SetPoint("CENTER"); value.title=title
     value:SetScript("OnClick",function() MainWindow:SelectGuide(key) end)
     value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
@@ -294,13 +302,13 @@ end
 function MainWindow:CreateGuidesPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.GUIDES=page
     local heading=label(page,"GameFontNormalHuge","GUIDES",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","Level-19 profession routes and related items. Informational only; every item opens its normal tooltip.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    local intro=label(page,"GameFontNormalSmall","Level-19 profession routes and related items. Informational only; every item opens its normal tooltip.",C.guideMuted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
     for index,key in ipairs(ns.GuidesData.order) do self:CreateGuideButton(page,key,index) end
 
     local panel=frame(page); panel:SetPoint("TOPLEFT",6,-94); panel:SetPoint("BOTTOMRIGHT",-6,6); skin(panel,C.panel)
     local title=label(panel,"GameFontNormalLarge","",C.text); title:SetPoint("TOPLEFT",16,-13); panel.title=title
-    local tagline=label(panel,"GameFontNormalSmall","",C.muted); tagline:SetPoint("TOPLEFT",16,-37); panel.tagline=tagline
-    local link=CreateFrame("EditBox",nil,panel,BackdropTemplateMixin and "BackdropTemplate" or nil); link:SetPoint("TOPRIGHT",-16,-11); link:SetSize(420,30); skin(link,C.panel2,C.accent); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end; link.value="Left-click an item to copy its Wowhead link."; link:SetText(link.value)
+    local tagline=label(panel,"GameFontNormalSmall","",C.guideMuted); tagline:SetPoint("TOPLEFT",16,-37); panel.tagline=tagline
+    local link=CreateFrame("EditBox",nil,panel,BackdropTemplateMixin and "BackdropTemplate" or nil); link:SetPoint("TOPRIGHT",-16,-11); link:SetSize(420,30); skin(link,C.panel2,C.accent); link:SetFontObject(GameFontHighlightSmall); increaseFontSize(link); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end; link.value="Left-click an item to copy its Wowhead link."; link:SetText(link.value)
     link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=self.value then self:SetText(self.value); self:HighlightText() end end)
     link:SetScript("OnEditFocusGained",function(self) if self.itemData then self:HighlightText() end end); link:SetScript("OnMouseUp",function(self) if self.itemData then self:SetFocus(); self:HighlightText() end end); link:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
     panel.link=link
@@ -328,35 +336,35 @@ function MainWindow:GetGuideStep(index)
     local panel=self.guidesPanel
     if self.professionGuideSteps[index] then return self.professionGuideSteps[index] end
     local card=frame(panel.child); card:SetHeight(72); skin(card,C.panel2,C.border)
-    local stripe=card:CreateTexture(nil,"ARTWORK"); stripe:SetPoint("TOPLEFT",0,0); stripe:SetPoint("BOTTOMLEFT",0,0); stripe:SetWidth(3); stripe:SetColorTexture(unpack(C.accent))
-    local number=label(card,"GameFontNormalLarge",tostring(index),C.accent); number:SetPoint("TOPLEFT",14,-13)
-    local title=label(card,"GameFontNormal","",C.accent); title:SetPoint("TOPLEFT",44,-10); title:SetPoint("TOPRIGHT",-14,-10); title:SetJustifyH("LEFT"); card.title=title; card.lines={}
+    local stripe=card:CreateTexture(nil,"ARTWORK"); stripe:SetPoint("TOPLEFT",0,0); stripe:SetPoint("BOTTOMLEFT",0,0); stripe:SetWidth(3); stripe:SetColorTexture(unpack(C.guideAccent))
+    local number=label(card,"GameFontNormalLarge",tostring(index),C.guideAccent); number:SetPoint("TOPLEFT",14,-13)
+    local title=label(card,"GameFontNormal","",C.guideAccent); title:SetPoint("TOPLEFT",44,-10); title:SetPoint("TOPRIGHT",-14,-10); title:SetJustifyH("LEFT"); card.title=title; card.lines={}
     self.professionGuideSteps[index]=card; return card
 end
 
 function MainWindow:GetGuideStepLine(card,index)
     if card.lines[index] then return card.lines[index] end
     local value={}
-    local tag=label(card,"GameFontNormalSmall","",C.accent); tag:SetJustifyH("LEFT"); value.tag=tag
-    local textValue=label(card,"GameFontNormalSmall","",C.secondary); textValue:SetJustifyH("LEFT"); value.text=textValue; value.icons={}
+    local tag=label(card,"GameFontNormalSmall","",C.guideAccent); tag:SetJustifyH("LEFT"); value.tag=tag
+    local textValue=label(card,"GameFontNormalSmall","",C.guideText); textValue:SetJustifyH("LEFT"); value.text=textValue; value.icons={}
     card.lines[index]=value; return value
 end
 
 function MainWindow:GetGuideLineIcon(card,lineView,index)
     if lineView.icons[index] then return lineView.icons[index] end
     local button=CreateFrame("Button",nil,card); button:SetSize(28,28)
-    local border=button:CreateTexture(nil,"BACKGROUND"); border:SetAllPoints(); border:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); button.border=border
+    local border=button:CreateTexture(nil,"BACKGROUND"); border:SetAllPoints(); border:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.65); button.border=border
     local icon=button:CreateTexture(nil,"ARTWORK"); icon:SetPoint("TOPLEFT",2,-2); icon:SetPoint("BOTTOMRIGHT",-2,2); icon:SetTexCoord(0.07,0.93,0.07,0.93); button.icon=icon
-    local hover=button:CreateTexture(nil,"HIGHLIGHT"); hover:SetAllPoints(); hover:SetColorTexture(0.35,0.72,1,0.28)
-    button:SetScript("OnEnter",function(self) self.border:SetColorTexture(unpack(C.accent)); GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemData.id); GameTooltip:Show() end)
-    button:SetScript("OnLeave",function(self) self.border:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); GameTooltip:Hide() end)
+    local hover=button:CreateTexture(nil,"HIGHLIGHT"); hover:SetAllPoints(); hover:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.24)
+    button:SetScript("OnEnter",function(self) self.border:SetColorTexture(unpack(C.guideAccent)); GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemData.id); GameTooltip:Show() end)
+    button:SetScript("OnLeave",function(self) self.border:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.65); GameTooltip:Hide() end)
     button:SetScript("OnClick",function(self) handleGuideItemClick(self.itemData) end)
     lineView.icons[index]=button; return button
 end
 
 function MainWindow:RefreshGuideButtons()
     local selected=ns.Database:Get().selectedGuide
-    for key,value in pairs(self.professionGuideButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.10 or 0.06,active and 0.17 or 0.08,active and 0.25 or 0.12,1); value.accent:SetColorTexture(0.2,0.62,1,active and 1 or 0); value.title:SetTextColor(active and 0.50 or 0.53,active and 0.80 or 0.60,active and 1.00 or 0.70,1) end
+    for key,value in pairs(self.professionGuideButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.15 or 0.06,active and 0.12 or 0.08,active and 0.07 or 0.12,1); value.accent:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],active and 1 or 0); value.title:SetTextColor(unpack(active and C.guideAccent or C.guideMuted)) end
 end
 
 function MainWindow:SelectGuide(key)
@@ -404,7 +412,7 @@ function MainWindow:CreateCommunityPage(parent)
     local discordLabel=label(card,"GameFontNormalSmall","DISCORD INVITE",C.muted); discordLabel:SetPoint("TOPLEFT",16,-112)
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
     local discord=CreateFrame("EditBox",nil,card,template); discord:SetPoint("TOPLEFT",16,-132); discord:SetPoint("TOPRIGHT",-16,-132); discord:SetHeight(38)
-    skin(discord,C.panel2,C.border); discord:SetFontObject(GameFontHighlightSmall); discord:SetTextInsets(10,10,0,0); discord:SetAutoFocus(false); discord:SetTextColor(unpack(C.accent))
+    skin(discord,C.panel2,C.border); discord:SetFontObject(GameFontHighlightSmall); increaseFontSize(discord); discord:SetTextInsets(10,10,0,0); discord:SetAutoFocus(false); discord:SetTextColor(unpack(C.accent))
     local discordURL="https://discord.gg/BdABEghf3M"
     discord:SetText(discordURL); discord:SetCursorPosition(0)
     discord:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=discordURL then self:SetText(discordURL); self:HighlightText() end end)
@@ -484,7 +492,7 @@ function MainWindow:CreateWowheadBar(parent)
     local caption=label(bar,"GameFontNormalSmall","WOWHEAD LINK",C.muted); caption:SetPoint("LEFT",10,0); caption:SetWidth(220); caption:SetJustifyH("LEFT"); self.wowheadCaption=caption
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
     local link=CreateFrame("EditBox",nil,bar,template); link:SetPoint("TOPLEFT",232,-4); link:SetPoint("BOTTOMRIGHT",-5,4)
-    skin(link,C.panel,C.accent); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end
+    skin(link,C.panel,C.accent); link:SetFontObject(GameFontHighlightSmall); increaseFontSize(link); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end
     bar.linkValue="Left-click an item to select its Wowhead link."
     link:SetText(bar.linkValue); link:SetCursorPosition(0)
     link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=bar.linkValue then self:SetText(bar.linkValue); self:HighlightText() end end)
@@ -532,7 +540,7 @@ function MainWindow:Create()
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
     skin(root,C.window,C.border); root:Hide(); self.frame=root
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
-    local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
+    local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); increaseFontSize(logoFallback); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
     for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end
     self:RefreshBracketButtons()

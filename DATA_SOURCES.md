@@ -127,6 +127,12 @@ Engineering, Fishing and First Aid. The old class guides remain candidate
 sources, not confirmation of current Era requirements or event availability.
 The detailed First Aid route is cross-checked against the current patch 1.15.8
 profession guide, both faction vendor pages and all three individual book pages.
+Fishing and Engineering now include complete level-19 progression plans rather
+than the sources' full 1-300 routes: First Aid can reach 225 at level 19, while
+Expert Fishing and Expert Engineering both require character level 20 and cap
+the level-19 routes at 150. Material and craft counts are planning quantities;
+yellow and green recipes, failed catches and ordinary skill-up variance can
+require extras.
 
 Supporting references:
 

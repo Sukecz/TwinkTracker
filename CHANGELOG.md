@@ -2,6 +2,26 @@
 
 All notable changes are documented here.
 
+## 0.3.3 - 2026-08-09
+
+### Added
+
+- Added complete level-19 profession progression to Guides: explicit material
+  reserves and craft counts for First Aid 1-225 and Engineering 1-150, plus
+  Fishing locations and estimated successful catches for each 1-150 segment.
+- Added every material and intermediate Engineering item used by the new route
+  as an illustrated, tooltip-enabled guide entry with its Wowhead Classic URL.
+
+### Changed
+
+- Documented the real level-19 profession caps: First Aid can reach 225, while
+  Expert Fishing and Expert Engineering require level 20 and therefore stop at
+  150 in this addon.
+- Increased all addon-rendered font sizes by one pixel for better readability
+  while preserving the existing visual hierarchy and layout scale.
+- Replaced the blue Guides headings, labels and body copy with a warm gold and
+  neutral-grey palette so guide styling is visually distinct from Alliance.
+
 ## 0.3.2 - 2026-08-09
 
 ### Added
