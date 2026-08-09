@@ -2,6 +2,45 @@
 
 All notable changes are documented here.
 
+## 0.3.0 - 2026-08-09
+
+### Changed
+
+- Added a dedicated Guides page with illustrated First Aid, Fishing and
+  Engineering walkthroughs, persistent guide selection,
+  native item tooltips, chat links and copyable Wowhead Classic URLs.
+- Expanded First Aid with exact Alliance/Horde trainers and book vendors,
+  coordinates, travel cautions, every 1-225 skill breakpoint and all related
+  books, cloth and bandages.
+- Improved information hierarchy across Guides, Enchants and Consumables:
+  guide steps now separate accent headings from readable body copy, while
+  effects, roles, cautions and notes use distinct visual treatments.
+- Reworked guide cards into labeled multi-line instructions with explicit skill
+  ranges and compact interactive item icons embedded directly in the line that
+  mentions each item.
+- Improved Wowhead URL selection contrast with light text, an accent border and
+  a translucent selection highlight in both Gear and Guides.
+- Documented the current level-19 Mageweave Bandage limit instead of repeating
+  the historical Heavy Runecloth Bandage recommendation from the 2019 guides.
+- Simplified Exploration route rows to show only each zone's recommended level
+  range, without route-type labels such as PvP or enemy territory.
+- Reviewed Class Resources: retained only relevant Mage, Rogue and Warlock
+  entries, and moved ammunition and Rage Potion to their appropriate categories.
+- Replaced unavailable Heavy Mageweave/Runecloth bandages with the level-19-legal
+  Mageweave Bandage and added Heavy Dynamite to Engineering.
+- Added the rare, transferable Feathered Arrow and Exploding Shot as the top
+  level-19 bow and gun ammunition options.
+- Added all twelve level-19-legal foods that provide the equivalent +6 Stamina
+  and +6 Spirit Well Fed bonus, alongside the separate mana-regeneration food.
+- Audited every enchant slot for all nine classes, added the four role-specific
+  Naxxramas shoulder augments and kept unusable Zul'Gurub Signets excluded.
+- Corrected the stat-specific Voracity Arcanum item IDs, added the missing
+  +150 Mana Rumination Arcanum and documented their high-level application path.
+- Added Accurate Scope for compatible item-level 20+ ranged weapons, retained
+  Standard Scope as the fallback and removed silent top-three list truncation.
+- Restricted Naxxramas twink guidance to white, non-binding tradeable shoulders;
+  green/blue BoE and direct BoP application remain live-client validation gates.
+
 ## 0.2.2 - 2026-08-08
 
 ### Fixed

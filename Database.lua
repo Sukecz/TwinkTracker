@@ -53,11 +53,14 @@ function Database:Initialize(saved)
         self.data.selectedClass = defaults.selectedClass
     end
     self.data.selectedTab = "BIS"
-    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
+    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "GUIDES" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
         self.data.selectedPage = defaults.selectedPage
     end
     if self.data.selectedGearSection ~= "GEAR" and self.data.selectedGearSection ~= "ENCHANTS" and self.data.selectedGearSection ~= "CONSUMABLES" then
         self.data.selectedGearSection = defaults.selectedGearSection
+    end
+    if not ns.GuidesData.sections[self.data.selectedGuide] then
+        self.data.selectedGuide = defaults.selectedGuide
     end
     self.data.minimapAngle = type(self.data.minimapAngle) == "number" and clamp(self.data.minimapAngle, 0, 360) or defaults.minimapAngle
     local profile = ns.BisData.classes[self.data.selectedClass]
@@ -108,8 +111,14 @@ function Database:SetSelectedSlot(slot)
 end
 
 function Database:SetSelectedPage(page)
-    if page ~= "GEAR" and page ~= "BASICS" and page ~= "EXPLORATION" and page ~= "COMMUNITY" then return false end
+    if page ~= "GEAR" and page ~= "BASICS" and page ~= "GUIDES" and page ~= "EXPLORATION" and page ~= "COMMUNITY" then return false end
     self.data.selectedPage = page
+    return true
+end
+
+function Database:SetSelectedGuide(guide)
+    if not ns.GuidesData.sections[guide] then return false end
+    self.data.selectedGuide = guide
     return true
 end
 

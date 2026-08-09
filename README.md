@@ -15,12 +15,14 @@ game action.
   equipment slot, with an inner `Gear / Enchants / Consumables` switch that is
   remembered per character.
 - **Enchants** — class-specific recommendations shown only for relevant gear
-  slots, including three role-aware HEAD and LEGS Arcanum/Libram choices. Each
-  slot is limited to its top three options, with exact effects, restrictions,
-  tooltips and copyable Wowhead Classic links.
+  slots, including transferable HEAD/LEGS Arcanums and Naxxramas shoulder
+  augments for white, non-binding tradeable shoulders. Slots normally show two
+  or three top choices and use a fourth only when a hybrid class needs distinct
+  survival, physical, caster and healer options. Every entry includes its exact
+  effect, restriction, tooltip and copyable Wowhead Classic link.
 - **Consumables** — class-specific tables grouped into bandages, food and
   drink, potions, elixirs, scrolls, Engineering, weapon coatings/ammunition and
-  class resources. Every entry has its native item icon, and each class has at
+  reviewed class resources. Every entry has its native item icon, and each class has at
   least five legal potion and five legal scroll choices. Items requiring level
   20 or higher are explicitly excluded.
 - **Tiers** — S, A and B recommendations per class and slot, with up to one
@@ -40,6 +42,12 @@ game action.
   every class that can use the corresponding weapon type.
 - **Twink Basics** — verified, read-only Classic Era safety rules centered on
   the absence of XP locking and avoiding every XP source after level 19.
+- **Guides** — practical, step-by-step First Aid, Fishing and Engineering
+  preparation. Each guide includes illustrated related items with normal
+  tooltips, Shift-click chat links and copyable Wowhead Classic URLs. First Aid
+  includes exact Alliance/Horde trainers, book vendors, coordinates, skill
+  breakpoints and the complete route from 1 to 225. Compact interactive item
+  icons appear directly inside the instruction line that mentions each item.
 - **Community** — a scalable guild directory beginning with the Horde guild
   Twink or Treat on the EU PvP Classic Era Firemaw Cluster, including a
   selectable Discord invite address and its supplied guild logo, plus the
@@ -86,7 +94,7 @@ and Wowhead spell page.
 Reference placeholders without an item ID deliberately have no Wowhead URL. If
 another character-specific addon already owns `/tt`, TwinkTracker reports the
 collision and `/twt` remains the unambiguous short command.
-The chosen class, page, window position and window size are saved per character.
+The chosen class, page, guide, window position and window size are saved per character.
 
 Exploration completion is deliberately manual and saved per character. Click a
 zone row to mark it done after checking the normal world map and any hidden

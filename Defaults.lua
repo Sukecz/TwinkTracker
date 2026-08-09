@@ -13,6 +13,7 @@ ns.Defaults = {
     selectedSlot = "HEAD",
     selectedPage = "GEAR",
     selectedGearSection = "GEAR",
+    selectedGuide = "FIRST_AID",
     minimapAngle = 225,
     xpLockdown = false,
     checklist = {},

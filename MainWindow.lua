@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-local MainWindow = { classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
+local MainWindow = { classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
 ns.MainWindow = MainWindow
 
 local ROW_HEIGHT = 52
@@ -9,7 +9,7 @@ local C = {
     window = { 0.022, 0.029, 0.044, 0.99 }, panel = { 0.050, 0.065, 0.095, 0.98 },
     panel2 = { 0.070, 0.090, 0.128, 0.98 }, border = { 0.15, 0.20, 0.29, 1 },
     accent = { 0.20, 0.62, 1.00, 1 }, text = { 0.92, 0.95, 1.00, 1 },
-    muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.67,0.70,0.78,1} },
+    secondary = { 0.72, 0.78, 0.88, 1 }, muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.67,0.70,0.78,1} },
     equipped = { 0.25, 0.85, 0.43, 1 }, alliance = { 0.36, 0.66, 1.00, 1 }, horde = { 1.00, 0.31, 0.36, 1 },
 }
 
@@ -62,6 +62,22 @@ local function handleItemClick(itemData)
     else
         MainWindow:ShowWowheadLink(itemData)
     end
+end
+
+local function handleGuideItemClick(itemData)
+    if not itemData then return end
+    if IsShiftKeyDown and IsShiftKeyDown() then insertItemLink(itemData.id); return end
+    local panel=MainWindow.guidesPanel; if not panel or not panel.link then return end
+    panel.link.itemData=itemData; panel.link.value=itemData.wowhead; panel.link:SetText(panel.link.value); panel.link:SetFocus(); panel.link:HighlightText()
+end
+
+local function formatReferenceDetails(entry,recommendation)
+    local details={}
+    if entry.effect then details[#details+1]="|cffeaf2ff"..entry.effect.."|r" end
+    if recommendation.roles then details[#details+1]="|cff52a0ffROLE:|r |cffb8c7df"..recommendation.roles.."|r" end
+    if entry.restrictions then details[#details+1]="|cffffbd5aCAUTION:|r |cffb8c7df"..entry.restrictions.."|r" end
+    if recommendation.note then details[#details+1]="|cff8799b3NOTE: "..recommendation.note.."|r" end
+    return table.concat(details,"  |cff627089•|r  ")
 end
 
 function MainWindow:CreateClassButton(parent, token, index)
@@ -198,8 +214,7 @@ function MainWindow:RefreshReferenceSection(sectionKey,profile,catalog,order,gro
                 local groupName=sectionKey=="ENCHANTS" and (ns.BisData.slotNames[groupKey] or groupKey) or (ns.ConsumablesData.categoryNames[groupKey] or groupKey)
                 row.group:SetText(recommendationIndex==1 and string.upper(groupName) or "")
                 row.name:SetText(entry.name); row.priority:SetText(recommendation.priority or "")
-                local details={}; if entry.effect then details[#details+1]=entry.effect end; if recommendation.roles then details[#details+1]=recommendation.roles end; if entry.restrictions then details[#details+1]=entry.restrictions end; if recommendation.note then details[#details+1]=recommendation.note end
-                row.detail:SetText(table.concat(details,"  |  ")); row.linkData={ id=entry.itemID, name=entry.name, wowhead=entry.wowhead }
+                row.detail:SetText(formatReferenceDetails(entry,recommendation)); row.linkData={ id=entry.itemID, name=entry.name, wowhead=entry.wowhead }
                 row.tooltipType=entry.itemID and "item" or (entry.spellID and "spell" or nil); row.tooltipID=entry.itemID or entry.spellID
                 if row.icon and sectionKey=="CONSUMABLES" then
                     row.icon:SetTexture(getItemIcon(entry.itemID))
@@ -217,8 +232,117 @@ function MainWindow:CreateBasicsPage(parent)
     for index,entry in ipairs(ns.BasicsData) do
         local card=frame(page); card:SetHeight(92); skin(card,C.panel,entry.critical and C.horde or C.border); self.guideCards[index]=card
         local title=label(card,"GameFontNormal",entry.title,entry.critical and C.horde or C.text); title:SetPoint("TOPLEFT",16,-15)
-        local text=label(card,"GameFontNormalSmall",entry.text,C.muted); text:SetPoint("TOPLEFT",16,-39); text:SetJustifyH("LEFT"); card.body=text
+        local text=label(card,"GameFontNormalSmall",entry.text,C.secondary); text:SetPoint("TOPLEFT",16,-39); text:SetJustifyH("LEFT"); card.body=text
     end
+end
+
+function MainWindow:CreateGuideButton(parent,key,index)
+    local data=ns.GuidesData.sections[key]
+    local value=CreateFrame("Button",nil,parent); value:SetSize(142,30); value:SetPoint("TOPLEFT",8+(index-1)*148,-55)
+    local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
+    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
+    local title=label(value,"GameFontNormalSmall",string.upper(data.name),C.muted); title:SetPoint("CENTER"); value.title=title
+    value:SetScript("OnClick",function() MainWindow:SelectGuide(key) end)
+    value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
+    value:SetScript("OnLeave",function() MainWindow:RefreshGuideButtons() end)
+    self.professionGuideButtons[key]=value
+end
+
+function MainWindow:CreateGuidesPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.GUIDES=page
+    local heading=label(page,"GameFontNormalHuge","GUIDES",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","Level-19 profession routes and related items. Informational only; every item opens its normal tooltip.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    for index,key in ipairs(ns.GuidesData.order) do self:CreateGuideButton(page,key,index) end
+
+    local panel=frame(page); panel:SetPoint("TOPLEFT",6,-94); panel:SetPoint("BOTTOMRIGHT",-6,6); skin(panel,C.panel)
+    local title=label(panel,"GameFontNormalLarge","",C.text); title:SetPoint("TOPLEFT",16,-13); panel.title=title
+    local tagline=label(panel,"GameFontNormalSmall","",C.muted); tagline:SetPoint("TOPLEFT",16,-37); panel.tagline=tagline
+    local link=CreateFrame("EditBox",nil,panel,BackdropTemplateMixin and "BackdropTemplate" or nil); link:SetPoint("TOPRIGHT",-16,-11); link:SetSize(420,30); skin(link,C.panel2,C.accent); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end; link.value="Left-click an item to copy its Wowhead link."; link:SetText(link.value)
+    link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=self.value then self:SetText(self.value); self:HighlightText() end end)
+    link:SetScript("OnEditFocusGained",function(self) if self.itemData then self:HighlightText() end end); link:SetScript("OnMouseUp",function(self) if self.itemData then self:SetFocus(); self:HighlightText() end end); link:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
+    panel.link=link
+    local scroll=CreateFrame("ScrollFrame",nil,panel,"UIPanelScrollFrameTemplate"); scroll:SetPoint("TOPLEFT",10,-68); scroll:SetPoint("BOTTOMRIGHT",-30,10)
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(900,1); scroll:SetScrollChild(child); panel.scroll=scroll; panel.child=child
+    self.guidesPanel=panel
+end
+
+function MainWindow:GetGuideRow(index)
+    local panel=self.guidesPanel
+    if self.professionGuideRows[index] then return self.professionGuideRows[index] end
+    local row=CreateFrame("Button",nil,panel.child); row:SetPoint("TOPLEFT"); row:SetPoint("TOPRIGHT"); row:SetHeight(50)
+    local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.055,0.070,0.102,0.92); row.bg=bg
+    local iconBorder=row:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(40,40); iconBorder:SetPoint("LEFT",8,0); iconBorder:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); row.iconBorder=iconBorder
+    local icon=row:CreateTexture(nil,"ARTWORK"); icon:SetSize(36,36); icon:SetPoint("CENTER",iconBorder); icon:SetTexCoord(0.07,0.93,0.07,0.93); row.icon=icon
+    local name=label(row,"GameFontNormal","",C.text); name:SetPoint("TOPLEFT",58,-8); name:SetWidth(245); name:SetJustifyH("LEFT"); row.name=name
+    local note=label(row,"GameFontNormalSmall","",C.secondary); note:SetPoint("LEFT",315,0); note:SetPoint("RIGHT",-12,0); note:SetJustifyH("LEFT"); row.note=note
+    row:SetScript("OnEnter",function(self) self.bg:SetColorTexture(0.10,0.14,0.20,0.92); GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemData.id); GameTooltip:Show() end)
+    row:SetScript("OnLeave",function(self) self.bg:SetColorTexture(0.055,0.070,0.102,0.92); GameTooltip:Hide() end)
+    row:SetScript("OnClick",function(self) handleGuideItemClick(self.itemData) end)
+    self.professionGuideRows[index]=row; return row
+end
+
+function MainWindow:GetGuideStep(index)
+    local panel=self.guidesPanel
+    if self.professionGuideSteps[index] then return self.professionGuideSteps[index] end
+    local card=frame(panel.child); card:SetHeight(72); skin(card,C.panel2,C.border)
+    local stripe=card:CreateTexture(nil,"ARTWORK"); stripe:SetPoint("TOPLEFT",0,0); stripe:SetPoint("BOTTOMLEFT",0,0); stripe:SetWidth(3); stripe:SetColorTexture(unpack(C.accent))
+    local number=label(card,"GameFontNormalLarge",tostring(index),C.accent); number:SetPoint("TOPLEFT",14,-13)
+    local title=label(card,"GameFontNormal","",C.accent); title:SetPoint("TOPLEFT",44,-10); title:SetPoint("TOPRIGHT",-14,-10); title:SetJustifyH("LEFT"); card.title=title; card.lines={}
+    self.professionGuideSteps[index]=card; return card
+end
+
+function MainWindow:GetGuideStepLine(card,index)
+    if card.lines[index] then return card.lines[index] end
+    local value={}
+    local tag=label(card,"GameFontNormalSmall","",C.accent); tag:SetJustifyH("LEFT"); value.tag=tag
+    local textValue=label(card,"GameFontNormalSmall","",C.secondary); textValue:SetJustifyH("LEFT"); value.text=textValue; value.icons={}
+    card.lines[index]=value; return value
+end
+
+function MainWindow:GetGuideLineIcon(card,lineView,index)
+    if lineView.icons[index] then return lineView.icons[index] end
+    local button=CreateFrame("Button",nil,card); button:SetSize(28,28)
+    local border=button:CreateTexture(nil,"BACKGROUND"); border:SetAllPoints(); border:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); button.border=border
+    local icon=button:CreateTexture(nil,"ARTWORK"); icon:SetPoint("TOPLEFT",2,-2); icon:SetPoint("BOTTOMRIGHT",-2,2); icon:SetTexCoord(0.07,0.93,0.07,0.93); button.icon=icon
+    local hover=button:CreateTexture(nil,"HIGHLIGHT"); hover:SetAllPoints(); hover:SetColorTexture(0.35,0.72,1,0.28)
+    button:SetScript("OnEnter",function(self) self.border:SetColorTexture(unpack(C.accent)); GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemData.id); GameTooltip:Show() end)
+    button:SetScript("OnLeave",function(self) self.border:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); GameTooltip:Hide() end)
+    button:SetScript("OnClick",function(self) handleGuideItemClick(self.itemData) end)
+    lineView.icons[index]=button; return button
+end
+
+function MainWindow:RefreshGuideButtons()
+    local selected=ns.Database:Get().selectedGuide
+    for key,value in pairs(self.professionGuideButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.10 or 0.06,active and 0.17 or 0.08,active and 0.25 or 0.12,1); value.accent:SetColorTexture(0.2,0.62,1,active and 1 or 0); value.title:SetTextColor(active and 0.50 or 0.53,active and 0.80 or 0.60,active and 1.00 or 0.70,1) end
+end
+
+function MainWindow:SelectGuide(key)
+    if not ns.Database:SetSelectedGuide(key) then return end
+    local data=ns.GuidesData.sections[key]; local panel=self.guidesPanel
+    panel.title:SetText(string.upper(data.name)); panel.tagline:SetText(data.tagline)
+    for _,card in ipairs(self.professionGuideSteps) do card:Hide() end
+    for _,row in ipairs(self.professionGuideRows) do row:Hide() end
+    local itemsByID={}; for _,itemData in ipairs(data.items) do itemsByID[itemData.id]=itemData end
+    local y=0
+    for index,step in ipairs(data.steps) do
+        local card=self:GetGuideStep(index); card:ClearAllPoints(); card:SetPoint("TOPLEFT",0,-y); card:SetPoint("TOPRIGHT"); card.title:SetText(step.title)
+        for _,lineView in ipairs(card.lines) do lineView.tag:Hide(); lineView.text:Hide(); for _,iconButton in ipairs(lineView.icons) do iconButton:Hide() end end
+        card.title:ClearAllPoints(); card.title:SetPoint("TOPLEFT",44,-10); card.title:SetPoint("TOPRIGHT",-14,-10)
+        local lineY=38
+        for lineIndex,lineData in ipairs(step.lines) do
+            local lineView=self:GetGuideStepLine(card,lineIndex); lineView.tag:ClearAllPoints(); lineView.tag:SetPoint("TOPLEFT",44,-lineY); lineView.tag:SetWidth(106); lineView.tag:SetText(lineData.label); lineView.tag:Show()
+            for iconIndex,itemID in ipairs(lineData.itemIDs) do
+                local itemData=itemsByID[itemID]; local iconButton=self:GetGuideLineIcon(card,lineView,iconIndex); iconButton:ClearAllPoints(); iconButton:SetPoint("TOPLEFT",156+(iconIndex-1)*30,-lineY+5); iconButton.itemData=itemData; iconButton.icon:SetTexture(getItemIcon(itemID)); iconButton:Show(); if C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+            end
+            local textLeft=156+#lineData.itemIDs*30; lineView.text:ClearAllPoints(); lineView.text:SetPoint("TOPLEFT",textLeft,-lineY); lineView.text:SetPoint("TOPRIGHT",-14,-lineY); lineView.text:SetHeight(48); lineView.text:SetText(lineData.text)
+            local textHeight=lineView.text.GetStringHeight and lineView.text:GetStringHeight() or 16; textHeight=math.max(16,math.ceil(textHeight)); lineView.text:SetHeight(textHeight); lineView.text:Show(); lineY=lineY+math.max(28,textHeight)+8
+        end
+        local cardHeight=math.max(72,lineY+4); card:SetHeight(cardHeight); card:Show(); y=y+cardHeight+6
+    end
+    if not panel.shopping then panel.shopping=label(panel.child,"GameFontNormal","RELATED ITEMS",C.accent) end
+    panel.shopping:ClearAllPoints(); panel.shopping:SetPoint("TOPLEFT",8,-y-4); y=y+28
+    for index,itemData in ipairs(data.items) do local row=self:GetGuideRow(index); row:ClearAllPoints(); row:SetPoint("TOPLEFT",0,-y); row:SetPoint("TOPRIGHT"); row.itemData=itemData; row.icon:SetTexture(getItemIcon(itemData.id)); row.name:SetText(itemData.name); row.note:SetText(itemData.note); row:Show(); if C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemData.id) end; y=y+52 end
+    panel.child:SetHeight(math.max(1,y)); panel.scroll:SetVerticalScroll(0); self:RefreshGuideButtons()
 end
 
 function MainWindow:CreateCommunityPage(parent)
@@ -269,8 +393,7 @@ function MainWindow:CreateExplorationColumn(page, faction, titleText, color)
         local check=frame(row); check:SetSize(22,22); check:SetPoint("LEFT",7,0); skin(check,C.panel2,C.border); row.check=check
         local checkFill=check:CreateTexture(nil,"ARTWORK"); checkFill:SetPoint("TOPLEFT",3,-3); checkFill:SetPoint("BOTTOMRIGHT",-3,3); checkFill:SetColorTexture(unpack(C.equipped)); checkFill:Hide(); row.checkFill=checkFill
         local zoneName=label(row,"GameFontNormal",zone.name,C.text); zoneName:SetPoint("TOPLEFT",36,-6); row.zoneName=zoneName
-        local metaColor=(zone.kind=="CORE") and C.accent or ((zone.kind=="WORLD PVP") and C.equipped or C.horde)
-        local meta=label(row,"GameFontNormalSmall",zone.levels.."  |  "..zone.kind,metaColor); meta:SetPoint("TOPLEFT",36,-25)
+        local meta=label(row,"GameFontNormalSmall",zone.levels,C.muted); meta:SetPoint("TOPLEFT",36,-25)
         local progress=label(row,"GameFontNormalSmall","TO DO",C.muted); progress:SetPoint("RIGHT",-8,0); progress:SetWidth(56); progress:SetJustifyH("RIGHT"); row.progress=progress; row.zone=zone; row.faction=faction
         row:SetScript("OnClick",function(self) local key="exploration:"..self.faction..":"..self.zone.mapID; ns.Database:SetChecklistDone(key,not ns.Database:IsChecklistDone(key)); MainWindow:RefreshExploration() end)
         row:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:AddLine(self.zone.name,1,0.82,0.35); GameTooltip:AddLine(self.zone.note,0.85,0.88,0.95,true); GameTooltip:AddLine(" "); GameTooltip:AddLine("Click to update this character's manual checklist.",0.53,0.60,0.70,true); GameTooltip:Show() end); row:SetScript("OnLeave",function() GameTooltip:Hide() end)
@@ -291,7 +414,7 @@ function MainWindow:CreateWowheadBar(parent)
     local caption=label(bar,"GameFontNormalSmall","WOWHEAD LINK",C.muted); caption:SetPoint("LEFT",10,0); caption:SetWidth(220); caption:SetJustifyH("LEFT"); self.wowheadCaption=caption
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
     local link=CreateFrame("EditBox",nil,bar,template); link:SetPoint("TOPLEFT",232,-4); link:SetPoint("BOTTOMRIGHT",-5,4)
-    skin(link,C.panel,C.border); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.accent))
+    skin(link,C.panel,C.accent); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end
     bar.linkValue="Left-click an item to select its Wowhead link."
     link:SetText(bar.linkValue); link:SetCursorPosition(0)
     link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=bar.linkValue then self:SetText(bar.linkValue); self:HighlightText() end end)
@@ -341,7 +464,7 @@ function MainWindow:Create()
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
     local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
-    self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128)
+    self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",236)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-172); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-64)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
     close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
@@ -368,9 +491,9 @@ function MainWindow:Create()
     self:CreateScrollBar(gear,scroll); self.gearViewFrames={header,scroll,self.scrollBar,self.gearLegend}
     self:CreateReferenceSection(gear,"ENCHANTS","ENCHANTS","Relevant equipment slots will replace the gear table here. Each class profile will reference a shared, source-verified enchant catalog.")
     self:CreateReferenceSection(gear,"CONSUMABLES","CONSUMABLES","A class-specific table grouped by bandages, food and drink, potions, elixirs, scrolls, Engineering, weapon consumables and class resources will appear here.")
-    self:CreateBasicsPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root)
+    self:CreateBasicsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root)
     root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
-    self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectPage(saved.selectedPage); return root
+    self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectGuide(saved.selectedGuide); self:SelectPage(saved.selectedPage); return root
 end
 
 function MainWindow:RefreshGearSectionButtons()
@@ -407,7 +530,7 @@ function MainWindow:SelectPage(page)
     ns.Database:SetSelectedPage(page)
     for key,value in pairs(self.pages) do value:SetShown(key==page) end
     self:RefreshPageButtons()
-    if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="EXPLORATION" then self:RefreshExploration() end
+    if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="GUIDES" then self:SelectGuide(ns.Database:Get().selectedGuide) elseif page=="EXPLORATION" then self:RefreshExploration() end
 end
 
 function MainWindow:Layout()
@@ -444,6 +567,7 @@ function MainWindow:Layout()
         if panel then panel:ClearAllPoints(); panel:SetPoint("TOPLEFT",6+(index-1)*(explorationWidth+6),-72); panel:SetPoint("BOTTOMLEFT",6+(index-1)*(explorationWidth+6),6); panel:SetWidth(explorationWidth); panel.child:SetWidth(math.max(320,explorationWidth-48)); for _,explorationRow in ipairs(self.explorationRows[faction]) do explorationRow:SetWidth(math.max(320,explorationWidth-48)) end end
     end
     for _,section in pairs(self.gearSections) do local width=math.max(620,section:GetWidth()-44); section.child:SetWidth(width); section.body:SetWidth(math.max(420,width-24)) end
+    if self.guidesPanel then self.guidesPanel.child:SetWidth(math.max(700,self.guidesPanel:GetWidth()-48)) end
     self.scrollChild:SetHeight(contentHeight)
     local viewport=self.scrollFrame:GetHeight(); if not viewport or viewport<=0 then viewport=455 end
     self.maxScroll=math.max(0,contentHeight-viewport); self.scrollBar:SetMinMaxValues(0,self.maxScroll); if self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
@@ -512,6 +636,7 @@ function MainWindow:RefreshItemIcons()
         if ns.Database:Get().selectedGearSection=="GEAR" then self:RefreshGear(false)
         elseif ns.Database:Get().selectedGearSection=="CONSUMABLES" then self:RefreshActiveGearSection(false) end
     end
+    if self.frame and self.frame:IsShown() and self.pages.GUIDES:IsShown() then self:SelectGuide(ns.Database:Get().selectedGuide) end
 end
 function MainWindow:RefreshEquipment()
     if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() and ns.Database:Get().selectedGearSection=="GEAR" then self:RefreshGear(false) end

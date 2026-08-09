@@ -62,11 +62,12 @@ Before a release, verify in a current Era client:
     Shaman weapon-imbue replacement and listed proc enchant behavior.
 22. Confirm excluded level-20+ entries never appear: Free Action Potion, Minor
     Mana Oil, Razor Arrow and Solid Shot. HEAD/LEGS Arcanums must retain their
-    high-level application warning; unverified raid shoulder augments remain absent.
+    high-level application warning; Naxx shoulder augments use the documented
+    level-60 white, non-binding item route, while ZG Signets remain absent.
 23. Each class shows at least five Potion and five Scroll rows. Confirm long
     categories remain scrollable and item icons, names and detail text do not
     overlap at minimum window width.
 24. The Horde Community card shows the compact Twink or Treat logo from the
     bundled TGA asset without obscuring the guild name or realm line.
-25. Every class displays exactly three focused HEAD and LEGS Arcanum choices,
-    and no other enchant slot displays more than three recommendations.
+25. Every class displays three or four focused HEAD and LEGS Arcanum choices,
+    and no enchant slot displays more than four focused recommendations.

@@ -86,24 +86,56 @@ Rules for future changes:
 3. Distinguish a permanent enchant from a temporary weapon coating. Shaman
    weapon imbues replace oils/stones; a Druid's weapon damage does not improve
    Bear Form attacks; level-19 Rogue poisons and Warrior Dual Wield are absent.
-4. HEAD/LEGS Arcanums from Libram turn-ins may be listed because they are core
-   Classic enchant paths, but must state that a high-level character performs
-   the turn-in/application and that clean Firemaw application remains a live
-   gate. Unverified raid shoulder augments remain excluded.
-5. Treat stacking, replacement, shared cooldowns, proc rates and low-rank spell
+4. HEAD/LEGS Arcanums from Libram turn-ins may be listed because a high-level
+   character can perform the turn-in and apply the Arcanum to a twink's item.
+   Keep the exact stat-specific Voracity item ID and retain current Firemaw
+   trade-window application as a live validation gate.
+5. Naxxramas Sapphiron shoulder augments may be listed for level 19. The
+   white, non-binding tradeable shoulder item before transferring it. Treat
+   green or blue BoE shoulders and direct application to another character's
+   soulbound shoulders as unverified until tested on Firemaw. Zul'Gurub Signets
+   remain excluded: applying one binds the shoulder item to the high-level owner
+   and the Signet cannot be applied through the trade window.
+6. Treat stacking, replacement, shared cooldowns, proc rates and low-rank spell
    coefficients as live-client validation points. The addon describes these
    cautions instead of inventing a mathematical universal best choice.
-6. Level-19 characters can reach First Aid 225 in Classic Era; Heavy Runecloth
-   Bandage requires that skill and is listed with its interrupt and Recently
-   Bandaged limitations.
-7. Enchant recommendations are deliberately capped at three per slot. Select
-   the strongest role-distinct choices rather than listing every formula. Each
-   class exposes at least five legal potion and five legal scroll choices.
-8. Warrior weapon enchants are role-dependent. The historical class guides
+7. Historical twink guides describe training First Aid beyond 150 and using
+   Heavy Runecloth Bandage. The current level-19 reference stops at Mageweave
+   Bandage because higher bandages now have character-level requirements above
+   19. Keep this distinction explicit until it is reconfirmed in a live Era
+   client.
+8. Enchant recommendations are deliberately capped at four per slot, with two
+   or three preferred wherever that covers the important roles. Four is used
+   only when a hybrid class needs distinct survival, physical, caster and
+   healing choices. Each class exposes at least five legal potion and five
+   legal scroll choices.
+9. Scope requirements apply to the target ranged weapon's item level as well
+   as the applying character. Accurate Scope is a level-19 option on item-level
+   20+ bows or guns when a higher-level character applies it through trade;
+   Standard Scope remains the fallback for lower-item-level weapons.
+10. Warrior weapon enchants are role-dependent. The historical class guides
    support Lifestealing as an all-round pressure/sustain option, Fiery Weapon as
    a frequent and cheaper damage proc, Crusader as a high-variance Strength proc
    and direct weapon damage or Agility as deterministic alternatives. Keep proc
    rankings explicitly subject to live combat-log testing.
+
+## Profession guides
+
+The in-addon Guides page condenses the profession sections repeated across the
+nine historical Wowhead level-19 class guides. The page is limited to
+Engineering, Fishing and First Aid. The old class guides remain candidate
+sources, not confirmation of current Era requirements or event availability.
+The detailed First Aid route is cross-checked against the current patch 1.15.8
+profession guide, both faction vendor pages and all three individual book pages.
+
+Supporting references:
+
+- [Wowhead level-19 guide index](https://www.wowhead.com/classic/news/wow-classic-level-19-twink-class-guides-and-bis-gear-291929)
+- [Classic Fishing 1-300](https://www.wowhead.com/classic/guide/fishing-leveling-1-300-classic-wow)
+- [Classic Engineering 1-300](https://www.wowhead.com/classic/guide/engineering-leveling-1-300-classic-wow)
+- [Stranglethorn Fishing Extravaganza](https://www.wowhead.com/classic/guide/stranglethorn-vale-fishing-extravaganza)
+- The individual Wowhead Classic item page linked by every illustrated guide
+  entry
 
 ## Exploration routes
 

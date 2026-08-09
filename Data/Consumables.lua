@@ -1,10 +1,21 @@
 local addonName, ns = ...
 
 local catalog = {
-    [14530]={name="Heavy Runecloth Bandage",effect="Heals 2000 over 8 sec",profession="First Aid 225",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
-    [8545]={name="Heavy Mageweave Bandage",effect="Heals 1104 over 8 sec",profession="First Aid 175"},
+    [8544]={name="Mageweave Bandage",effect="Heals 800 over 8 sec",profession="First Aid 150",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
+    [6451]={name="Heavy Silk Bandage",effect="Heals 640 over 8 sec",profession="First Aid 125",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
     [6453]={name="Strong Anti-Venom",effect="Cures a poison up to level 35",restrictions="Situational poison removal"},
     [3665]={name="Curiously Tasty Omelet",effect="Restores 552 health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [5527]={name="Goblin Deviled Clams",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [3726]={name="Big Bear Steak",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [5479]={name="Crispy Lizard Tail",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=12,restrictions="Well Fed; alternatives do not stack"},
+    [3664]={name="Crocolisk Gumbo",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [3666]={name="Gooey Spider Cake",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [3727]={name="Hot Lion Chops",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [5480]={name="Lean Venison",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [12209]={name="Lean Wolf Steak",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [3663]={name="Murloc Fin Soup",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
+    [1082]={name="Redridge Goulash",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=10,restrictions="Well Fed; alternatives do not stack"},
+    [1017]={name="Seasoned Wolf Kabob",effect="Restores health; Well Fed: 6 Stamina and Spirit",requiredLevel=15,restrictions="Well Fed; alternatives do not stack"},
     [21072]={name="Smoked Sagefish",effect="Restores health and mana; Well Fed: 3 mana every 5 sec",requiredLevel=10,restrictions="Well Fed; alternatives do not stack"},
     [1205]={name="Melon Juice",effect="Restores 835 mana over 24 sec",requiredLevel=15},
     [21151]={name="Rumsey Rum Black Label",effect="15 Stamina for 15 min",restrictions="Intoxicates; Firemaw availability and stacking need live verification"},
@@ -30,6 +41,7 @@ local catalog = {
     [1712]={name="Scroll of Spirit II",effect="7 Spirit for 30 min",requiredLevel=15,restrictions="Verify same-stat buff replacement live"},
     [1478]={name="Scroll of Protection II",effect="120 Armor for 30 min",requiredLevel=15,restrictions="Verify armor-buff stacking live"},
     [4380]={name="Big Bronze Bomb",effect="85-115 Fire damage and 2 sec break-on-damage stun",profession="Engineering 140",restrictions="1 min explosives cooldown"},
+    [4378]={name="Heavy Dynamite",effect="128-172 Fire damage in a 5 yard radius",profession="Engineering 125",restrictions="1 min explosives cooldown; no stun"},
     [4384]={name="Explosive Sheep",effect="Summons a sheep that explodes for 135-165 damage",profession="Engineering 150",restrictions="1 min cooldown; targeting needs live verification"},
     [4366]={name="Target Dummy",effect="Attracts nearby monsters for up to 15 sec",profession="Engineering 85",restrictions="PvE escape tool; does not taunt players"},
     [4381]={name="Minor Recombobulator",effect="Removes Polymorph from a friendly target; restores 150-250 health and mana",profession="Engineering 140",restrictions="Equipped trinket with 10 charges"},
@@ -39,17 +51,12 @@ local catalog = {
     [2515]={name="Sharp Arrow",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Bow ammunition"},
     [2519]={name="Heavy Shot",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Gun ammunition"},
     [8068]={name="Crafted Heavy Shot",effect="4.5 ranged damage per second",requiredLevel=15,restrictions="Gun ammunition"},
-    [3770]={name="Mutton Chop",effect="Pet food; restores 552 health while eating",requiredLevel=15,restrictions="Meat diet"},
-    [4593]={name="Bristle Whisker Catfish",effect="Pet food; restores 552 health while eating",requiredLevel=15,restrictions="Fish diet"},
-    [4542]={name="Moist Cornbread",effect="Pet food; restores 552 health while eating",requiredLevel=15,restrictions="Bread diet"},
-    [4538]={name="Snapvine Watermelon",effect="Pet food; restores 552 health while eating",requiredLevel=15,restrictions="Fruit diet"},
-    [4606]={name="Spongy Morel",effect="Pet food; restores 552 health while eating",requiredLevel=15,restrictions="Fungus diet"},
-    [17056]={name="Light Feather",effect="Reagent for Slow Fall",restrictions="Mage class resource"},
+    [3464]={name="Feathered Arrow",effect="9.5 ranged damage per second",restrictions="Rare transferable Stealing Supplies quest reward; top level-19 bow ammunition"},
+    [3465]={name="Exploding Shot",effect="9.5 ranged damage per second",restrictions="Rare transferable Stealing Supplies quest reward; top level-19 gun ammunition"},
+    [17056]={name="Light Feather",effect="Reagent for Slow Fall",restrictions="Mage class resource; not consumed by the spell"},
     [2136]={name="Conjured Purified Water",effect="Restores 835 mana over 24 sec",requiredLevel=15,restrictions="Conjured Mage item"},
     [1113]={name="Conjured Bread",effect="Restores 243 health over 21 sec",requiredLevel=5,restrictions="Conjured Mage item"},
-    [7676]={name="Thistle Tea",effect="Restores 100 Energy",requiredLevel=5,restrictions="Rogue only; recipe normally requires the level-20 class quest"},
-    [5175]={name="Earth Totem",effect="Required in bags to cast Earth totems",restrictions="Shaman only; persistent key item, not consumed"},
-    [5176]={name="Fire Totem",effect="Required in bags to cast Fire totems",restrictions="Shaman only; persistent key item, not consumed"},
+    [7676]={name="Thistle Tea",effect="Restores 100 Energy",requiredLevel=5,restrictions="Rogue only; obtain from a higher-level Rogue because the recipe comes from the level-20 class quest"},
     [6265]={name="Soul Shard",effect="Resource for summons and stone creation",restrictions="Warlock only; generated from an XP or honor-eligible target"},
     [5512]={name="Minor Healthstone",effect="Restores 100 health",restrictions="Warlock only; self-created at level 10 for one Soul Shard"},
     [5232]={name="Minor Soulstone",effect="Stores a soul for resurrection",requiredLevel=18,restrictions="Warlock only; Era only; unavailable for Hardcore resurrection; live test pending"},
@@ -86,18 +93,37 @@ local function addProfile(classToken, categories)
 end
 
 local bandage = {
-    recommendation(14530,"CORE","maximum reset / survival"),
-    recommendation(8545,"ALTERNATIVE","lower First Aid fallback"),
+    recommendation(8544,"CORE","maximum level-19 First Aid healing"),
+    recommendation(6451,"ALTERNATIVE","First Aid 125 fallback"),
     recommendation(6453,"OPTIONAL","anti-poison"),
 }
 local engineering = {
     recommendation(4380,"CORE","control / interrupt"),
+    recommendation(4378,"CORE","area damage"),
     recommendation(4384,"OPTIONAL","burst damage"),
     recommendation(4366,"OPTIONAL","open-world / Hardcore escape"),
     recommendation(4381,"OPTIONAL","friendly Polymorph removal / emergency healing"),
 }
-local physicalFood = { recommendation(21151,"CORE","survival"), recommendation(3665,"ALTERNATIVE","ordinary Well Fed food") }
+local staminaSpiritFood = {
+    recommendation(3665,"CORE","Well Fed: 6 Stamina and Spirit"),
+    recommendation(5527,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(3726,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(5479,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(3664,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(3666,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(3727,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(5480,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(12209,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(3663,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(1082,"ALTERNATIVE","same Well Fed bonus"),
+    recommendation(1017,"ALTERNATIVE","same Well Fed bonus"),
+}
+local physicalFood = { recommendation(21151,"CORE","survival") }
 local casterFood = { recommendation(21072,"CORE","mana sustain"), recommendation(21151,"ALTERNATIVE","survival") }
+for _, recommendationEntry in ipairs(staminaSpiritFood) do
+    physicalFood[#physicalFood+1] = recommendationEntry
+    casterFood[#casterFood+1] = recommendationEntry
+end
 local physicalPotions = {
     recommendation(929,"CORE","emergency healing"), recommendation(2459,"CORE","mobility"),
     recommendation(3384,"OPTIONAL","all-school resistance"), recommendation(6048,"OPTIONAL","Shadow protection"),
@@ -152,8 +178,7 @@ addProfile("HUNTER", {
     ELIXIRS=physicalElixirs,
     SCROLLS={recommendation(3012,"CORE","ranged damage"),recommendation(955,"CORE","mana"),recommendation(1180,"OPTIONAL","survival"),recommendation(1478,"OPTIONAL","physical defense"),recommendation(1712,"OPTIONAL","regeneration")},
     ENGINEERING=engineering,
-    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon")},
-    CLASS={recommendation(2515,"CORE","bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(3770,"OPTIONAL","pet food; choose the pet's diet")},
+    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"ALTERNATIVE","crafted gun ammunition")},
 })
 
 addProfile("MAGE", {
@@ -161,7 +186,7 @@ addProfile("MAGE", {
     ELIXIRS=casterElixirs, SCROLLS=casterScrolls,
     ENGINEERING=engineering,
     WEAPON={recommendation(20744,"CORE","spell pressure")},
-    CLASS={recommendation(17056,"CORE","Slow Fall reagent"),recommendation(2136,"CORE","conjured mana drink"),recommendation(1113,"OPTIONAL","conjured food")},
+    CLASS={recommendation(2136,"CORE","conjured mana drink"),recommendation(1113,"OPTIONAL","conjured food"),recommendation(17056,"OPTIONAL","Slow Fall reagent")},
 })
 
 addProfile("PALADIN", {
@@ -182,8 +207,8 @@ addProfile("ROGUE", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=physicalPotions,
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering,
-    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace")},
-    CLASS={recommendation(7676,"CORE","energy burst","Poisons are unavailable before level 20")},
+    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition")},
+    CLASS={recommendation(7676,"CORE","energy burst")},
 })
 
 addProfile("SHAMAN", {
@@ -191,7 +216,6 @@ addProfile("SHAMAN", {
     ELIXIRS=hybridElixirs, SCROLLS=hybridScrolls,
     ENGINEERING=engineering,
     WEAPON={recommendation(20744,"OPTIONAL","caster"),recommendation(3241,"OPTIONAL","melee","Replaces Rockbiter or Flametongue")},
-    CLASS={recommendation(5175,"CORE","Earth totems"),recommendation(5176,"CORE","Fire totems")},
 })
 
 addProfile("WARLOCK", {
@@ -199,7 +223,7 @@ addProfile("WARLOCK", {
     ELIXIRS=casterElixirs, SCROLLS=casterScrolls,
     ENGINEERING=engineering,
     WEAPON={recommendation(20744,"CORE","spell pressure")},
-    CLASS={recommendation(6265,"CORE","spell resource"),recommendation(5512,"CORE","self-created healing"),recommendation(5232,"OPTIONAL","Era resurrection","Do not present as functional on Hardcore")},
+    CLASS={recommendation(5512,"CORE","self-created healing"),recommendation(6265,"OPTIONAL","spell resource"),recommendation(5232,"OPTIONAL","Era resurrection","Do not present as functional on Hardcore")},
 })
 
 addProfile("WARRIOR", {
@@ -207,6 +231,5 @@ addProfile("WARRIOR", {
     POTIONS={recommendation(5631,"CORE","Rage burst"),recommendation(929,"CORE","emergency healing"),recommendation(2459,"CORE","mobility"),recommendation(3384,"OPTIONAL","all-school resistance"),recommendation(6048,"OPTIONAL","Shadow protection"),recommendation(6372,"OPTIONAL","world travel / escape")},
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering,
-    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace")},
-    CLASS={recommendation(2515,"OPTIONAL","bow ammunition"),recommendation(2519,"OPTIONAL","gun ammunition","Dual Wield is unavailable before level 20")},
+    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition","Dual Wield is unavailable before level 20")},
 })

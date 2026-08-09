@@ -9,12 +9,42 @@ loadModule("Data/Basics.lua")
 loadModule("Data/Bis.lua")
 loadModule("Data/Enchants.lua")
 loadModule("Data/Consumables.lua")
+loadModule("Data/Guides.lua")
 
 assert(#ns.BasicsData == 7)
 assert(ns.BasicsData[1].title == "XP CANNOT BE LOCKED")
 assert(#ns.BisData.classOrder == 9)
 assert(type(ns.EnchantsData.catalog) == "table")
 assert(type(ns.ConsumablesData.catalog) == "table")
+assert(#ns.GuidesData.order == 3)
+assert(ns.GuidesData.sections.SUPPORT == nil)
+for _, guideKey in ipairs(ns.GuidesData.order) do
+    local guide = assert(ns.GuidesData.sections[guideKey])
+    assert(type(guide.name) == "string" and guide.name ~= "")
+    assert(#guide.steps >= 3 and #guide.items >= 3)
+    local guideItemsByID = {}
+    for _, guideItem in ipairs(guide.items) do guideItemsByID[guideItem.id] = true end
+    for _, guideStep in ipairs(guide.steps) do
+        assert(type(guideStep.title) == "string" and guideStep.title ~= "")
+        assert(type(guideStep.lines) == "table" and #guideStep.lines >= 2)
+        for _, guideLine in ipairs(guideStep.lines) do
+            assert(type(guideLine.label) == "string" and guideLine.label ~= "")
+            assert(type(guideLine.text) == "string" and guideLine.text ~= "")
+            assert(type(guideLine.itemIDs) == "table")
+            for _, itemID in ipairs(guideLine.itemIDs) do
+                assert(guideItemsByID[itemID], guideKey .. " line references unknown inline item " .. tostring(itemID))
+            end
+        end
+    end
+    for _, guideItem in ipairs(guide.items) do
+        assert(type(guideItem.id) == "number" and guideItem.id > 0)
+        assert(type(guideItem.name) == "string" and guideItem.name ~= "")
+        assert(guideItem.wowhead == "https://www.wowhead.com/classic/item=" .. guideItem.id)
+    end
+end
+assert(#ns.GuidesData.sections.FIRST_AID.steps >= 8)
+assert(#ns.GuidesData.sections.FIRST_AID.items >= 17)
+assert(ns.GuidesData.sections.FIRST_AID.steps[2].lines[1].itemIDs[1] == 1251)
 local alternativeCount = 0
 local linkedItemCount = 0
 for _, classToken in ipairs(ns.BisData.classOrder) do
@@ -22,8 +52,9 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     local enchantProfile = assert(ns.EnchantsData.classes[classToken])
     local consumableProfile = assert(ns.ConsumablesData.classes[classToken])
     assert(#enchantProfile.slotOrder > 0, classToken .. " has no enchant profile")
-    assert(#enchantProfile.slots.HEAD == 3, classToken .. " does not have three top head enchants")
-    assert(#enchantProfile.slots.LEGS == 3, classToken .. " does not have three top leg enchants")
+    assert(#enchantProfile.slots.HEAD >= 3 and #enchantProfile.slots.HEAD <= 4, classToken .. " has an invalid focused head-enchant list")
+    assert(#enchantProfile.slots.LEGS == #enchantProfile.slots.HEAD, classToken .. " head and leg Arcanum choices drifted")
+    assert(#enchantProfile.slots.SHOULDERS >= 2 and #enchantProfile.slots.SHOULDERS <= 4, classToken .. " has an invalid Naxx shoulder-enchant list")
     assert(#consumableProfile.categoryOrder > 0, classToken .. " has no consumable profile")
     assert(#consumableProfile.categories.POTIONS >= 5, classToken .. " has fewer than five potion choices")
     assert(#consumableProfile.categories.SCROLLS >= 5, classToken .. " has fewer than five scroll choices")
@@ -92,7 +123,7 @@ end
 for _, classToken in ipairs(ns.BisData.classOrder) do
     local enchantProfile = ns.EnchantsData.classes[classToken]
     for _, slot in ipairs(enchantProfile.slotOrder) do
-        assert(type(enchantProfile.slots[slot]) == "table" and #enchantProfile.slots[slot] > 0 and #enchantProfile.slots[slot] <= 3, classToken .. " " .. slot .. " is not a focused top-three list")
+        assert(type(enchantProfile.slots[slot]) == "table" and #enchantProfile.slots[slot] > 0 and #enchantProfile.slots[slot] <= 4, classToken .. " " .. slot .. " is not a focused top-four list")
         for _, recommendation in ipairs(enchantProfile.slots[slot]) do
             assert(ns.EnchantsData.catalog[recommendation.key], classToken .. " references unknown enchant " .. tostring(recommendation.key))
         end
@@ -109,14 +140,32 @@ end
 for _, excludedItemID in ipairs({ 5634, 20745, 3030, 3033 }) do
     assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes a level-20+ consumable " .. excludedItemID)
 end
-for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumRapidity" }) do
+for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumRumination", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumProtection", "arcanumRapidity" }) do
     local entry = assert(ns.EnchantsData.catalog[requiredKey], "missing head/leg Arcanum " .. requiredKey)
     assert(entry.restrictions and string.find(entry.restrictions,"verify",1,true), requiredKey .. " lacks live-application warning")
 end
-for _, raidShoulderID in ipairs({ 23545, 23547, 23549 }) do
-    for _, entry in pairs(ns.EnchantsData.catalog) do
-        assert(entry.itemID ~= raidShoulderID, "normal enchant catalog includes an unverified raid shoulder augment")
+local expectedVoracityIDs = { arcanumVoracityStrength=11645, arcanumVoracityAgility=11647, arcanumVoracityIntellect=11648 }
+for key, itemID in pairs(expectedVoracityIDs) do
+    assert(ns.EnchantsData.catalog[key].itemID == itemID, key .. " has the wrong stat-specific item ID")
+end
+local expectedScourgeIDs = { scourgePower=23545, scourgeResilience=23547, scourgeMight=23548, scourgeFortitude=23549 }
+for key, itemID in pairs(expectedScourgeIDs) do
+    local entry = assert(ns.EnchantsData.catalog[key], "missing Naxx shoulder enchant " .. key)
+    assert(entry.itemID == itemID, key .. " has the wrong item ID")
+    assert(entry.restrictions and string.find(entry.restrictions,"white, non-binding tradeable shoulders",1,true), key .. " lacks its safe white-shoulder restriction")
+end
+for _, classToken in ipairs(ns.BisData.classOrder) do
+    for _, recommendation in ipairs(ns.EnchantsData.classes[classToken].slots.SHOULDERS) do
+        assert(expectedScourgeIDs[recommendation.key], classToken .. " includes a non-Naxx shoulder enchant")
     end
+end
+for _, excludedZGID in ipairs({ 20076, 20077, 20078 }) do
+    for _, entry in pairs(ns.EnchantsData.catalog) do assert(entry.itemID ~= excludedZGID, "catalog includes an unusable ZG shoulder enchant") end
+end
+assert(ns.EnchantsData.catalog.accurateScope.itemID == 4407)
+for _, classToken in ipairs({ "HUNTER", "ROGUE", "WARRIOR" }) do
+    local ranged = ns.EnchantsData.classes[classToken].slots.RANGED
+    assert(ranged[1].key == "accurateScope" and ranged[2].key == "standardScope", classToken .. " has the wrong scope fallback order")
 end
 
 local expectedInsignias = {

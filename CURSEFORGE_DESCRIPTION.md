@@ -13,7 +13,8 @@ All settings and checklist progress are stored separately for each character.
 - Alliance, Horde, role-specific and budget item alternatives
 - Separate Gear, Enchants and Consumables views for every class
 - Focused enchant recommendations for relevant equipment slots
-- Three role-aware HEAD and LEGS Arcanum/Libram choices per class
+- Role-aware HEAD and LEGS Arcanum/Libram choices for every class
+- Naxxramas shoulder augments with their white, non-binding item warning
 - Consumables grouped into bandages, food and drink, potions, elixirs, scrolls,
   Engineering items, weapon supplies and class resources
 - At least five level-19-legal potion and scroll options for every class
@@ -38,8 +39,10 @@ suffix.
 
 Enchant slots are deliberately limited to the strongest role-distinct choices.
 Classic HEAD and LEGS Arcanums are included with clear high-level Libram
-turn-in and live-application warnings. Unverified raid shoulder augments and
-consumables requiring level 20 or higher are excluded.
+turn-in and live-application warnings. Naxxramas shoulder augments document the
+level-60, white non-binding shoulder transfer route; Zul'Gurub Signets remain
+excluded because they bind the target to their high-level owner. Consumables
+requiring level 20 or higher are excluded.
 
 Realm-specific availability, exact random-suffix rolls, buff stacking, proc
 rates and selected vendor, quest, event or drop details may still require
