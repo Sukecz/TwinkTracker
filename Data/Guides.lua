@@ -15,7 +15,7 @@ local function step(title, lines)
 end
 
 ns.GuidesData = {
-    version = "2026-08-09",
+    version = "2026-08-10",
     order = { "FIRST_AID", "FISHING", "ENGINEERING" },
     sections = {
         FIRST_AID = {
@@ -64,11 +64,13 @@ ns.GuidesData = {
                     line("CAP","Stop at 225; Artisan First Aid requires level 35, but level 19 can legally reach this cap."),
                 }),
                 step("COMBAT USE",{
-                    line("BEST","Mageweave Bandage is the strongest bandage retained by the current level-19 audit.",{8544}),
-                    line("FALLBACK","Heavy Silk Bandage is the cheaper option.",{6451}),
+                    line("BEST","Heavy Runecloth Bandage heals 2000 over 8 seconds and can be used at First Aid 225.",{14530}),
+                    line("OBTAIN","Buy it from the Auction House or have a higher-level character craft and mail it to the twink.",{14530}),
+                    line("CRAFT LIMIT","A level 19 cannot craft it: the recipe requires First Aid 290, beyond the level-35 Artisan unlock.",{14530}),
+                    line("SELF-CRAFTED","Mageweave Bandage is the strongest bandage a level 19 can craft personally.",{8544}),
+                    line("FALLBACK","Heavy Silk Bandage is the cheaper First Aid 125 option.",{6451}),
                     line("ANTI-VENOM","The rare world-drop manual is usually sourced from the AH; one Large Venom Sac creates three Strong Anti-Venom.",{6454,1288,6453}),
                     line("CAUTION","Damage interrupts bandaging and applies Recently Bandaged for 60 seconds."),
-                    line("LIVE TEST","Historical guides recommend Heavy Runecloth at 225; it remains excluded pending a clean live Era level-19 use test."),
                 }),
             },
             items = {
@@ -86,6 +88,7 @@ ns.GuidesData = {
                 item(6450,"Silk Bandage","Train at First Aid 150 after learning Expert."),
                 item(6451,"Heavy Silk Bandage","Learn from its manual at First Aid 180; use requires 125."),
                 item(8544,"Mageweave Bandage","Learn from its manual at First Aid 210; use requires 150."),
+                item(14530,"Heavy Runecloth Bandage","Use requires First Aid 225; crafting requires First Aid 290, so obtain it from another character."),
                 item(6454,"Manual: Strong Anti-Venom","Rare world drop; read at First Aid 130."),
                 item(1288,"Large Venom Sac","One sac creates three Strong Anti-Venom."),
                 item(6453,"Strong Anti-Venom","Situational poison removal made from Large Venom Sacs."),
@@ -199,6 +202,11 @@ ns.GuidesData = {
                     line("SHEEP","Optional burst pressure.",{4384}),
                     line("TARGET DUMMY","Open-world or Hardcore escape tool; it does not taunt players.",{4366}),
                 }),
+                step("HIGHER-LEVEL CRAFTS YOU CAN USE",{
+                    line("RAY","Discombobulator Ray has no Engineering use requirement; buy a five-charge ray made by an Engineering 160 crafter.",{4388}),
+                    line("BOOTS","Goblin Rocket Boots have no level or Engineering use requirement, but they must be equipped and can explode and be destroyed.",{7189}),
+                    line("HARDCORE","Do not rely on Goblin Rocket Boots on Hardcore because a malfunction can destroy them and may harm or knock down the user.",{7189}),
+                }),
             },
             items = {
                 item(2835,"Rough Stone","Buy 60 for the 1-30 Engineering segment."),
@@ -228,6 +236,8 @@ ns.GuidesData = {
                 item(4381,"Minor Recombobulator","Engineering 140; trinket with 10 charges."),
                 item(4384,"Explosive Sheep","Engineering 150; optional burst tool."),
                 item(4366,"Target Dummy","Engineering 85; PvE distraction and escape tool."),
+                item(4388,"Discombobulator Ray","Usable without Engineering; obtain the five-charge item from an Engineering 160 crafter."),
+                item(7189,"Goblin Rocket Boots","Usable without a level or Engineering requirement; risky equipped mobility made at Engineering 225."),
             },
         },
     },

@@ -45,6 +45,12 @@ end
 assert(#ns.GuidesData.sections.FIRST_AID.steps >= 8)
 assert(#ns.GuidesData.sections.FIRST_AID.items >= 17)
 assert(ns.GuidesData.sections.FIRST_AID.steps[2].lines[1].itemIDs[1] == 1251)
+local firstAidText = ""
+for _, guideStep in ipairs(ns.GuidesData.sections.FIRST_AID.steps) do
+    for _, guideLine in ipairs(guideStep.lines) do firstAidText = firstAidText .. " " .. guideLine.text end
+end
+assert(string.find(firstAidText,"Heavy Runecloth Bandage heals 2000",1,true), "First Aid guide is missing the level-19 Heavy Runecloth recommendation")
+assert(string.find(firstAidText,"recipe requires First Aid 290",1,true), "First Aid guide is missing the Heavy Runecloth crafting limit")
 assert(#ns.GuidesData.sections.FISHING.steps >= 8)
 assert(#ns.GuidesData.sections.FISHING.items >= 12)
 assert(#ns.GuidesData.sections.ENGINEERING.steps >= 8)
@@ -80,7 +86,7 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
         assert(type(profile.slots[slot]) == "table", classToken .. " missing slot " .. slot)
         for _, tier in ipairs({ "S", "A", "B" }) do
             local choices = profile.slots[slot][tier]
-            assert(type(choices) == "table" and #choices >= 1 and #choices <= 2, classToken .. " " .. slot .. " invalid tier " .. tier)
+            assert(type(choices) == "table" and #choices >= 1 and #choices <= 3, classToken .. " " .. slot .. " invalid tier " .. tier)
             alternativeCount = alternativeCount + #choices - 1
             for _, item in ipairs(choices) do
                 assert(type(item) == "table", classToken .. " " .. slot .. " missing tier " .. tier)
@@ -130,6 +136,10 @@ for itemID, entry in pairs(ns.ConsumablesData.catalog) do
     assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. itemID, "invalid consumable link " .. itemID)
     assert(not entry.requiredLevel or entry.requiredLevel <= 19, entry.name .. " exceeds level 19")
 end
+assert(ns.ConsumablesData.catalog[14530].profession == "First Aid 225", "Heavy Runecloth Bandage has the wrong use requirement")
+for _, requiredItemID in ipairs({ 2091, 4388, 5332, 7189 }) do
+    assert(ns.ConsumablesData.catalog[requiredItemID], "missing audited level-19 utility item " .. requiredItemID)
+end
 
 for _, classToken in ipairs(ns.BisData.classOrder) do
     local enchantProfile = ns.EnchantsData.classes[classToken]
@@ -140,6 +150,11 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
         end
     end
     local consumableProfile = ns.ConsumablesData.classes[classToken]
+    assert(consumableProfile.categories.BANDAGES[1].itemID == 14530, classToken .. " is missing Heavy Runecloth as the top bandage")
+    assert(consumableProfile.categories.WORLD_UTILITY[1].itemID == 2091, classToken .. " is missing Magic Dust world utility")
+    local engineeringItems = {}
+    for _, recommendation in ipairs(consumableProfile.categories.ENGINEERING) do engineeringItems[recommendation.itemID] = true end
+    assert(engineeringItems[4388] and engineeringItems[7189], classToken .. " is missing externally crafted Engineering utility")
     for _, category in ipairs(consumableProfile.categoryOrder) do
         assert(type(consumableProfile.categories[category]) == "table" and #consumableProfile.categories[category] > 0)
         for _, recommendation in ipairs(consumableProfile.categories[category]) do
@@ -148,8 +163,8 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     end
 end
 
-for _, excludedItemID in ipairs({ 5634, 20745, 3030, 3033 }) do
-    assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes a level-20+ consumable " .. excludedItemID)
+for _, excludedItemID in ipairs({ 835, 5634, 20745, 3030, 3033 }) do
+    assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes an unavailable or level-20+ consumable " .. excludedItemID)
 end
 for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumRumination", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumProtection", "arcanumRapidity" }) do
     local entry = assert(ns.EnchantsData.catalog[requiredKey], "missing head/leg Arcanum " .. requiredKey)
@@ -252,6 +267,12 @@ end
 assert(ns.BisData.classes.MAGE.slots.OFF_HAND.S[2].id == 5183)
 assert(ns.BisData.classes.MAGE.slots.OFF_HAND.A[1].id == 2879)
 assert(ns.BisData.classes.MAGE.slots.RANGED.A[1].id == 12984)
+local rogue = ns.BisData.classes.ROGUE.slots
+assert(rogue.FEET.S[1].id == 1121 and rogue.FEET.S[2].id == 19969 and rogue.FEET.S[3].id == 10653, "Rogue S-tier boots do not preserve burst, flag-carrier and Horde balanced roles")
+assert(rogue.FEET.S[3].faction == "HORDE", "Trailblazer Boots must remain Horde-only")
+assert(rogue.RANGED.S[1].id == 20437 and rogue.RANGED.S[2].id == 20438, "Rogue WSG bows are not faction-equivalent S-tier choices")
+assert(rogue.SHOULDERS.S[1].id == 15313 and rogue.SHOULDERS.S[2].id == 5404, "Rogue Naxx-compatible white shoulders are not S tier")
+assert(rogue.SHOULDERS.A[1].id == 10657, "Talbar Mantle should remain the no-Naxx Rogue alternative")
 assert(alternativeCount >= 30)
 assert(linkedItemCount > 0)
 

@@ -99,11 +99,9 @@ Rules for future changes:
 6. Treat stacking, replacement, shared cooldowns, proc rates and low-rank spell
    coefficients as live-client validation points. The addon describes these
    cautions instead of inventing a mathematical universal best choice.
-7. Historical twink guides describe training First Aid beyond 150 and using
-   Heavy Runecloth Bandage. The current level-19 reference stops at Mageweave
-   Bandage because higher bandages now have character-level requirements above
-   19. Keep this distinction explicit until it is reconfirmed in a live Era
-   client.
+7. Heavy Runecloth Bandage requires First Aid 225 to use but First Aid 290 to
+   craft. A level-19 character can use one supplied by a higher-level crafter,
+   while Mageweave Bandage remains the strongest version it can craft itself.
 8. Enchant recommendations are deliberately capped at four per slot, with two
    or three preferred wherever that covers the important roles. Four is used
    only when a hybrid class needs distinct survival, physical, caster and
@@ -118,6 +116,13 @@ Rules for future changes:
    a frequent and cheaper damage proc, Crusader as a high-variance Strength proc
    and direct weapon damage or Agility as deterministic alternatives. Keep proc
    rankings explicitly subject to live combat-log testing.
+11. Rogue boot rankings are role-specific: Feet of the Lynx is the burst set,
+   Nat Pagle's Extreme Anglin' Boots is the flag-carrier stamina set, and
+   Horde-only Trailblazer Boots is the balanced agility/stamina set. Outrider's
+   Bow and Outrunner's Bow are faction-equivalent level-18 WSG rewards. For a
+   Naxx-enchanted shoulder set, use white non-binding Feral Shoulder Pads or
+   Serpent's Shoulders; Talbar Mantle is the no-Naxx stamina alternative because
+   it binds on pickup.
 
 ## Profession guides
 

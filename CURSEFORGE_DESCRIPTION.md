@@ -25,7 +25,7 @@ presented as usable.
 - Equal-tier faction, role, survivability and budget alternatives
 - Blue `A` and red `H` badges for faction-specific recommendations
 - Live green highlighting when a recommended item is equipped
-- Normal item tooltips and Shift-click insertion into chat
+- Normal item tooltips and standard Shift-click handling for chat and Auction House search
 - Copy-ready Wowhead Classic links for every real item
 
 TwinkTracker presents a curated planning reference rather than claiming one

@@ -1,6 +1,7 @@
 local addonName, ns = ...
 
 local catalog = {
+    [14530]={name="Heavy Runecloth Bandage",effect="Heals 2000 over 8 sec",profession="First Aid 225",restrictions="Obtain from a higher-level crafter or the Auction House; level 19 cannot craft it; damage interrupts; Recently Bandaged for 60 sec"},
     [8544]={name="Mageweave Bandage",effect="Heals 800 over 8 sec",profession="First Aid 150",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
     [6451]={name="Heavy Silk Bandage",effect="Heals 640 over 8 sec",profession="First Aid 125",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
     [6453]={name="Strong Anti-Venom",effect="Cures a poison up to level 35",restrictions="Situational poison removal"},
@@ -45,6 +46,10 @@ local catalog = {
     [4384]={name="Explosive Sheep",effect="Summons a sheep that explodes for 135-165 damage",profession="Engineering 150",restrictions="1 min cooldown; targeting needs live verification"},
     [4366]={name="Target Dummy",effect="Attracts nearby monsters for up to 15 sec",profession="Engineering 85",restrictions="PvE escape tool; does not taunt players"},
     [4381]={name="Minor Recombobulator",effect="Removes Polymorph from a friendly target; restores 150-250 health and mana",profession="Engineering 140",restrictions="Equipped trinket with 10 charges"},
+    [4388]={name="Discombobulator Ray",effect="Reduces the target's melee damage and spell power by 40 and movement speed by 20% for 12 sec",restrictions="No Engineering required to use; 5 charges; crafted at Engineering 160; shares the 1 min explosives cooldown"},
+    [7189]={name="Goblin Rocket Boots",effect="Significantly increases run speed for 20 sec",restrictions="No level or Engineering requirement to use; equipped cloth boots; 5 min cooldown; can explode and be destroyed; avoid on Hardcore"},
+    [2091]={name="Magic Dust",effect="Puts one enemy to sleep for up to 30 sec",requiredLevel=10,restrictions="Damage awakens the target; 1 min cooldown; rare Dust Devil drop in Westfall"},
+    [5332]={name="Glowing Cat Figurine",effect="Summons an uncontrolled Ghost Saber guardian for 10 min",restrictions="Unique; binds when picked up; one charge; rare Ghost Saber drop in Darkshore"},
     [20744]={name="Minor Wizard Oil",effect="8 spell damage for 30 min",requiredLevel=5,restrictions="Temporary weapon coating"},
     [2871]={name="Heavy Sharpening Stone",effect="4 damage to a sharp weapon for 30 min",requiredLevel=15,restrictions="Temporary weapon coating"},
     [3241]={name="Heavy Weightstone",effect="4 damage to a blunt weapon for 30 min",requiredLevel=15,restrictions="Temporary weapon coating"},
@@ -69,12 +74,12 @@ for itemID, entry in pairs(catalog) do
 end
 
 ns.ConsumablesData = {
-    version = "2026-08-08",
-    categoryOrder = { "BANDAGES", "FOOD_DRINK", "POTIONS", "ELIXIRS", "SCROLLS", "ENGINEERING", "WEAPON", "CLASS" },
+    version = "2026-08-10",
+    categoryOrder = { "BANDAGES", "FOOD_DRINK", "POTIONS", "ELIXIRS", "SCROLLS", "ENGINEERING", "WORLD_UTILITY", "WEAPON", "CLASS" },
     categoryNames = {
         BANDAGES="Bandages", FOOD_DRINK="Food and Drink", POTIONS="Potions",
         ELIXIRS="Elixirs and Buffs", SCROLLS="Scrolls", ENGINEERING="Engineering",
-        WEAPON="Weapon Consumables", CLASS="Class Resources",
+        WORLD_UTILITY="World Utility", WEAPON="Weapon Consumables", CLASS="Class Resources",
     },
     catalog = catalog,
     classes = {},
@@ -93,16 +98,23 @@ local function addProfile(classToken, categories)
 end
 
 local bandage = {
-    recommendation(8544,"CORE","maximum level-19 First Aid healing"),
+    recommendation(14530,"CORE","maximum level-19 First Aid healing; obtain from another character"),
+    recommendation(8544,"ALTERNATIVE","self-crafted at level 19"),
     recommendation(6451,"ALTERNATIVE","First Aid 125 fallback"),
     recommendation(6453,"OPTIONAL","anti-poison"),
 }
 local engineering = {
     recommendation(4380,"CORE","control / interrupt"),
     recommendation(4378,"CORE","area damage"),
+    recommendation(4388,"CORE","PvP debuff / slow; obtain from an Engineering 160 crafter"),
     recommendation(4384,"OPTIONAL","burst damage"),
     recommendation(4366,"OPTIONAL","open-world / Hardcore escape"),
     recommendation(4381,"OPTIONAL","friendly Polymorph removal / emergency healing"),
+    recommendation(7189,"OPTIONAL","equipped mobility; destructive malfunction risk; not for Hardcore"),
+}
+local worldUtility = {
+    recommendation(2091,"CORE","break-on-damage crowd control"),
+    recommendation(5332,"OPTIONAL","rare one-use guardian"),
 }
 local staminaSpiritFood = {
     recommendation(3665,"CORE","Well Fed: 6 Stamina and Spirit"),
@@ -169,7 +181,7 @@ local hybridScrolls = {
 addProfile("DRUID", {
     BANDAGES=bandage, FOOD_DRINK=casterFood,
     POTIONS=casterPotions, ELIXIRS=hybridElixirs, SCROLLS=hybridScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(20744,"OPTIONAL","caster weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon","Weapon damage does not increase Bear Form attacks")},
 })
 
@@ -177,14 +189,14 @@ addProfile("HUNTER", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=physicalPotions,
     ELIXIRS=physicalElixirs,
     SCROLLS={recommendation(3012,"CORE","ranged damage"),recommendation(955,"CORE","mana"),recommendation(1180,"OPTIONAL","survival"),recommendation(1478,"OPTIONAL","physical defense"),recommendation(1712,"OPTIONAL","regeneration")},
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"ALTERNATIVE","crafted gun ammunition")},
 })
 
 addProfile("MAGE", {
     BANDAGES=bandage, FOOD_DRINK=casterFood, POTIONS=casterPotions,
     ELIXIRS=casterElixirs, SCROLLS=casterScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(20744,"CORE","spell pressure")},
     CLASS={recommendation(2136,"CORE","conjured mana drink"),recommendation(1113,"OPTIONAL","conjured food"),recommendation(17056,"OPTIONAL","Slow Fall reagent")},
 })
@@ -192,21 +204,21 @@ addProfile("MAGE", {
 addProfile("PALADIN", {
     BANDAGES=bandage, FOOD_DRINK=casterFood, POTIONS=casterPotions,
     ELIXIRS=hybridElixirs, SCROLLS=hybridScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace")},
 })
 
 addProfile("PRIEST", {
     BANDAGES=bandage, FOOD_DRINK=casterFood, POTIONS=casterPotions,
     ELIXIRS=casterElixirs, SCROLLS=casterScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(20744,"CORE","Shadow pressure","Healing benefit must not be assumed")},
 })
 
 addProfile("ROGUE", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=physicalPotions,
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition")},
     CLASS={recommendation(7676,"CORE","energy burst")},
 })
@@ -214,14 +226,14 @@ addProfile("ROGUE", {
 addProfile("SHAMAN", {
     BANDAGES=bandage, FOOD_DRINK=casterFood, POTIONS=casterPotions,
     ELIXIRS=hybridElixirs, SCROLLS=hybridScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(20744,"OPTIONAL","caster"),recommendation(3241,"OPTIONAL","melee","Replaces Rockbiter or Flametongue")},
 })
 
 addProfile("WARLOCK", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=casterPotions,
     ELIXIRS=casterElixirs, SCROLLS=casterScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(20744,"CORE","spell pressure")},
     CLASS={recommendation(5512,"CORE","self-created healing"),recommendation(6265,"OPTIONAL","spell resource"),recommendation(5232,"OPTIONAL","Era resurrection","Do not present as functional on Hardcore")},
 })
@@ -230,6 +242,6 @@ addProfile("WARRIOR", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood,
     POTIONS={recommendation(5631,"CORE","Rage burst"),recommendation(929,"CORE","emergency healing"),recommendation(2459,"CORE","mobility"),recommendation(3384,"OPTIONAL","all-school resistance"),recommendation(6048,"OPTIONAL","Shadow protection"),recommendation(6372,"OPTIONAL","world travel / escape")},
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
-    ENGINEERING=engineering,
+    ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
     WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition","Dual Wield is unavailable before level 20")},
 })

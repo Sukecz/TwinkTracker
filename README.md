@@ -24,15 +24,26 @@ game action.
   drink, potions, elixirs, scrolls, Engineering, weapon coatings/ammunition and
   reviewed class resources. Every entry has its native item icon, and each class has at
   least five legal potion and five legal scroll choices. Items requiring level
-  20 or higher are explicitly excluded.
-- **Tiers** — S, A and B recommendations per class and slot, with up to one
-  additional role, faction or budget variant inside each tier.
+  20 or higher are explicitly excluded. Heavy Runecloth Bandage is the top
+  bandage at First Aid 225; a level-19 character can use it but must obtain it
+  from a higher-level crafter or the Auction House. The same use-versus-craft
+  distinction covers Discombobulator Ray and Goblin Rocket Boots, while a
+  separate World Utility group includes obtainable Magic Dust and the rare
+  one-charge Glowing Cat Figurine. Removed Large Rope Net drops are excluded.
+- **Tiers** — S, A and B recommendations per class and slot, with up to two
+  additional role, faction or budget variants inside a tier when the builds are
+  genuinely equivalent. Rogue boots explicitly separate burst, flag-carrier
+  and Horde balanced S-tier sets.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px icons and S/A/B columns. Equal same-tier choices are stacked vertically
   with identically sized icons and matching item-name styling; rows expand only
-  where the extra space is needed. Auxiliary build labels are hidden; mouse over
-  either choice for its tooltip, Shift-click it into an open chat message, or
-  left-click it to select its Wowhead Classic link for copying.
+  where the extra space is needed. All nine classes sit in one compact top row,
+  leaving the full window width to the recommendation table. The resizable
+  window can be narrowed to 880px while retaining readable tier columns.
+  Auxiliary build labels are hidden; mouse over either choice for its tooltip,
+  Shift-click it through WoW's standard item handling (including chat and
+  Auction House search), or left-click it to select its Wowhead Classic link
+  for copying.
 - **Live equipment status** — matching equipped items receive a green highlight
   and update immediately after an equipment change. Random-suffix alternatives
   are matched by their full item name when one base item ID represents several tiers.
@@ -45,7 +56,8 @@ game action.
   the absence of XP locking and avoiding every XP source after level 19.
 - **Guides** — practical, step-by-step First Aid, Fishing and Engineering
   preparation. Each guide includes illustrated related items with normal
-  tooltips, Shift-click chat links and copyable Wowhead Classic URLs. First Aid
+  tooltips, standard Shift-click item handling and copyable Wowhead Classic
+  URLs. First Aid
   includes exact Alliance/Horde trainers, book vendors, coordinates, skill
   breakpoints and the complete route from 1 to 225. Compact interactive item
   icons appear directly inside the instruction line that mentions each item.
@@ -105,9 +117,11 @@ availability remain live Firemaw Era validation points.
 - `/tt reset` — reset the saved window position and size
 - `/tt help` — show command help
 
-Hover an item choice to open its normal WoW tooltip. With a chat input open,
-Shift-click a choice to insert its normal item link. Left-click a real item to
-select its Wowhead Classic URL in the link row, then press Ctrl+C to copy it.
+Hover an item choice to open its normal WoW tooltip. Shift-click a choice to
+use WoW's standard item-link action: insert it into an open chat input or send
+it to the Auction House search when that interface is active. Left-click a real
+item to select its Wowhead Classic URL in the link row, then press Ctrl+C to
+copy it.
 The same tooltip, Shift-click and Wowhead behavior applies to item-based entries
 inside Enchants and Consumables; spell-based enchants use their spell tooltip
 and Wowhead spell page.

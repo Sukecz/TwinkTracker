@@ -2,6 +2,43 @@
 
 All notable changes are documented here.
 
+## 0.3.7 - 2026-08-10
+
+### Changed
+
+- Moved all nine class selectors into one compact horizontal row and gave the
+  gear, enchant and consumable tables the full available window width.
+- Centered the class selector row dynamically at every supported window width.
+- Reduced the minimum window width from 980px to 880px while preserving readable
+  class selectors and tier columns.
+- Compacted the three left navigation tabs so Guides no longer overlaps the
+  centered logo at the minimum window width.
+
+### Fixed
+
+- Restored WoW's standard modified item-click handling so Shift-clicking addon
+  items can populate Auction House search as well as insert links into chat.
+
+### Corrected
+
+- Promoted Heavy Runecloth Bandage to the top level-19 bandage after confirming
+  that using it requires First Aid 225, while crafting it requires First Aid
+  290 and therefore a higher-level character.
+- Updated the First Aid guide to distinguish the best usable bandage from the
+  best bandage a level-19 character can craft personally.
+- Added Discombobulator Ray and Goblin Rocket Boots as externally crafted items
+  that a level-19 character can use, including shared-cooldown, equipment,
+  malfunction and Hardcore cautions.
+- Added a World Utility consumables group with Magic Dust and the rare,
+  one-charge Glowing Cat Figurine guardian.
+- Kept Large Rope Net excluded because it was removed from the obtainable loot
+  tables used by Classic Era.
+- Re-audited Rogue gear: promoted Trailblazer Boots alongside Feet of the Lynx
+  and Nat Pagle's boots as role-specific S-tier choices, promoted the faction
+  WSG bows, and made Naxx-compatible white shoulders the premium shoulder set.
+- Expanded equal-tier gear rows to display up to three full-size choices when
+  a class has three genuine role variants.
+
 ## 0.3.6 - 2026-08-09
 
 ### Fixed

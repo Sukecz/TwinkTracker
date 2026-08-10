@@ -63,6 +63,17 @@ grep -Fq 'ns.MinimapButton:SetShown(shown)' MainWindow.lua
 grep -Fq 'settings:SetSize(16,16)' MainWindow.lua
 grep -Fq 'Interface\\Buttons\\UI-OptionsButton' MainWindow.lua
 grep -Fq 'cell.alternative.state:SetColorTexture' MainWindow.lua
+grep -Fq 'cell.thirdAlternative.state:SetColorTexture' MainWindow.lua
+grep -Fq 'MULTI_ROW_HEIGHT+(choiceCount-2)*46' MainWindow.lua
+grep -Fq 'value:SetSize(42,42)' MainWindow.lua
+grep -Fq 'value:SetPoint("TOP",parent,"TOP",(index-5)*64,-7)' MainWindow.lua
+grep -Fq 'classes:SetPoint("TOPRIGHT")' MainWindow.lua
+grep -Fq 'gear:SetPoint("TOPLEFT",classes,"BOTTOMLEFT",0,-8)' MainWindow.lua
+grep -Fq 'root:SetResizeBounds(880,620,1500,950)' MainWindow.lua
+grep -Fq 'root:SetMinResize(880,620)' MainWindow.lua
+grep -Fq '"GEAR","GEAR","TOPLEFT",16,88' MainWindow.lua
+grep -Fq '"BASICS","TWINK BASICS","TOPLEFT",112,88' MainWindow.lua
+grep -Fq '"GUIDES","GUIDES","TOPLEFT",208,88' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
 grep -Fq '"H  HORDE ROUTES"' MainWindow.lua
 grep -Fq '"A  ALLIANCE ROUTES"' MainWindow.lua
@@ -96,6 +107,8 @@ grep -Fq '"ENCHANTS","ENCHANTS"' MainWindow.lua
 grep -Fq '"CONSUMABLES","CONSUMABLES"' MainWindow.lua
 grep -Fq 'section.key=="CONSUMABLES"' MainWindow.lua
 grep -Fq 'GetItemInfoInstant(itemID)' MainWindow.lua
+grep -Fq 'HandleModifiedItemClick(itemLink)' MainWindow.lua
+grep -Fq 'elseif ChatEdit_InsertLink then' MainWindow.lua
 grep -Fq 'assets\\twinkortreat.tga' MainWindow.lua
 test -s assets/twinkortreat.tga
 grep -Fq '"TWINK FACTORY"' MainWindow.lua

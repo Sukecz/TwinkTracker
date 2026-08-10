@@ -85,16 +85,21 @@ local function addMissingExplorationAreas(tooltip, missing)
     end
 end
 
-local function insertItemLink(itemID)
+local function handleModifiedItemLink(itemID)
     if not itemID or not IsShiftKeyDown or not IsShiftKeyDown() then return end
     local itemLink = GetItemInfo and select(2,GetItemInfo(itemID))
-    if itemLink and ChatEdit_InsertLink then ChatEdit_InsertLink(itemLink) end
+    if not itemLink then return end
+    if HandleModifiedItemClick then
+        HandleModifiedItemClick(itemLink)
+    elseif ChatEdit_InsertLink then
+        ChatEdit_InsertLink(itemLink)
+    end
 end
 
 local function handleItemClick(itemData)
     if not itemData then return end
     if IsShiftKeyDown and IsShiftKeyDown() then
-        insertItemLink(itemData.id)
+        handleModifiedItemLink(itemData.id)
     else
         MainWindow:ShowWowheadLink(itemData)
     end
@@ -102,7 +107,7 @@ end
 
 local function handleGuideItemClick(itemData)
     if not itemData then return end
-    if IsShiftKeyDown and IsShiftKeyDown() then insertItemLink(itemData.id); return end
+    if IsShiftKeyDown and IsShiftKeyDown() then handleModifiedItemLink(itemData.id); return end
     local panel=MainWindow.guidesPanel; if not panel or not panel.link then return end
     panel.link.itemData=itemData; panel.link.value=itemData.wowhead; panel.link:SetText(panel.link.value); panel.link:SetFocus(); panel.link:HighlightText()
 end
@@ -117,12 +122,12 @@ local function formatReferenceDetails(entry,recommendation)
 end
 
 function MainWindow:CreateClassButton(parent, token, index)
-    local value = CreateFrame("Button", nil, parent); value:SetSize(52,52)
-    value:SetPoint("TOPLEFT",14+((index-1)%3)*62,-50-math.floor((index-1)/3)*73)
+    local value = CreateFrame("Button", nil, parent); value:SetSize(42,42)
+    value:SetPoint("TOP",parent,"TOP",(index-5)*64,-7)
     local border=value:CreateTexture(nil,"BACKGROUND"); border:SetPoint("TOPLEFT",-2,2); border:SetPoint("BOTTOMRIGHT",2,-2); border:SetColorTexture(unpack(C.border)); value.border=border
     local icon=value:CreateTexture(nil,"ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
     local coords=CLASS_COORDS[token]; if coords then icon:SetTexCoord(unpack(coords)) end
-    local name=label(value,"GameFontNormalSmall",ns.BisData.classes[token].name,C.muted); name:SetPoint("TOP",value,"BOTTOM",0,-3)
+    local name=label(value,"GameFontNormalSmall",ns.BisData.classes[token].name,C.muted); name:SetPoint("TOP",value,"BOTTOM",0,-2); name:SetWidth(60)
     value:SetScript("OnClick",function() ns.Database:SetSelectedClass(token); MainWindow:RefreshActiveGearSection(true) end)
     value:SetScript("OnEnter",function() border:SetColorTexture(unpack(C.accent)) end)
     value:SetScript("OnLeave",function() MainWindow:RefreshClassButtons() end)
@@ -152,6 +157,17 @@ function MainWindow:CreateItemCell(parent, tier, column)
     alternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
     alternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     alternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
+    local thirdAlternative=CreateFrame("Button",nil,cell); thirdAlternative:SetSize(214,44); thirdAlternative:SetPoint("TOPLEFT",4,-96); thirdAlternative:Hide(); cell.thirdAlternative=thirdAlternative
+    local thirdState=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdState:SetAllPoints(); thirdState:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); thirdAlternative.state=thirdState
+    local thirdHover=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdHover:SetAllPoints(); thirdHover:SetColorTexture(0.10,0.14,0.20,0); thirdAlternative.hover=thirdHover
+    local thirdBorder=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdBorder:SetSize(44,44); thirdBorder:SetPoint("LEFT"); thirdBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); thirdAlternative.border=thirdBorder
+    local thirdIcon=thirdAlternative:CreateTexture(nil,"ARTWORK"); thirdIcon:SetSize(40,40); thirdIcon:SetPoint("CENTER",thirdBorder); thirdIcon:SetTexCoord(0.07,0.93,0.07,0.93); thirdAlternative.icon=thirdIcon
+    local thirdFactionBg=thirdAlternative:CreateTexture(nil,"OVERLAY"); thirdFactionBg:SetSize(16,16); thirdFactionBg:SetPoint("BOTTOMRIGHT",thirdIcon,"BOTTOMRIGHT",1,-1); thirdAlternative.factionBg=thirdFactionBg
+    local thirdFactionText=label(thirdAlternative,"GameFontNormalSmall","",C.text); thirdFactionText:SetPoint("CENTER",thirdFactionBg,"CENTER",0,1); thirdAlternative.factionText=thirdFactionText
+    local thirdName=label(thirdAlternative,"GameFontNormalSmall","Item",C.text); thirdName:SetPoint("LEFT",52,0); thirdName:SetJustifyH("LEFT"); thirdAlternative.name=thirdName
+    thirdAlternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
+    thirdAlternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
+    thirdAlternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
     cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
     cell:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     cell:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
@@ -177,8 +193,8 @@ function MainWindow:CreateScrollBar(parent,scrollFrame)
     self.scrollBar=bar
 end
 
-function MainWindow:CreatePageButton(parent,key,text,anchor,x)
-    local value=CreateFrame("Button",nil,parent); value:SetSize(100,30); value:SetPoint(anchor,x,-35)
+function MainWindow:CreatePageButton(parent,key,text,anchor,x,width)
+    local value=CreateFrame("Button",nil,parent); value:SetSize(width or 100,30); value:SetPoint(anchor,x,-35)
     local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
     local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
     local title=label(value,"GameFontNormalSmall",text,C.muted); title:SetPoint("CENTER"); value.title=title
@@ -255,7 +271,7 @@ function MainWindow:GetReferenceRow(section,index)
     local detail=label(row,"GameFontNormalSmall","",C.muted); detail:SetPoint("TOPLEFT",358,-8); detail:SetPoint("RIGHT",-10,0); detail:SetHeight(38); detail:SetJustifyH("LEFT"); row.detail=detail
     row:SetScript("OnClick",function(self)
         if self.tooltipType == "item" and IsShiftKeyDown and IsShiftKeyDown() then
-            insertItemLink(self.tooltipID)
+            handleModifiedItemLink(self.tooltipID)
         elseif self.linkData then
             MainWindow:ShowWowheadLink(self.linkData)
         end
@@ -580,7 +596,7 @@ function MainWindow:Create()
     local saved=ns.Database:Get(); local root=frame(UIParent,"TwinkTrackerMainFrame")
     root:SetSize(saved.frame.width,saved.frame.height); root:SetPoint(saved.frame.point,UIParent,saved.frame.point,saved.frame.x,saved.frame.y); root:SetFrameStrata("DIALOG")
     root:SetResizable(true)
-    if root.SetResizeBounds then root:SetResizeBounds(980,620,1500,950) else root:SetMinResize(980,620); root:SetMaxResize(1500,950) end
+    if root.SetResizeBounds then root:SetResizeBounds(880,620,1500,950) else root:SetMinResize(880,620); root:SetMaxResize(1500,950) end
     root:SetMovable(true); root:EnableMouse(true); root:RegisterForDrag("LeftButton"); root:SetScript("OnDragStart",root.StartMoving)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
     skin(root,C.window,C.border); root:Hide(); self.frame=root
@@ -589,7 +605,7 @@ function MainWindow:Create()
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
     for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end
     self:RefreshBracketButtons()
-    self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",128); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",236)
+    self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",16,88); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",112,88); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",208,88)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-172); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-64)
     local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
     close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
@@ -600,11 +616,11 @@ function MainWindow:Create()
 
     local content=frame(root); content:SetPoint("TOPLEFT",20,-108); content:SetPoint("BOTTOMRIGHT",-20,20); self.content=content
     local gearPage=frame(content); gearPage:SetAllPoints(); self.pages.GEAR=gearPage
-    local classes=frame(gearPage); classes:SetPoint("TOPLEFT"); classes:SetPoint("BOTTOMLEFT"); classes:SetWidth(208); skin(classes,C.panel)
-    local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("TOPLEFT",14,-16)
+    local classes=frame(gearPage); classes:SetPoint("TOPLEFT"); classes:SetPoint("TOPRIGHT"); classes:SetHeight(66); skin(classes,C.panel)
+    local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("LEFT",14,5)
     for i,token in ipairs(ns.BisData.classOrder) do self:CreateClassButton(classes,token,i) end
 
-    local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
+    local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"BOTTOMLEFT",0,-8); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
     self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
     self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
     self:CreateGearSectionButton(gear,"GEAR","GEAR",218); self:CreateGearSectionButton(gear,"ENCHANTS","ENCHANTS",320); self:CreateGearSectionButton(gear,"CONSUMABLES","CONSUMABLES",422)
@@ -674,7 +690,8 @@ function MainWindow:Layout()
         local rowHeight=ROW_HEIGHT
         if slot then
             for _,tier in ipairs({"S","A","B"}) do
-                if #profile.slots[slot][tier]>1 then rowHeight=MULTI_ROW_HEIGHT; break end
+                local choiceCount=#profile.slots[slot][tier]
+                if choiceCount>1 then rowHeight=math.max(rowHeight,MULTI_ROW_HEIGHT+(choiceCount-2)*46) end
             end
         end
         row:ClearAllPoints(); row:SetPoint("TOPLEFT",0,-contentHeight); row:SetHeight(rowHeight)
@@ -685,6 +702,7 @@ function MainWindow:Layout()
             local textWidth=math.max(90,tierWidth-62); cell.textWidth=textWidth
             cell.name:SetWidth(math.max(45,textWidth-(cell.equipped and not cell.hasAlternative and 62 or 0)))
             cell.alternative:SetWidth(math.max(44,tierWidth-12)); cell.alternative.name:SetWidth(textWidth)
+            cell.thirdAlternative:SetWidth(math.max(44,tierWidth-12)); cell.thirdAlternative.name:SetWidth(textWidth)
         end
         if slot then contentHeight=contentHeight+rowHeight end
     end
@@ -717,7 +735,7 @@ function MainWindow:RefreshGear(resetScroll)
         if slot then
             row.slot:SetText(string.upper(ns.BisData.slotNames[slot]))
             for _,tier in ipairs({"S","A","B"}) do
-                local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
+                local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local thirdAlternative=choices[3]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
                 cell.itemID=data.id; cell.itemData=data; cell.equipped=isEquipped; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name)
                 cell.state:SetHeight(alternative and 48 or ROW_HEIGHT); cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and 0.16 or 0)
                 local borderColor=isEquipped and C.equipped or C.tier[tier]; cell.iconBorder:SetColorTexture(borderColor[1],borderColor[2],borderColor[3],isEquipped and 1 or 0.72)
@@ -739,6 +757,16 @@ function MainWindow:RefreshGear(resetScroll)
                     local altFactionColor=getFactionColor(alternative.faction); cell.alternative.factionBg:SetShown(altFactionColor~=nil); cell.alternative.factionText:SetShown(altFactionColor~=nil)
                     if altFactionColor then cell.alternative.factionBg:SetColorTexture(unpack(altFactionColor)); cell.alternative.factionText:SetText(string.sub(alternative.faction,1,1)) end
                     if alternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(alternative.id) end
+                end
+                cell.thirdAlternative:SetShown(thirdAlternative~=nil)
+                if thirdAlternative then
+                    local thirdEquipped=ns.GearStatus:IsEquipped(thirdAlternative,equipped,profileCounts); local thirdColor=thirdEquipped and C.equipped or C.tier[tier]
+                    cell.thirdAlternative.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],thirdEquipped and 0.16 or 0)
+                    cell.thirdAlternative.itemID=thirdAlternative.id; cell.thirdAlternative.itemData=thirdAlternative; cell.thirdAlternative.icon:SetTexture(getItemIcon(thirdAlternative.id)); cell.thirdAlternative.border:SetColorTexture(thirdColor[1],thirdColor[2],thirdColor[3],thirdEquipped and 1 or 0.72)
+                    cell.thirdAlternative.name:SetText(thirdAlternative.name); cell.thirdAlternative.name:SetTextColor(unpack(thirdEquipped and C.equipped or C.text))
+                    local thirdFactionColor=getFactionColor(thirdAlternative.faction); cell.thirdAlternative.factionBg:SetShown(thirdFactionColor~=nil); cell.thirdAlternative.factionText:SetShown(thirdFactionColor~=nil)
+                    if thirdFactionColor then cell.thirdAlternative.factionBg:SetColorTexture(unpack(thirdFactionColor)); cell.thirdAlternative.factionText:SetText(string.sub(thirdAlternative.faction,1,1)) end
+                    if thirdAlternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(thirdAlternative.id) end
                 end
             end
         end
