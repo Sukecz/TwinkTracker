@@ -113,7 +113,8 @@ grep -Fq 'assets\\twinkortreat.tga' MainWindow.lua
 test -s assets/twinkortreat.tga
 grep -Fq '"TWINK FACTORY"' MainWindow.lua
 grep -Fq 'Whisper Sparre for an invite.' MainWindow.lua
-grep -Fqx '## IconTexture: Interface\AddOns\TwinkTracker\assets\logo.tga' TwinkTracker.toc
+grep -Fqx '## IconTexture: Interface\AddOns\TwinkTracker\assets\addon-icon.tga' TwinkTracker.toc
+file assets/addon-icon.tga | grep -q '256 x 256 x 32'
 grep -qx 'manual-changelog: CHANGELOG.md' .pkgmeta
 grep -qx '  - CURSEFORGE_DESCRIPTION.md' .pkgmeta
 grep -qx '  - assets/minimap-icon-source.png' .pkgmeta

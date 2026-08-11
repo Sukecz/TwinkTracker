@@ -2,6 +2,12 @@
 
 All notable changes are documented here.
 
+## 0.3.8 - 2026-08-11
+
+### Fixed
+
+- Use a dedicated high-contrast TGA icon in the in-game AddOns list.
+
 ## 0.3.7 - 2026-08-10
 
 ### Changed
