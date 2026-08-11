@@ -59,6 +59,16 @@ weapon setup, random suffix or availability.
 - Level 29 is labeled as a curated community estimate because direct bracket
   consensus is thinner than at level 19
 
+### PvP Events
+
+- Bracket-specific space for up to three confirmed community battleground events
+- Clear empty state when no session is scheduled
+- Native Blizzard Horde and Alliance PvP icons on confirmed event rows
+- Firemaw-cluster scope plus a live server-time countdown in days and hours
+- Copyable Firemaw EU Horde in-game contact for `Lovepotion`
+- Right-side copyable Discord profile for all realms when submitting a realm, bracket, battleground, date,
+  start time with time zone, faction and organizer contact
+
 ### Automatic Exploration progress
 
 Exploration is divided into faction-specific route groups:

@@ -7,7 +7,7 @@ end
 
 for _, path in ipairs({
     "Data/Brackets.lua", "Data/Basics.lua", "Data/Bis.lua", "Data/Enchants.lua",
-    "Data/Consumables.lua", "Data/Guides.lua", "Data/ClassTiers.lua", "Data/Exploration.lua",
+    "Data/Consumables.lua", "Data/Guides.lua", "Data/ClassTiers.lua", "Data/PvPEvents.lua", "Data/Exploration.lua",
     "Data/BracketRegistry.lua", "Data/Bracket29/Bis.lua", "Data/Bracket29/Enchants.lua",
     "Data/Bracket29/Consumables.lua", "Data/Bracket29/Basics.lua",
     "Data/Bracket29/Guides.lua", "Data/Bracket29/ClassTiers.lua", "Data/Bracket29/Exploration.lua",
@@ -23,6 +23,7 @@ assert(#data.bis.classOrder == 9)
 assert(#data.basics == 7)
 assert(#data.guides.order == 3)
 assert(#data.classTiers.classOrder == 9)
+assert(data.pvp.level == 29 and data.pvp.contact.character == "Lovepotion")
 assert(#data.exploration.HORDE == 17 and #data.exploration.ALLIANCE == 16)
 
 local forbiddenGear = { [9459]=true, [9461]=true, [10542]=true, [10545]=true, [34227]=true }

@@ -2,6 +2,26 @@
 
 All notable changes are documented here.
 
+## 0.3.10 - 2026-08-11
+
+### Added
+
+- Added a bracket-aware PvP Events page with room for three confirmed sessions,
+  an empty-state announcement and copyable submission contacts for Lovepotion
+  and the supplied Discord profile.
+- Added Firemaw EU level-19 Horde-vs-Alliance Warsong Gulch sessions for
+  15 and 16 August 2026, both from 16:00 to 21:00 server time, with native
+  Blizzard Horde and Alliance PvP icons.
+- Scoped Lovepotion mail to Firemaw EU Horde and moved the all-realm Discord
+  submission contact into a separate right-side column.
+- Moved the PvP navigation button to the right side of the logo and centered
+  the `VS` label explicitly between the native Horde and Alliance icons.
+- Removed the submission contact name from confirmed event rows; it now appears
+  only in the dedicated contact section.
+- Added a `BE READY FOR BATTLE!` callout and a server-time countdown that shows
+  days/hours before each event, a live hours-remaining state and `ENDED` after it.
+- Marked both WSG sessions for the full Firemaw cluster and all connected realms.
+
 ## 0.3.9 - 2026-08-11
 
 ### Added

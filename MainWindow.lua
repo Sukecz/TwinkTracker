@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-local MainWindow = { bracketButtons = {}, classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, classTierCards = {}, classTierHeaders = {}, classTierBranches = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
+local MainWindow = { bracketButtons = {}, classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, classTierCards = {}, classTierHeaders = {}, classTierBranches = {}, pvpEventRows = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
 ns.MainWindow = MainWindow
 
 local ROW_HEIGHT = 52
@@ -22,6 +22,23 @@ end
 
 local function getTierColor(tier)
     return C.tier[tier] or C.muted
+end
+
+local function getPvpTime()
+    if GetServerTime then return GetServerTime() end
+    if time then return time() end
+    return 0
+end
+
+local function formatPvpCountdown(event,now)
+    if now<event.startsAt then
+        local remaining=event.startsAt-now; local days=math.floor(remaining/86400); local hours=math.floor((remaining%86400)/3600)
+        if days>0 then return string.format("STARTS IN %dD %dH",days,hours) end
+        if hours>0 then return string.format("STARTS IN %dH",hours) end
+        return "STARTS IN <1H"
+    end
+    if now<event.endsAt then return string.format("LIVE  •  %dH LEFT",math.max(1,math.ceil((event.endsAt-now)/3600))) end
+    return "ENDED"
 end
 
 local CLASS_COORDS = CLASS_ICON_TCOORDS or {
@@ -263,6 +280,7 @@ function MainWindow:RefreshBracketContent()
     if self.guidesIntro then self.guidesIntro:SetText("Level-"..bracketData.level.." profession routes and related items. Informational only; every item opens its normal tooltip.") end
     self:RefreshBasicsPage()
     self:RefreshClassTiers()
+    self:RefreshPvpPage()
     self:RefreshExplorationBracketData()
     self:RefreshActiveGearSection(true)
     if bracketData.guides.sections[ns.Database:Get().selectedGuide] then
@@ -430,6 +448,67 @@ function MainWindow:RefreshClassTiers()
             card.iconBorder:SetColorTexture(unpack(tierColor)); if card.SetBackdropBorderColor then card:SetBackdropBorderColor(unpack(tierColor)) end
             for _,key in ipairs({"offense","survival","utility"}) do local score=entry[key]; local metric=card.metrics[key]; metric.value:SetText((key=="offense" and "OFF" or key=="survival" and "SURV" or "UTIL").."  "..score.."/10"); metric.bar:SetValue(score) end
         end
+    end
+end
+
+function MainWindow:CreatePvpCopyField(parent,captionText,valueText)
+    local caption=label(parent,"GameFontNormalSmall",captionText,C.muted); caption:SetPoint("TOPLEFT",0,0); caption:SetPoint("TOPRIGHT",0,0); caption:SetJustifyH("LEFT")
+    local value=CreateFrame("EditBox",nil,parent,BackdropTemplateMixin and "BackdropTemplate" or nil); value:SetPoint("TOPLEFT",0,-22); value:SetPoint("TOPRIGHT",0,-22); value:SetHeight(30); skin(value,C.window,C.accent)
+    value:SetFontObject(GameFontHighlightSmall); increaseFontSize(value); value:SetTextInsets(8,8,0,0); value:SetAutoFocus(false); value:SetTextColor(unpack(C.text)); value:SetText(valueText); value.readOnlyValue=valueText
+    value:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=self.readOnlyValue then self:SetText(self.readOnlyValue); self:HighlightText() end end)
+    value:SetScript("OnEditFocusGained",function(self) self:HighlightText() end); value:SetScript("OnMouseUp",function(self) self:SetFocus(); self:HighlightText() end); value:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
+    return value
+end
+
+function MainWindow:CreatePvpPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.PVP=page
+    local heading=label(page,"GameFontNormalHuge","PVP EVENTS",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","Confirmed community battleground sessions for the selected bracket.",C.muted); intro:SetPoint("TOPLEFT",7,-36)
+
+    local events=frame(page); events:SetPoint("TOPLEFT",6,-64); events:SetPoint("TOPRIGHT",-6,-64); events:SetHeight(188); skin(events,C.panel)
+    local eventsTitle=label(events,"GameFontNormal","UPCOMING EVENTS",C.accent); eventsTitle:SetPoint("TOPLEFT",16,-14)
+    local callout=label(events,"GameFontNormal","BE READY FOR BATTLE!",C.horde); callout:SetPoint("TOPRIGHT",-16,-14)
+    local emptyTitle=label(events,"GameFontNormalLarge","NO CONFIRMED EVENTS",C.guideAccent); emptyTitle:SetPoint("CENTER",0,10); self.pvpEmptyTitle=emptyTitle
+    local emptyText=label(events,"GameFontNormalSmall","No approved events are scheduled for this bracket yet.",C.secondary); emptyText:SetPoint("TOP",emptyTitle,"BOTTOM",0,-8); self.pvpEmptyText=emptyText
+    for index=1,3 do
+        local row=frame(events); row:SetPoint("TOPLEFT",12,-42-(index-1)*46); row:SetPoint("TOPRIGHT",-12,-42-(index-1)*46); row:SetHeight(40); skin(row,index%2==0 and C.panel2 or C.window)
+        local horde=row:CreateTexture(nil,"ARTWORK"); horde:SetSize(28,28); horde:SetPoint("LEFT",8,0); horde:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde"); horde:SetTexCoord(0,38/64,0,36/64)
+        local versus=label(row,"GameFontNormalSmall","VS",C.muted); versus:SetPoint("CENTER",row,"LEFT",46,0); versus:SetWidth(20); versus:SetJustifyH("CENTER")
+        local alliance=row:CreateTexture(nil,"ARTWORK"); alliance:SetSize(28,28); alliance:SetPoint("LEFT",56,0); alliance:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance"); alliance:SetTexCoord(0,32/64,0,38/64)
+        local title=label(row,"GameFontNormal","",C.text); title:SetPoint("TOPLEFT",94,-6); row.title=title
+        local when=label(row,"GameFontNormalSmall","",C.guideAccent); when:SetPoint("TOPRIGHT",-10,-7); row.when=when
+        local details=label(row,"GameFontNormalSmall","",C.muted); details:SetPoint("BOTTOMLEFT",94,5); details:SetPoint("BOTTOMRIGHT",-10,5); details:SetJustifyH("LEFT"); row.details=details; row:Hide(); self.pvpEventRows[index]=row
+    end
+
+    local share=frame(page); share:SetPoint("TOPLEFT",6,-262); share:SetPoint("BOTTOMRIGHT",-6,6); skin(share,C.panel)
+    local shareTitle=label(share,"GameFontNormalLarge","SHARE A PVP EVENT",C.guideAccent); shareTitle:SetPoint("TOPLEFT",18,-16)
+    local shareText=label(share,"GameFontNormalSmall","Want your WSG or other PvP event listed here? Firemaw EU Horde players can mail Lovepotion; every realm can use Discord.",C.secondary); shareText:SetPoint("TOPLEFT",18,-45); shareText:SetPoint("TOPRIGHT",-18,-45); shareText:SetJustifyH("LEFT")
+    local required=label(share,"GameFontNormalSmall",ns.PvPEventsData.submissionFields,C.muted); required:SetPoint("TOPLEFT",18,-71); required:SetPoint("TOPRIGHT",-18,-71); required:SetJustifyH("LEFT")
+    local mailContact=frame(share); mailContact:SetPoint("TOPLEFT",18,-102); mailContact:SetPoint("TOPRIGHT",share,"TOP",-9,-102); mailContact:SetHeight(56)
+    local discordContact=frame(share); discordContact:SetPoint("TOPLEFT",share,"TOP",9,-102); discordContact:SetPoint("TOPRIGHT",-18,-102); discordContact:SetHeight(56)
+    self.pvpMailField=self:CreatePvpCopyField(mailContact,"FIREMAW EU • HORDE MAIL",ns.PvPEventsData.brackets[19].contact.character)
+    self.pvpDiscordField=self:CreatePvpCopyField(discordContact,"DISCORD PROFILE • ALL REALMS",ns.PvPEventsData.brackets[19].contact.discord)
+    local copyHint=label(share,"GameFontNormalSmall","Click a field, then press Ctrl+C to copy it.",C.muted); copyHint:SetPoint("TOP",0,-164)
+    self:RefreshPvpPage()
+end
+
+function MainWindow:RefreshPvpPage()
+    if not self.pvpEmptyTitle then return end
+    self.pvpCountdownGeneration=(self.pvpCountdownGeneration or 0)+1
+    local generation=self.pvpCountdownGeneration; local data=getActiveBracketData().pvp; local hasEvents=#data.events>0; local now=getPvpTime(); local nextRefresh
+    self.pvpEmptyTitle:SetShown(not hasEvents); self.pvpEmptyText:SetShown(not hasEvents)
+    for index,row in ipairs(self.pvpEventRows) do
+        local event=data.events[index]; row:SetShown(event~=nil)
+        if event then
+            row.title:SetText(event.battleground); row.when:SetText(formatPvpCountdown(event,now)); row.details:SetText(table.concat({event.realm,event.scope,event.faction,event.date,event.time},"  •  "))
+            local remaining=now<event.startsAt and event.startsAt-now or now<event.endsAt and event.endsAt-now
+            if remaining then local delay=(remaining%3600)+1; nextRefresh=not nextRefresh and delay or math.min(nextRefresh,delay) end
+        end
+    end
+    self.pvpMailField.readOnlyValue=data.contact.character; self.pvpMailField:SetText(data.contact.character)
+    self.pvpDiscordField.readOnlyValue=data.contact.discord; self.pvpDiscordField:SetText(data.contact.discord)
+    if nextRefresh and C_Timer and C_Timer.After and self.pages.PVP:IsShown() then
+        C_Timer.After(math.max(1,math.min(nextRefresh,3600)),function() if generation==MainWindow.pvpCountdownGeneration and MainWindow.pages.PVP:IsShown() then MainWindow:RefreshPvpPage() end end)
     end
 end
 
@@ -788,6 +867,7 @@ function MainWindow:Create()
     self:RefreshBracketButtons()
     self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20,88); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",116,88); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",212,88)
     self:CreatePageButton(root,"CLASS_TIERS","CLASS TIERS","TOPLEFT",20,112,-72)
+    self:CreatePageButton(root,"PVP","PVP","TOPRIGHT",-84,88,-72)
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-192); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-84)
     local close=CreateFrame("Button",nil,root); close:SetSize(36,36); close:SetPoint("TOPRIGHT",-13,-11)
     local closeHighlight=close:CreateTexture(nil,"HIGHLIGHT"); closeHighlight:SetAllPoints(); closeHighlight:SetColorTexture(1,0.20,0.20,0.14)
@@ -822,7 +902,7 @@ function MainWindow:Create()
     self:CreateScrollBar(gear,scroll); self.gearViewFrames={header,scroll,self.scrollBar,self.gearLegend}
     self:CreateReferenceSection(gear,"ENCHANTS","ENCHANTS","Relevant equipment slots will replace the gear table here. Each class profile will reference a shared, source-verified enchant catalog.")
     self:CreateReferenceSection(gear,"CONSUMABLES","CONSUMABLES","A class-specific table grouped by bandages, food and drink, potions, elixirs, scrolls, Engineering, weapon consumables and class resources will appear here.")
-    self:CreateBasicsPage(content); self:CreateClassTiersPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
+    self:CreateBasicsPage(content); self:CreateClassTiersPage(content); self:CreatePvpPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
     root:SetScript("OnHide",function() if MainWindow.settingsPanel then MainWindow.settingsPanel:Hide() end end)
     root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
     self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectGuide(saved.selectedGuide); self:SelectPage(saved.selectedPage); return root
@@ -862,7 +942,7 @@ function MainWindow:SelectPage(page)
     ns.Database:SetSelectedPage(page)
     for key,value in pairs(self.pages) do value:SetShown(key==page) end
     self:RefreshPageButtons()
-    if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="CLASS_TIERS" then self:RefreshClassTiers() elseif page=="GUIDES" then self:SelectGuide(ns.Database:Get().selectedGuide) elseif page=="EXPLORATION" then self:RefreshExploration() end
+    if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="CLASS_TIERS" then self:RefreshClassTiers() elseif page=="PVP" then self:RefreshPvpPage() elseif page=="GUIDES" then self:SelectGuide(ns.Database:Get().selectedGuide) elseif page=="EXPLORATION" then self:RefreshExploration() end
 end
 
 function MainWindow:Layout()

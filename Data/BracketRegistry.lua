@@ -24,6 +24,7 @@ Brackets:RegisterData(19, {
     basics = ns.BasicsData,
     guides = ns.GuidesData,
     classTiers = ns.ClassTiersData,
+    pvp = ns.PvPEventsData.brackets[19],
     exploration = ns.ExplorationData,
     explorationCategories = ns.ExplorationCategories,
     basicsIntro = "The essential Classic Era rule: experience cannot be locked. Prepare before 19, then avoid every source of character XP.",

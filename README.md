@@ -40,6 +40,14 @@ game action.
   adds only `Offense`, `Survival` and `Utility` scores out of 10. The rationale
   moves into a hover tooltip. Equal tiers are not ranked internally; level 29
   is clearly marked as a lower-confidence curated estimate.
+- **PvP Events** — a bracket-aware announcement page for confirmed community
+  battleground sessions. When no event is scheduled, players are invited to
+  send the realm, bracket, battleground, date, time zone, faction and organizer
+  contact to `Lovepotion` by in-game mail on Firemaw EU Horde or, for every
+  realm, through the copyable Discord profile
+  `https://discord.com/users/608587388184428544`. Confirmed sessions use
+  Blizzard's native Horde and Alliance PvP icons, identify the full realm
+  cluster and show a live server-time countdown in days and hours.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px icons and S/A/B columns. Equal same-tier choices are stacked vertically
   with identically sized icons and matching item-name styling; rows expand only

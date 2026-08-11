@@ -48,6 +48,7 @@ grep -Fq 'Data\Brackets.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\BracketRegistry.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\PvPEvents.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
@@ -84,11 +85,22 @@ grep -Fq '"GEAR","GEAR","TOPLEFT",20,88' MainWindow.lua
 grep -Fq '"BASICS","TWINK BASICS","TOPLEFT",116,88' MainWindow.lua
 grep -Fq '"GUIDES","GUIDES","TOPLEFT",212,88' MainWindow.lua
 grep -Fq '"CLASS_TIERS","CLASS TIERS","TOPLEFT",20,112,-72' MainWindow.lua
+grep -Fq '"PVP","PVP","TOPRIGHT",-84,88,-72' MainWindow.lua
+grep -Fq 'versus:SetPoint("CENTER",row,"LEFT",46,0)' MainWindow.lua
 grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT",-192' MainWindow.lua
 grep -Fq '"COMMUNITY","COMMUNITY","TOPRIGHT",-84' MainWindow.lua
 grep -Fq 'self:CreateGearSectionButton(gear,"GEAR","GEAR",-216)' MainWindow.lua
 grep -Fq 'value:SetPoint("TOPRIGHT",x,-13)' MainWindow.lua
 grep -Fq 'self:CreateClassTiersPage(content)' MainWindow.lua
+grep -Fq 'self:CreatePvpPage(content)' MainWindow.lua
+grep -Fq 'https://discord.com/users/608587388184428544' Data/PvPEvents.lua
+grep -Fq 'Interface\\TargetingFrame\\UI-PVP-Horde' MainWindow.lua
+grep -Fq 'Interface\\TargetingFrame\\UI-PVP-Alliance' MainWindow.lua
+grep -Fq 'DISCORD PROFILE • ALL REALMS' MainWindow.lua
+grep -Fq 'BE READY FOR BATTLE!' MainWindow.lua
+grep -Fq 'GetServerTime()' MainWindow.lua
+grep -Fq 'C_Timer.After' MainWindow.lua
+grep -Fq 'STARTS IN %dD %dH' MainWindow.lua
 grep -Fq 'for row,tier in ipairs({"S","A","B","C"}) do' MainWindow.lua
 grep -Fq 'B={0.62,0.45,0.78,1}, C={0.67,0.70,0.78,1}' MainWindow.lua
 grep -Fq 'metric.bar:SetValue(score)' MainWindow.lua
