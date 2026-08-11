@@ -1,7 +1,7 @@
 # TwinkTracker
 
 TwinkTracker is a planning companion for **WoW Classic Era / Hardcore
-level-19 twinks**. The initial release focuses on Gear, essential XP-safety
+level-19 and level-29 twinks**. The current profiles focus on Gear, essential XP-safety
 rules and automatic Exploration map progress; XP Tracker remains hidden until its
 next design pass.
 
@@ -22,11 +22,12 @@ game action.
   effect, restriction, tooltip and copyable Wowhead Classic link.
 - **Consumables** — class-specific tables grouped into bandages, food and
   drink, potions, elixirs, scrolls, Engineering, weapon coatings/ammunition and
-  reviewed class resources. Every entry has its native item icon, and each class has at
-  least five legal potion and five legal scroll choices. Items requiring level
-  20 or higher are explicitly excluded. Heavy Runecloth Bandage is the top
-  bandage at First Aid 225; a level-19 character can use it but must obtain it
-  from a higher-level crafter or the Auction House. The same use-versus-craft
+  reviewed class resources. Every entry has its native item icon, and each class has
+  a bracket-specific legal catalog. Heavy Runecloth Bandage is the top
+  bandage at First Aid 225, with Runecloth Bandage retained as its weaker
+  First Aid 200 alternative. Vendor books let a level-19 character reach the
+  225 skill cap and use both, but neither can be crafted at level 19 or 29; obtain
+  finished bandages from another character or the Auction House. The same use-versus-craft
   distinction covers Discombobulator Ray and Goblin Rocket Boots, while a
   separate World Utility group includes obtainable Magic Dust and the rare
   one-charge Glowing Cat Figurine. Removed Large Rope Net drops are excluded.
@@ -34,6 +35,11 @@ game action.
   additional role, faction or budget variants inside a tier when the builds are
   genuinely equivalent. Rogue boots explicitly separate burst, flag-carrier
   and Horde balanced S-tier sets.
+- **Class Tiers** — a fast bracket-specific community overview for all nine
+  classes. A descending S-to-C tree expresses overall strength once; each card
+  adds only `Offense`, `Survival` and `Utility` scores out of 10. The rationale
+  moves into a hover tooltip. Equal tiers are not ranked internally; level 29
+  is clearly marked as a lower-confidence curated estimate.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px icons and S/A/B columns. Equal same-tier choices are stacked vertically
   with identically sized icons and matching item-name styling; rows expand only
@@ -53,7 +59,7 @@ game action.
 - **Weapon choices** — separate 1H and 2H rows, with S/A/B recommendations for
   every class that can use the corresponding weapon type.
 - **Twink Basics** — verified, read-only Classic Era safety rules centered on
-  the absence of XP locking and avoiding every XP source after level 19.
+  the absence of XP locking and avoiding every XP source after the selected bracket level.
 - **Guides** — practical, step-by-step First Aid, Fishing and Engineering
   preparation. Each guide includes illustrated related items with normal
   tooltips, standard Shift-click item handling and copyable Wowhead Classic
@@ -61,9 +67,10 @@ game action.
   includes exact Alliance/Horde trainers, book vendors, coordinates, skill
   breakpoints and the complete route from 1 to 225. Compact interactive item
   icons appear directly inside the instruction line that mentions each item.
-  All three professions include level-19-specific shopping lists and sequential
-  skill ranges: First Aid reaches 225, while Fishing and Engineering stop at
-  150 because their Expert ranks require level 20.
+  The level-19 routes take First Aid to 225 and stop Fishing and Engineering at
+  150. The level-29 routes retain the First Aid 225 cap and take Fishing and
+  Engineering to 225; Artisan ranks and Engineering specialization remain
+  unavailable because they require a higher character level.
   Warm gold headings and neutral-grey descriptions keep guide structure
   visually separate from the blue Alliance markers.
 - **Community** — a scalable guild directory beginning with the Horde guild
@@ -80,13 +87,17 @@ game action.
   progress carries a completion color. This is visible-map progress, not proof
   that no exploration XP remains.
 - **Resizable layout** — drag the lower-right corner to resize the window; its
-  size and the selected page are saved per character. Addon-rendered text uses
-  a one-pixel readability increase over the matching default Classic font
-  objects.
-- **Bracket-ready header** — compact `19 / 29 / 39` selectors sit below the
-  logo. Level 19 is the active profile; the greyed-out level 29 and 39 profiles
-  show `Coming soon` on hover. Bracket selection is stored per character once a
-  profile is available.
+  position remains stable while sizing, and its size and the selected page are
+  saved per character. Addon-rendered text uses a one-pixel readability increase
+  over the matching default Classic font objects. The larger high-contrast close
+  button in the upper-right corner remains easy to target at every window size,
+  with the Settings control separated clearly from the navigation tabs.
+- **Bracket selector** — compact `19 / 29 / 39` selectors sit below the logo.
+  Levels 19 and 29 have independent Gear, Enchants, Consumables, Class Tiers,
+  Basics, Guides and Exploration data. Level 39 remains greyed out with a `Coming soon`
+  tooltip. The active bracket is stored per character.
+- **Consistent item tooltips** — gear, enchant, consumable and Guide references
+  open their normal game tooltip beside the mouse cursor.
 - **Custom branding** — the supplied TwinkTracker artwork is integrated into the
   window header through a softly feathered, Classic-safe power-of-two TGA
   runtime texture and is included by the shared deployment tool.
@@ -101,7 +112,8 @@ The reference is intentionally curated rather than presented as a universal
 mathematical ranking. Exact random-suffix rolls and realm-specific vendor,
 quest, event and drop availability still require live-client confirmation.
 
-All nine class tables have received independent slot-by-slot source audits.
+All nine class tables in both active brackets have received independent
+slot-by-slot source audits.
 They now keep faction equivalents together, define both ring and trinket slots
 deliberately, separate major role variants and exclude items that exceed level
 19 or cannot be equipped by the class. The complete guide index and the rules

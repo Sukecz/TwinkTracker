@@ -1,6 +1,6 @@
 # Gear data sources and audit rules
 
-TwinkTracker targets level 19 on WoW Classic Era / Hardcore. A guide is a
+TwinkTracker targets levels 19 and 29 on WoW Classic Era / Hardcore. A guide is a
 candidate source, not proof that every listed item is currently obtainable or
 usable. Every recommendation must also be checked against its individual
 Wowhead Classic item page and, where noted, the live Era client.
@@ -27,6 +27,38 @@ Supporting references:
 - [Blackfathom Deeps quests](https://www.wowhead.com/classic/guide/classic-wow-blackfathom-deeps-dungeon-quests)
 - [Shadowfang Keep quests](https://www.wowhead.com/classic/guide/classic-wow-shadowfang-keep-dungeon-quests)
 
+## Class tier overview
+
+The in-addon Class Tiers page is a compact community synthesis, not a simulated
+or mathematically objective ranking. Overall strength is shown once through the
+descending `S / A / B / C` tree. Every class then receives three whole-number
+context scores: `OFFENSE` covers damage and kill pressure, `SURVIVAL` covers
+durability and escapes, and `UTILITY` covers control, healing, mobility and
+objective value. Classes inside one tier are deliberately not ordered. Faction,
+role, build, gear and team composition can change the result.
+
+Level 19 has the stronger community consensus. The main synthesis and conflict
+checks use:
+
+- [XPOff community level-19 tier aggregation](https://xpoff.com/threads/classic-lvl-19-twink-tier-list.88756/)
+- [Experienced level-19 class assessment](https://www.reddit.com/r/classicwow/comments/bg80dd/best_twink_for_1019_bracket/)
+- [Wowhead level-19 Priest guide](https://www.wowhead.com/classic/guide/priest-classic-level-19-twink)
+- [Cross-bracket class discussion](https://www.reddit.com/r/classicwow/comments/f6qyxt/twinks_best_classes_for_each_bracket/)
+- [Classic bracket power-spike discussion](https://www.reddit.com/r/classicwow/comments/buotdw/which_classes_shine_the_most_in_each_battleground/)
+
+Level 29 has fewer direct tier discussions, so its page is explicitly labeled
+`CURATED COMMUNITY ESTIMATE`. The overview combines:
+
+- [Classic twink bracket rankings](https://rankedboost.com/world-of-warcraft/classic-twink-build/)
+- [Level-19 and level-29 class experiences](https://www.reddit.com/r/classicwow/comments/ea2f1l/most_fun_classes_to_twink_with_in_either_level_19/)
+- [Level-29 Hunter guide](https://www.warcrafttavern.com/wow-classic/guides/29-twink-hunter/)
+- [Level-29 Priest guide](https://www.warcrafttavern.com/wow-classic/guides/29-priest-twink/)
+- [Level-29 Warlock guide](https://www.warcrafttavern.com/wow-classic/guides/29-warlock-twink/)
+- [Level-29 Warrior guide](https://www.warcrafttavern.com/wow-classic/guides/29-twink-warrior/)
+
+Future tier changes must preserve the three-attribute limit, cite new evidence and
+describe conflicts instead of presenting one author's preference as fact.
+
 ## Twink Basics rules
 
 Twink Basics is intentionally limited to stable safety rules rather than build
@@ -45,9 +77,9 @@ Before adding or changing an item:
 
 1. Confirm the exact English name and positive item ID on
    `https://www.wowhead.com/classic/item=<ID>`.
-2. Confirm the item requires level 19 or lower. A random suffix does not change
-   the base item's required level.
-3. Confirm that the class can equip the armor and weapon type at level 19 in
+2. Confirm the item does not exceed the profile's bracket level. A random suffix
+   does not change the base item's required level.
+3. Confirm that the class can equip the armor and weapon type at the bracket level in
    Vanilla/Era, including level-gated weapon talents.
 4. Distinguish an item's faction restriction from a faction-specific acquisition
    route. Do not mark a neutral BoE item as faction-locked merely because one
@@ -80,9 +112,11 @@ Primary supporting references:
 Rules for future changes:
 
 1. Confirm the exact Classic Era tooltip, item/spell ID, effect and requirement.
-2. Never add a consumable requiring level 20 or higher. Current explicit
-   exclusions include Free Action Potion (5634), Minor Mana Oil (20745), Razor
-   Arrow (3030) and Solid Shot (3033).
+2. Never add a consumable above the selected bracket. Level 19 explicitly
+   excludes Free Action Potion (5634), Minor Mana Oil (20745), Razor Arrow
+   (3030) and Solid Shot (3033); those become valid in the level-29 profile.
+   Feathered Arrow (3464), Exploding Shot (3465), Crafted Solid Shot (8069) and
+   Lesser Wizard Oil (20746) require level 30 and are excluded from both.
 3. Distinguish a permanent enchant from a temporary weapon coating. Shaman
    weapon imbues replace oils/stones; a Druid's weapon damage does not improve
    Bear Form attacks; level-19 Rogue poisons and Warrior Dual Wield are absent.
@@ -99,9 +133,13 @@ Rules for future changes:
 6. Treat stacking, replacement, shared cooldowns, proc rates and low-rank spell
    coefficients as live-client validation points. The addon describes these
    cautions instead of inventing a mathematical universal best choice.
-7. Heavy Runecloth Bandage requires First Aid 225 to use but First Aid 290 to
-   craft. A level-19 character can use one supplied by a higher-level crafter,
-   while Mageweave Bandage remains the strongest version it can craft itself.
+7. Heavy Runecloth Bandage requires First Aid 225 to use; Runecloth Bandage is
+   the weaker First Aid 200 alternative. Vendor books let a level-19 character
+   reach 225, but neither Runecloth variant can be crafted at level 19. Obtain
+   finished bandages from another character or the Auction House. This remains
+   true at level 29: the character's 225 cap is below the 240/260/290 craft
+   recipes. Mageweave Bandage remains the strongest version either character
+   can craft personally.
 8. Enchant recommendations are deliberately capped at four per slot, with two
    or three preferred wherever that covers the important roles. Four is used
    only when a hybrid class needs distinct survival, physical, caster and
@@ -123,6 +161,41 @@ Rules for future changes:
    Naxx-enchanted shoulder set, use white non-binding Feral Shoulder Pads or
    Serpent's Shoulders; Talbar Mantle is the no-Naxx stamina alternative because
    it binds on pickup.
+
+## Level-29 audit sources and special rules
+
+Each level-29 class received a separate multi-source audit using the individual
+Wowhead Classic item pages, Warcraft Tavern's level-29 class guides and
+independent historical candidate lists where available. Historical lists were
+used only to generate candidates; exact Classic Era item IDs, required levels,
+armor/weapon proficiency, faction route, quest-XP risk and every named random
+suffix were checked separately.
+
+- [Level-29 Druid](https://www.warcrafttavern.com/wow-classic/guides/29-twink-druid/)
+- [Level-29 Hunter](https://www.warcrafttavern.com/wow-classic/guides/29-twink-hunter/)
+- [Level-29 Mage](https://www.warcrafttavern.com/wow-classic/guides/29-twink-mage/)
+- [Level-29 Paladin](https://www.warcrafttavern.com/wow-classic/guides/29-twink-paladin/)
+- [Level-29 Priest](https://www.warcrafttavern.com/wow-classic/guides/29-twink-priest/)
+- [Level-29 Rogue](https://www.warcrafttavern.com/wow-classic/guides/29-twink-rogue/)
+- [Level-29 Shaman](https://www.warcrafttavern.com/wow-classic/guides/29-twink-shaman/)
+- [Level-29 Warlock](https://www.warcrafttavern.com/wow-classic/guides/29-twink-warlock/)
+- [Level-29 Warrior](https://www.warcrafttavern.com/wow-classic/guides/29-twink-warrior/)
+- [Classic Engineering 1-300](https://www.wowhead.com/classic/guide/engineering-leveling-1-300-wow-classic)
+- [Classic consumables by class](https://www.wowhead.com/classic/guide/classic-wow-consumables-list-for-each-class)
+
+Battleground rewards are Era-only because Hardcore has no battlegrounds. At
+level 29, Warrior and Paladin still use Mail and Hunter and Shaman still use
+Leather; level-40 armor upgrades must not be inferred from item names. Generic
+Engineering can reach 225, but Goblin/Gnomish specialization requires character
+level 30. Tradeable specialist gadgets may therefore be bought from a higher
+level crafter only when their exact use requirement is 225 or lower. Quest and
+dungeon recommendations retain XP warnings because a level-29 reward can still
+force the character to level 30.
+
+The level-29 enchant profile shares the stable armor enchants with level 19 but
+adds target-item-level scope tiers and Blacksmithing-applied weapon/shield
+enhancements. Temporary oils, stones, poisons and Shaman imbues remain in
+Consumables because they coexist with permanent enchants but replace one another.
 
 ## Profession guides
 

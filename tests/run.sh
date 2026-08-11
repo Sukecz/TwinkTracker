@@ -45,6 +45,10 @@ file assets/logo.tga | grep -q '1024 x 512 x 32'
 file assets/minimap-icon.tga | grep -q '256 x 256 x 32'
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Brackets.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\BracketRegistry.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\Bracket29\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\Bracket29\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'tar -czf' tools/windows/Deploy-WoW-Addons.ps1
@@ -54,7 +58,7 @@ grep -Fq 'assets\\bracket-"..level..".tga' MainWindow.lua
 grep -Fq 'value.icon:SetDesaturated(not value.available)' MainWindow.lua
 grep -Fq 'GameTooltip:AddLine("Coming soon"' MainWindow.lua
 grep -Fq 'selectedBracket = 19' Defaults.lua
-grep -Fq '[29] = { level = 29, available = false }' Data/Brackets.lua
+grep -Fq '[29] = { level = 29, available = true }' Data/Brackets.lua
 grep -Fq '[39] = { level = 39, available = false }' Data/Brackets.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
 grep -Fq 'showMinimapIcon = true' Defaults.lua
@@ -71,10 +75,24 @@ grep -Fq 'classes:SetPoint("TOPRIGHT")' MainWindow.lua
 grep -Fq 'gear:SetPoint("TOPLEFT",classes,"BOTTOMLEFT",0,-8)' MainWindow.lua
 grep -Fq 'root:SetResizeBounds(880,620,1500,950)' MainWindow.lua
 grep -Fq 'root:SetMinResize(880,620)' MainWindow.lua
-grep -Fq '"GEAR","GEAR","TOPLEFT",16,88' MainWindow.lua
-grep -Fq '"BASICS","TWINK BASICS","TOPLEFT",112,88' MainWindow.lua
-grep -Fq '"GUIDES","GUIDES","TOPLEFT",208,88' MainWindow.lua
-grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT"' MainWindow.lua
+grep -Fq 'root:SetPoint("TOPLEFT",UIParent,"BOTTOMLEFT",left,top)' MainWindow.lua
+grep -Fq 'root:StartSizing("BOTTOMRIGHT",true)' MainWindow.lua
+grep -Fq 'ns.Database:SetFramePosition("CENTER",x,y)' MainWindow.lua
+grep -Fq 'tagline:SetPoint("TOPRIGHT",link,"BOTTOMLEFT",-12,4)' MainWindow.lua
+grep -Fq 'close:SetSize(36,36)' MainWindow.lua
+grep -Fq '"GEAR","GEAR","TOPLEFT",20,88' MainWindow.lua
+grep -Fq '"BASICS","TWINK BASICS","TOPLEFT",116,88' MainWindow.lua
+grep -Fq '"GUIDES","GUIDES","TOPLEFT",212,88' MainWindow.lua
+grep -Fq '"CLASS_TIERS","CLASS TIERS","TOPLEFT",20,112,-72' MainWindow.lua
+grep -Fq '"EXPLORATION","EXPLORATION","TOPRIGHT",-192' MainWindow.lua
+grep -Fq '"COMMUNITY","COMMUNITY","TOPRIGHT",-84' MainWindow.lua
+grep -Fq 'self:CreateGearSectionButton(gear,"GEAR","GEAR",-216)' MainWindow.lua
+grep -Fq 'value:SetPoint("TOPRIGHT",x,-13)' MainWindow.lua
+grep -Fq 'self:CreateClassTiersPage(content)' MainWindow.lua
+grep -Fq 'for row,tier in ipairs({"S","A","B","C"}) do' MainWindow.lua
+grep -Fq 'B={0.62,0.45,0.78,1}, C={0.67,0.70,0.78,1}' MainWindow.lua
+grep -Fq 'metric.bar:SetValue(score)' MainWindow.lua
+grep -Fq 'GameTooltip:AddLine(self.entry.summary' MainWindow.lua
 grep -Fq '"H  HORDE ROUTES"' MainWindow.lua
 grep -Fq '"A  ALLIANCE ROUTES"' MainWindow.lua
 grep -Fq '"|cff5ca9ffA|r  ALLIANCE"' Data/Guides.lua
@@ -90,7 +108,7 @@ if grep -Fq 'EXPLORATION_GROUP_COLORS' MainWindow.lua; then
     echo "Exploration categories still use separate semantic colors" >&2
     exit 1
 fi
-grep -Fq 'ns.ExplorationCategories.labels[groupKey],C.secondary' MainWindow.lua
+grep -Fq 'bracketData.explorationCategories.labels[groupKey],C.secondary' MainWindow.lua
 if grep -Eq 'local (marker|stripe|line)=.*Exploration|EXPLORATION_SECTION_COLOR' MainWindow.lua; then
     echo "Exploration category headings still contain decorative color accents" >&2
     exit 1
@@ -107,6 +125,11 @@ grep -Fq '"ENCHANTS","ENCHANTS"' MainWindow.lua
 grep -Fq '"CONSUMABLES","CONSUMABLES"' MainWindow.lua
 grep -Fq 'section.key=="CONSUMABLES"' MainWindow.lua
 grep -Fq 'GetItemInfoInstant(itemID)' MainWindow.lua
+grep -Fq 'GameTooltip:SetOwner(owner,"ANCHOR_CURSOR")' MainWindow.lua
+if grep -Eq 'GameTooltip:SetOwner\(self,"ANCHOR_RIGHT"\).*GameTooltip:SetHyperlink' MainWindow.lua; then
+    echo "Item or spell tooltip still uses a frame-right anchor" >&2
+    exit 1
+fi
 grep -Fq 'HandleModifiedItemClick(itemLink)' MainWindow.lua
 grep -Fq 'elseif ChatEdit_InsertLink then' MainWindow.lua
 grep -Fq 'assets\\twinkortreat.tga' MainWindow.lua

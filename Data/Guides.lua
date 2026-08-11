@@ -14,8 +14,10 @@ local function step(title, lines)
     return { title=title, lines=lines }
 end
 
+ns.GuideHelpers = { item=item, line=line, step=step }
+
 ns.GuidesData = {
-    version = "2026-08-10",
+    version = "2026-08-11",
     order = { "FIRST_AID", "FISHING", "ENGINEERING" },
     sections = {
         FIRST_AID = {
@@ -65,8 +67,8 @@ ns.GuidesData = {
                 }),
                 step("COMBAT USE",{
                     line("BEST","Heavy Runecloth Bandage heals 2000 over 8 seconds and can be used at First Aid 225.",{14530}),
-                    line("OBTAIN","Buy it from the Auction House or have a higher-level character craft and mail it to the twink.",{14530}),
-                    line("CRAFT LIMIT","A level 19 cannot craft it: the recipe requires First Aid 290, beyond the level-35 Artisan unlock.",{14530}),
+                    line("OBTAIN","A level-19 character cannot craft Heavy Runecloth or Runecloth Bandages; buy finished bandages from the Auction House or receive them from another character.",{14530,14529}),
+                    line("RUNE FALLBACK","Runecloth Bandage heals 1360 over 8 seconds and requires First Aid 200 to use; it is the weaker Runecloth option.",{14529}),
                     line("SELF-CRAFTED","Mageweave Bandage is the strongest bandage a level 19 can craft personally.",{8544}),
                     line("FALLBACK","Heavy Silk Bandage is the cheaper First Aid 125 option.",{6451}),
                     line("ANTI-VENOM","The rare world-drop manual is usually sourced from the AH; one Large Venom Sac creates three Strong Anti-Venom.",{6454,1288,6453}),
@@ -88,7 +90,8 @@ ns.GuidesData = {
                 item(6450,"Silk Bandage","Train at First Aid 150 after learning Expert."),
                 item(6451,"Heavy Silk Bandage","Learn from its manual at First Aid 180; use requires 125."),
                 item(8544,"Mageweave Bandage","Learn from its manual at First Aid 210; use requires 150."),
-                item(14530,"Heavy Runecloth Bandage","Use requires First Aid 225; crafting requires First Aid 290, so obtain it from another character."),
+                item(14529,"Runecloth Bandage","Weaker Runecloth fallback; requires First Aid 200 to use and cannot be crafted by a level-19 character."),
+                item(14530,"Heavy Runecloth Bandage","Requires First Aid 225 to use and cannot be crafted by a level-19 character."),
                 item(6454,"Manual: Strong Anti-Venom","Rare world drop; read at First Aid 130."),
                 item(1288,"Large Venom Sac","One sac creates three Strong Anti-Venom."),
                 item(6453,"Strong Anti-Venom","Situational poison removal made from Large Venom Sacs."),

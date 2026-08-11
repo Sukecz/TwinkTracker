@@ -1,20 +1,19 @@
 # TwinkTracker
 
 TwinkTracker is a compact planning companion for **World of Warcraft Classic
-Era and Classic Hardcore twinks**. The current profile is built for the
-**level-19 bracket**, bringing gear, enchants, consumables, preparation guides,
+Era and Classic Hardcore twinks**. Complete profiles are available for the
+**level-19 and level-29 brackets**, bringing gear, enchants, consumables, preparation guides,
 XP-safety reminders and automatic exploration progress into one movable and
 resizable in-game window.
 
 The header is already prepared for multiple brackets:
 
-- **19** — available now with the complete current reference
-- **29** — Coming soon
+- **19** — complete bracket-specific reference
+- **29** — complete bracket-specific reference
 - **39** — Coming soon
 
-The 29 and 39 emblems are intentionally greyed out and cannot be selected yet.
-They are a preview of planned future bracket guides, not unfinished content
-presented as usable.
+The level-39 emblem remains greyed out and cannot be selected yet. It is a
+preview of a planned future bracket guide, not unfinished usable content.
 
 ## Current features
 
@@ -40,7 +39,7 @@ weapon setup, random suffix or availability.
 - Consumables grouped into bandages, food and drink, potions, elixirs, scrolls,
   Engineering, weapon supplies and class resources
 - Native item icons plus normal item or spell tooltips
-- Level-20-and-higher consumables excluded from the level-19 profile
+- Separate level-19 and level-29 catalogs with bracket-specific requirements
 
 ### Twink Basics and guides
 
@@ -49,6 +48,16 @@ weapon setup, random suffix or availability.
 - Fishing and Engineering preparation routes
 - Faction-specific trainers, vendors, coordinates and travel cautions
 - Interactive related-item icons, tooltips, chat links and Wowhead links
+
+### Class Tiers
+
+- Fast bracket-specific cards for all nine Classic Era classes
+- Overall strength grouped in one descending S-to-C tree
+- Three concise attributes only: Offense, Survival and Utility out of 10
+- Primary role on each card and its rationale in a hover tooltip
+- Equal tiers are not ranked internally
+- Level 29 is labeled as a curated community estimate because direct bracket
+  consensus is thinner than at level 19
 
 ### Automatic Exploration progress
 
@@ -73,6 +82,7 @@ exploration-XP trigger has fired or that no exploration XP remains.
 ### Community and interface
 
 - Community page for faction-specific Classic Era twink guild information
+- A second left-side navigation row with the Class Tiers overview
 - Compact bracket emblems below the TwinkTracker logo
 - Movable and resizable window with remembered position, size and selected page
 - Draggable minimap button with remembered position

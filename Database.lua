@@ -34,6 +34,10 @@ local function clamp(value, minimum, maximum)
     return value
 end
 
+local function getBracketData(level)
+    return ns.Brackets:GetData(level) or ns.Brackets:GetData(ns.Defaults.selectedBracket)
+end
+
 function Database:Initialize(saved)
     self.data = type(saved) == "table" and saved or {}
     local defaults = copyDefaults(ns.Defaults)
@@ -46,31 +50,32 @@ function Database:Initialize(saved)
     end
     self.data.frame.x = clamp(self.data.frame.x, -5000, 5000)
     self.data.frame.y = clamp(self.data.frame.y, -5000, 5000)
-    self.data.frame.width = type(self.data.frame.width) == "number" and clamp(self.data.frame.width, 980, 1500) or defaults.frame.width
+    self.data.frame.width = type(self.data.frame.width) == "number" and clamp(self.data.frame.width, 880, 1500) or defaults.frame.width
     self.data.frame.height = type(self.data.frame.height) == "number" and clamp(self.data.frame.height, 620, 950) or defaults.frame.height
 
-    if not ns.BisData.classes[self.data.selectedClass] then
-        self.data.selectedClass = defaults.selectedClass
-    end
     local bracket = ns.Brackets.profiles[self.data.selectedBracket]
-    if not bracket or not bracket.available then
+    if not bracket or not bracket.available or not ns.Brackets:GetData(self.data.selectedBracket) then
         self.data.selectedBracket = defaults.selectedBracket
     end
+    local bracketData = getBracketData(self.data.selectedBracket)
+    if not bracketData.bis.classes[self.data.selectedClass] then
+        self.data.selectedClass = defaults.selectedClass
+    end
     self.data.selectedTab = "BIS"
-    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "GUIDES" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
+    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "CLASS_TIERS" and self.data.selectedPage ~= "GUIDES" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
         self.data.selectedPage = defaults.selectedPage
     end
     if self.data.selectedGearSection ~= "GEAR" and self.data.selectedGearSection ~= "ENCHANTS" and self.data.selectedGearSection ~= "CONSUMABLES" then
         self.data.selectedGearSection = defaults.selectedGearSection
     end
-    if not ns.GuidesData.sections[self.data.selectedGuide] then
+    if not bracketData.guides.sections[self.data.selectedGuide] then
         self.data.selectedGuide = defaults.selectedGuide
     end
     self.data.minimapAngle = type(self.data.minimapAngle) == "number" and clamp(self.data.minimapAngle, 0, 360) or defaults.minimapAngle
     if type(self.data.showMinimapIcon) ~= "boolean" then
         self.data.showMinimapIcon = defaults.showMinimapIcon
     end
-    local profile = ns.BisData.classes[self.data.selectedClass]
+    local profile = bracketData.bis.classes[self.data.selectedClass]
     if type(self.data.selectedSlot) ~= "string" or not profile.slots[self.data.selectedSlot] then
         self.data.selectedSlot = defaults.selectedSlot
     end
@@ -100,40 +105,52 @@ function Database:IsChecklistDone(key)
 end
 
 function Database:SetSelectedClass(classToken)
-    if not ns.BisData.classes[classToken] then
+    local bracketData = getBracketData(self.data.selectedBracket)
+    if not bracketData.bis.classes[classToken] then
         return false
     end
     self.data.selectedClass = classToken
-    if not ns.BisData.classes[classToken].slots[self.data.selectedSlot] then
-        self.data.selectedSlot = ns.BisData.classes[classToken].slotOrder[1]
+    if not bracketData.bis.classes[classToken].slots[self.data.selectedSlot] then
+        self.data.selectedSlot = bracketData.bis.classes[classToken].slotOrder[1]
     end
     return true
 end
 
 function Database:SetSelectedBracket(level)
     local bracket = ns.Brackets.profiles[level]
-    if not bracket or not bracket.available then
+    local bracketData = ns.Brackets:GetData(level)
+    if not bracket or not bracket.available or not bracketData then
         return false
     end
     self.data.selectedBracket = level
+    if not bracketData.bis.classes[self.data.selectedClass] then
+        self.data.selectedClass = ns.Defaults.selectedClass
+    end
+    local profile = bracketData.bis.classes[self.data.selectedClass]
+    if not profile.slots[self.data.selectedSlot] then
+        self.data.selectedSlot = profile.slotOrder[1]
+    end
+    if not bracketData.guides.sections[self.data.selectedGuide] then
+        self.data.selectedGuide = bracketData.guides.order[1]
+    end
     return true
 end
 
 function Database:SetSelectedSlot(slot)
-    local profile = ns.BisData.classes[self.data.selectedClass]
+    local profile = getBracketData(self.data.selectedBracket).bis.classes[self.data.selectedClass]
     if not profile.slots[slot] then return false end
     self.data.selectedSlot = slot
     return true
 end
 
 function Database:SetSelectedPage(page)
-    if page ~= "GEAR" and page ~= "BASICS" and page ~= "GUIDES" and page ~= "EXPLORATION" and page ~= "COMMUNITY" then return false end
+    if page ~= "GEAR" and page ~= "BASICS" and page ~= "CLASS_TIERS" and page ~= "GUIDES" and page ~= "EXPLORATION" and page ~= "COMMUNITY" then return false end
     self.data.selectedPage = page
     return true
 end
 
 function Database:SetSelectedGuide(guide)
-    if not ns.GuidesData.sections[guide] then return false end
+    if not getBracketData(self.data.selectedBracket).guides.sections[guide] then return false end
     self.data.selectedGuide = guide
     return true
 end
@@ -167,7 +184,7 @@ function Database:SetFramePosition(point, x, y)
 end
 
 function Database:SetFrameSize(width, height)
-    self.data.frame.width = clamp(width, 980, 1500)
+    self.data.frame.width = clamp(width, 880, 1500)
     self.data.frame.height = clamp(height, 620, 950)
 end
 

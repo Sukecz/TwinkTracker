@@ -2,6 +2,61 @@
 
 All notable changes are documented here.
 
+## 0.3.9 - 2026-08-11
+
+### Added
+
+- Added a compact bracket-specific Class Tiers page with a descending S-to-C
+  tree and Offense, Survival and Utility scores out of 10 for all nine classes.
+  Roles stay on the cards, rationales move to tooltips, and the level-29 view is
+  explicitly labeled as a curated community estimate.
+- Completed the level-29 bracket with independent S/A/B gear profiles for all
+  nine classes, explicit second ring and trinket slots, and bracket-specific
+  Enchants, Consumables, Twink Basics, profession Guides and Exploration routes.
+- Added level-29 permanent enhancements including item-level-gated Deadly and
+  Sniper Scopes, Steel Weapon Chain, Iron Counterweight and Thorium Shield Spike.
+- Added the level-29 consumable tiers: Heavy Mageweave Bandage, stronger food,
+  potions, elixirs and rank-II scrolls, Engineering 175-225 utility, legal
+  level-25 ammunition, temporary oils/stones and class reagents.
+- Enabled level 29 in the persistent bracket selector while keeping level 39
+  unavailable.
+
+### Corrected
+
+- Separated Tier B and C styling with muted purple for B and silver-grey for C.
+- Aligned the left navigation tabs to the same 20px content edge as the Select
+  Class panel and the tables below it.
+- Right-aligned the Gear, Enchants and Consumables controls as one group so
+  long class-role descriptions retain clear space beside the first button.
+- Shifted the right-side Exploration and Community tabs away from the Settings
+  control, leaving a clear gap between navigation and window controls.
+- Standardized every item and spell tooltip to open beside the mouse cursor,
+  regardless of whether the hovered target is a small icon or a full row.
+- Kept the Guides tagline inside the space beside the Wowhead field so longer
+  profession descriptions no longer render underneath the link box.
+- Stabilized lower-right resizing by preserving the window's on-screen geometry
+  when sizing begins, and aligned the saved minimum width with the 880px UI
+  limit.
+- Enlarged and brightened the main window close button with a clearer hover
+  target.
+- Added Runecloth Bandage as the weaker First Aid 200 alternative directly
+  below Heavy Runecloth Bandage for every class.
+- Clarified throughout Consumables and the First Aid guide that vendor books
+  only unlock the level-19 skill cap: neither Runecloth variant can be crafted
+  by the level-19 character, so finished bandages must come from elsewhere.
+- Re-audited Druid, Hunter, Mage, Paladin, Priest, Shaman and Warlock gear
+  against multiple Classic guides and each changed item's Wowhead Classic page.
+- Expanded role and faction coverage with focused Druid boots and rings, Hunter
+  wrist and ring variants, Protector's Sword for Paladin, four Priest quest
+  alternatives and Miner's Cape for Warlock.
+- Removed or replaced impossible random-suffix combinations across Mage, Priest,
+  Shaman and Warlock, and corrected Gravestone Scepter to a neutral quest wand.
+- Removed Feathered Arrow and Exploding Shot from level 19 after confirming their
+  hidden level-30 requirement, and corrected Light Feather to state that Slow
+  Fall consumes it.
+- Removed level-30+ items, non-equippable consumables and impossible suffixes
+  found by the final independent level-29 gear validation.
+
 ## 0.3.8 - 2026-08-11
 
 ### Fixed

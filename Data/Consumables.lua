@@ -1,7 +1,8 @@
 local addonName, ns = ...
 
 local catalog = {
-    [14530]={name="Heavy Runecloth Bandage",effect="Heals 2000 over 8 sec",profession="First Aid 225",restrictions="Obtain from a higher-level crafter or the Auction House; level 19 cannot craft it; damage interrupts; Recently Bandaged for 60 sec"},
+    [14530]={name="Heavy Runecloth Bandage",effect="Heals 2000 over 8 sec",profession="First Aid 225 to use",restrictions="A level-19 character cannot craft this; obtain finished bandages from another character or the Auction House; damage interrupts; Recently Bandaged for 60 sec"},
+    [14529]={name="Runecloth Bandage",effect="Heals 1360 over 8 sec",profession="First Aid 200 to use",restrictions="Weaker Runecloth fallback; a level-19 character cannot craft this; obtain finished bandages from another character or the Auction House; damage interrupts; Recently Bandaged for 60 sec"},
     [8544]={name="Mageweave Bandage",effect="Heals 800 over 8 sec",profession="First Aid 150",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
     [6451]={name="Heavy Silk Bandage",effect="Heals 640 over 8 sec",profession="First Aid 125",restrictions="Damage interrupts; Recently Bandaged for 60 sec"},
     [6453]={name="Strong Anti-Venom",effect="Cures a poison up to level 35",restrictions="Situational poison removal"},
@@ -56,9 +57,7 @@ local catalog = {
     [2515]={name="Sharp Arrow",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Bow ammunition"},
     [2519]={name="Heavy Shot",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Gun ammunition"},
     [8068]={name="Crafted Heavy Shot",effect="4.5 ranged damage per second",requiredLevel=15,restrictions="Gun ammunition"},
-    [3464]={name="Feathered Arrow",effect="9.5 ranged damage per second",restrictions="Rare transferable Stealing Supplies quest reward; top level-19 bow ammunition"},
-    [3465]={name="Exploding Shot",effect="9.5 ranged damage per second",restrictions="Rare transferable Stealing Supplies quest reward; top level-19 gun ammunition"},
-    [17056]={name="Light Feather",effect="Reagent for Slow Fall",restrictions="Mage class resource; not consumed by the spell"},
+    [17056]={name="Light Feather",effect="Reagent for Slow Fall",restrictions="Mage class resource; consumed when Slow Fall is cast"},
     [2136]={name="Conjured Purified Water",effect="Restores 835 mana over 24 sec",requiredLevel=15,restrictions="Conjured Mage item"},
     [1113]={name="Conjured Bread",effect="Restores 243 health over 21 sec",requiredLevel=5,restrictions="Conjured Mage item"},
     [7676]={name="Thistle Tea",effect="Restores 100 Energy",requiredLevel=5,restrictions="Rogue only; obtain from a higher-level Rogue because the recipe comes from the level-20 class quest"},
@@ -74,7 +73,7 @@ for itemID, entry in pairs(catalog) do
 end
 
 ns.ConsumablesData = {
-    version = "2026-08-10",
+    version = "2026-08-11",
     categoryOrder = { "BANDAGES", "FOOD_DRINK", "POTIONS", "ELIXIRS", "SCROLLS", "ENGINEERING", "WORLD_UTILITY", "WEAPON", "CLASS" },
     categoryNames = {
         BANDAGES="Bandages", FOOD_DRINK="Food and Drink", POTIONS="Potions",
@@ -98,7 +97,8 @@ local function addProfile(classToken, categories)
 end
 
 local bandage = {
-    recommendation(14530,"CORE","maximum level-19 First Aid healing; obtain from another character"),
+    recommendation(14530,"CORE","maximum level-19 First Aid healing; usable but not craftable at level 19"),
+    recommendation(14529,"ALTERNATIVE","weaker Runecloth option; usable but not craftable at level 19"),
     recommendation(8544,"ALTERNATIVE","self-crafted at level 19"),
     recommendation(6451,"ALTERNATIVE","First Aid 125 fallback"),
     recommendation(6453,"OPTIONAL","anti-poison"),
@@ -190,7 +190,7 @@ addProfile("HUNTER", {
     ELIXIRS=physicalElixirs,
     SCROLLS={recommendation(3012,"CORE","ranged damage"),recommendation(955,"CORE","mana"),recommendation(1180,"OPTIONAL","survival"),recommendation(1478,"OPTIONAL","physical defense"),recommendation(1712,"OPTIONAL","regeneration")},
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"ALTERNATIVE","crafted gun ammunition")},
+    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
 })
 
 addProfile("MAGE", {
@@ -219,7 +219,7 @@ addProfile("ROGUE", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=physicalPotions,
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition")},
+    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition")},
     CLASS={recommendation(7676,"CORE","energy burst")},
 })
 
@@ -243,5 +243,5 @@ addProfile("WARRIOR", {
     POTIONS={recommendation(5631,"CORE","Rage burst"),recommendation(929,"CORE","emergency healing"),recommendation(2459,"CORE","mobility"),recommendation(3384,"OPTIONAL","all-school resistance"),recommendation(6048,"OPTIONAL","Shadow protection"),recommendation(6372,"OPTIONAL","world travel / escape")},
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(3464,"CORE","best bow ammunition"),recommendation(3465,"CORE","best gun ammunition"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition","Dual Wield is unavailable before level 20")},
+    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
 })

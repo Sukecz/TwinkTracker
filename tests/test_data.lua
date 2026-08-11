@@ -10,6 +10,7 @@ loadModule("Data/Bis.lua")
 loadModule("Data/Enchants.lua")
 loadModule("Data/Consumables.lua")
 loadModule("Data/Guides.lua")
+loadModule("Data/ClassTiers.lua")
 
 assert(#ns.BasicsData == 7)
 assert(ns.BasicsData[1].title == "XP CANNOT BE LOCKED")
@@ -18,6 +19,7 @@ assert(type(ns.EnchantsData.catalog) == "table")
 assert(type(ns.ConsumablesData.catalog) == "table")
 assert(#ns.GuidesData.order == 3)
 assert(ns.GuidesData.sections.SUPPORT == nil)
+assert(#ns.ClassTiersData.classOrder == 9)
 for _, guideKey in ipairs(ns.GuidesData.order) do
     local guide = assert(ns.GuidesData.sections[guideKey])
     assert(type(guide.name) == "string" and guide.name ~= "")
@@ -50,7 +52,8 @@ for _, guideStep in ipairs(ns.GuidesData.sections.FIRST_AID.steps) do
     for _, guideLine in ipairs(guideStep.lines) do firstAidText = firstAidText .. " " .. guideLine.text end
 end
 assert(string.find(firstAidText,"Heavy Runecloth Bandage heals 2000",1,true), "First Aid guide is missing the level-19 Heavy Runecloth recommendation")
-assert(string.find(firstAidText,"recipe requires First Aid 290",1,true), "First Aid guide is missing the Heavy Runecloth crafting limit")
+assert(string.find(firstAidText,"Runecloth Bandage heals 1360",1,true), "First Aid guide is missing the weaker Runecloth fallback")
+assert(string.find(firstAidText,"cannot craft Heavy Runecloth or Runecloth Bandages",1,true), "First Aid guide does not prohibit level-19 Runecloth crafting")
 assert(#ns.GuidesData.sections.FISHING.steps >= 8)
 assert(#ns.GuidesData.sections.FISHING.items >= 12)
 assert(#ns.GuidesData.sections.ENGINEERING.steps >= 8)
@@ -136,7 +139,10 @@ for itemID, entry in pairs(ns.ConsumablesData.catalog) do
     assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. itemID, "invalid consumable link " .. itemID)
     assert(not entry.requiredLevel or entry.requiredLevel <= 19, entry.name .. " exceeds level 19")
 end
-assert(ns.ConsumablesData.catalog[14530].profession == "First Aid 225", "Heavy Runecloth Bandage has the wrong use requirement")
+assert(ns.ConsumablesData.catalog[14530].profession == "First Aid 225 to use", "Heavy Runecloth Bandage has the wrong use requirement")
+assert(ns.ConsumablesData.catalog[14529].profession == "First Aid 200 to use", "Runecloth Bandage has the wrong use requirement")
+assert(string.find(ns.ConsumablesData.catalog[14530].restrictions,"cannot craft this",1,true), "Heavy Runecloth Bandage lacks its level-19 crafting prohibition")
+assert(string.find(ns.ConsumablesData.catalog[14529].restrictions,"cannot craft this",1,true), "Runecloth Bandage lacks its level-19 crafting prohibition")
 for _, requiredItemID in ipairs({ 2091, 4388, 5332, 7189 }) do
     assert(ns.ConsumablesData.catalog[requiredItemID], "missing audited level-19 utility item " .. requiredItemID)
 end
@@ -151,6 +157,7 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     end
     local consumableProfile = ns.ConsumablesData.classes[classToken]
     assert(consumableProfile.categories.BANDAGES[1].itemID == 14530, classToken .. " is missing Heavy Runecloth as the top bandage")
+    assert(consumableProfile.categories.BANDAGES[2].itemID == 14529, classToken .. " is missing Runecloth as the second bandage")
     assert(consumableProfile.categories.WORLD_UTILITY[1].itemID == 2091, classToken .. " is missing Magic Dust world utility")
     local engineeringItems = {}
     for _, recommendation in ipairs(consumableProfile.categories.ENGINEERING) do engineeringItems[recommendation.itemID] = true end
@@ -163,7 +170,7 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     end
 end
 
-for _, excludedItemID in ipairs({ 835, 5634, 20745, 3030, 3033 }) do
+for _, excludedItemID in ipairs({ 835, 5634, 20745, 3030, 3033, 3464, 3465 }) do
     assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes an unavailable or level-20+ consumable " .. excludedItemID)
 end
 for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumRumination", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumProtection", "arcanumRapidity" }) do
@@ -241,6 +248,44 @@ local function profileHasItem(classToken, itemID)
         end
     end
     return false
+end
+
+local function profileHasNamedItem(classToken, itemName)
+    local profile = ns.BisData.classes[classToken]
+    for _, slot in ipairs(profile.slotOrder) do
+        for _, tier in ipairs({ "S", "A", "B" }) do
+            for _, entry in ipairs(profile.slots[slot][tier]) do
+                if entry.name == itemName then return true end
+            end
+        end
+    end
+    return false
+end
+
+local auditedClasses = { "DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "SHAMAN", "WARLOCK" }
+local impossibleSuffixNames = {
+    "Hook Dagger of the Eagle", "Hook Dagger of Shadow Wrath",
+    "Pagan Mitts of Frozen Wrath", "Pagan Mitts of Shadow Wrath", "Pagan Mitts of Stamina",
+    "Greenweave Sash of Frozen Wrath", "Greenweave Sash of Shadow Wrath", "Greenweave Sash of Stamina",
+    "Shimmering Trousers of Frozen Wrath", "Shimmering Trousers of Shadow Wrath", "Shimmering Trousers of Stamina",
+    "Watcher's Cape of Nature's Wrath", "Ritual Shroud of Nature's Wrath",
+    "Greenweave Bracers of Nature's Wrath", "Pagan Mitts of Nature's Wrath",
+    "Greenweave Sash of Nature's Wrath", "Shimmering Trousers of Nature's Wrath",
+    "Ritual Belt of Shadow Wrath", "Ritual Leggings of Shadow Wrath", "Buccaneer's Cord of Shadow Wrath",
+}
+for _, classToken in ipairs(auditedClasses) do
+    for _, itemName in ipairs(impossibleSuffixNames) do
+        assert(not profileHasNamedItem(classToken, itemName), classToken .. " contains impossible random suffix " .. itemName)
+    end
+end
+
+for classToken, itemIDs in pairs({
+    DRUID = { 6582, 11982 }, PALADIN = { 20440 },
+    PRIEST = { 3324, 10654, 6282, 6505 }, WARLOCK = { 5444 },
+}) do
+    for _, itemID in ipairs(itemIDs) do
+        assert(profileHasItem(classToken, itemID), classToken .. " is missing audited gear item " .. itemID)
+    end
 end
 
 assert(not profileHasItem("HUNTER", 2825), "Hunter contains a required-level 37 bow")
