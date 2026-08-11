@@ -2,6 +2,26 @@
 
 All notable changes are documented here.
 
+## 0.3.11 - 2026-08-11
+
+### Changed
+
+- Made the level-19 bracket explicit on every confirmed PvP event row and added
+  a clear instruction to queue for WSG during the listed server-time window.
+- Added an automatic WSG bonus-weekend panel that follows the Classic Era
+  three-week rotation and counts down to its start or end in server time.
+- Added a separate Event Timers page that repeats the WSG bonus countdown and
+  adds an automatic weekly Stranglethorn Fishing Extravaganza countdown.
+- Expanded Event Timers with expected three-hour Gurubashi chest spawns,
+  monthly Darkmoon Faire location and the next tracked seasonal holiday.
+- Positioned the Events navigation on the right side of the logo beside PvP.
+- Removed the Curated Community Overview and Curated Community Estimate labels
+  from the Class Tiers heading.
+- Restored Feathered Arrow as the top level-19 bow ammunition after separating
+  its level-30 acquisition quest from the item's unrestricted transferable use.
+- Replaced the unavailable Gurubashi chest texture path with the Classic item
+  icon for Arena Master so the event card always has a visible icon.
+
 ## 0.3.10 - 2026-08-11
 
 ### Added

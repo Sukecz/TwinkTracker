@@ -6,7 +6,6 @@ end
 
 ns.Bracket29ClassTiersData = {
     version = "2026-08-11",
-    status = "CURATED COMMUNITY ESTIMATE",
     intro = "A fast level-29 community estimate. Sources are thinner than for level 19, so role, build and gear can move a class substantially.",
     criteria = "OFFENSE = kill pressure   •   SURVIVAL = durability and escapes   •   UTILITY = control, healing, mobility and objectives",
     classOrder = ns.Bracket29BisData.classOrder,

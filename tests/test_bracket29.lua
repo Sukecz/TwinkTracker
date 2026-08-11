@@ -84,10 +84,10 @@ for itemID, entry in pairs(data.consumables.catalog) do
     assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. itemID)
     assert(not entry.requiredLevel or entry.requiredLevel <= 29, entry.name .. " exceeds level 29")
 end
-for _, forbiddenID in ipairs({ 3464, 3465, 8069, 20746 }) do
+for _, forbiddenID in ipairs({ 3465, 8069, 20746 }) do
     assert(not data.consumables.catalog[forbiddenID], "level-29 catalog includes forbidden consumable " .. forbiddenID)
 end
-for _, requiredID in ipairs({ 8545, 5634, 3030, 3033, 20745, 7964, 7965, 10646 }) do
+for _, requiredID in ipairs({ 8545, 5634, 3030, 3033, 3464, 20745, 7964, 7965, 10646 }) do
     assert(data.consumables.catalog[requiredID], "level-29 catalog is missing " .. requiredID)
 end
 for _, bandageID in ipairs({ 14530, 14529, 8545 }) do

@@ -12,6 +12,7 @@ loadModule("Data/Consumables.lua")
 loadModule("Data/Guides.lua")
 loadModule("Data/ClassTiers.lua")
 loadModule("Data/PvPEvents.lua")
+loadModule("Data/Events.lua")
 
 assert(#ns.BasicsData == 7)
 assert(ns.BasicsData[1].title == "XP CANNOT BE LOCKED")
@@ -22,6 +23,7 @@ assert(#ns.GuidesData.order == 3)
 assert(ns.GuidesData.sections.SUPPORT == nil)
 assert(#ns.ClassTiersData.classOrder == 9)
 assert(ns.PvPEventsData.brackets[19].contact.character == "Lovepotion")
+assert(#ns.EventTimersData.order == 5)
 for _, guideKey in ipairs(ns.GuidesData.order) do
     local guide = assert(ns.GuidesData.sections[guideKey])
     assert(type(guide.name) == "string" and guide.name ~= "")
@@ -172,8 +174,20 @@ for _, classToken in ipairs(ns.BisData.classOrder) do
     end
 end
 
-for _, excludedItemID in ipairs({ 835, 5634, 20745, 3030, 3033, 3464, 3465 }) do
+for _, excludedItemID in ipairs({ 835, 5634, 20745, 3030, 3033, 3465 }) do
     assert(ns.ConsumablesData.catalog[excludedItemID] == nil, "catalog includes an unavailable or level-20+ consumable " .. excludedItemID)
+end
+local featheredArrow = assert(ns.ConsumablesData.catalog[3464], "missing Feathered Arrow")
+assert(featheredArrow.requiredLevel == nil, "Feathered Arrow incorrectly has an item-use level requirement")
+assert(featheredArrow.wowhead == "https://www.wowhead.com/classic/item=3464")
+for _, classToken in ipairs({ "HUNTER", "ROGUE", "WARRIOR" }) do
+    local weapon = ns.ConsumablesData.classes[classToken].categories.WEAPON
+    local featheredIndex, sharpIndex
+    for index, recommendation in ipairs(weapon) do
+        if recommendation.itemID == 3464 then featheredIndex = index end
+        if recommendation.itemID == 2515 then sharpIndex = index end
+    end
+    assert(featheredIndex and sharpIndex and featheredIndex < sharpIndex, classToken .. " does not rank Feathered Arrow above Sharp Arrow")
 end
 for _, requiredKey in ipairs({ "arcanumConstitution", "arcanumRumination", "arcanumVoracityStrength", "arcanumVoracityAgility", "arcanumVoracityIntellect", "arcanumFocus", "arcanumProtection", "arcanumRapidity" }) do
     local entry = assert(ns.EnchantsData.catalog[requiredKey], "missing head/leg Arcanum " .. requiredKey)

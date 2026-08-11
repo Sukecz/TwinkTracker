@@ -64,10 +64,19 @@ weapon setup, random suffix or availability.
 - Bracket-specific space for up to three confirmed community battleground events
 - Clear empty state when no session is scheduled
 - Native Blizzard Horde and Alliance PvP icons on confirmed event rows
+- Prominent level-bracket label and an explicit instruction to queue for WSG during the listed time
+- Automatic WSG bonus-weekend countdown based on the Classic Era three-week rotation
 - Firemaw-cluster scope plus a live server-time countdown in days and hours
 - Copyable Firemaw EU Horde in-game contact for `Lovepotion`
 - Right-side copyable Discord profile for all realms when submitting a realm, bracket, battleground, date,
   start time with time zone, faction and organizer contact
+
+### Event Timers
+
+- Automatic cards for WSG, Stranglethorn Fishing, expected Gurubashi chest spawns,
+  Darkmoon Faire and the next tracked seasonal holiday
+- Server-time windows with countdowns to each start or live end
+- Automatic rollover to the following recurring event
 
 ### Automatic Exploration progress
 

@@ -1,0 +1,55 @@
+local addonName, ns = ...
+
+ns.EventTimersData = {
+    version = "2026-08-11",
+    order = { "WSG", "FISHING", "GURUBASHI", "DARKMOON", "SEASONAL" },
+    events = {
+        WSG = {
+            kind = "INTERVAL",
+            name = "WSG BONUS WEEKEND",
+            category = "PVP  •  CLASSIC ERA",
+            icon = "Interface\\Icons\\Spell_Misc_WarsongFocus",
+            anchor = { year=2026, month=1, day=16, hour=0, minute=1 },
+            endDayOffset = 4,
+            endHour = 7,
+            endMinute = 0,
+            frequencyDays = 21,
+            note = "Warsong Gulch bonus rewards are active throughout this server-time window.",
+        },
+        FISHING = {
+            kind = "INTERVAL",
+            name = "STRANGLETHORN FISHING EXTRAVAGANZA",
+            category = "FISHING  •  STRANGLETHORN VALE",
+            icon = "Interface\\Icons\\Trade_Fishing",
+            anchor = { year=2024, month=2, day=11, hour=14, minute=0 },
+            endDayOffset = 0,
+            endHour = 16,
+            endMinute = 0,
+            frequencyDays = 7,
+            note = "The weekly fishing contest runs on Sunday in server time.",
+        },
+        GURUBASHI = {
+            kind = "CLOCK",
+            name = "GURUBASHI ARENA CHEST",
+            category = "WORLD PVP  •  ARENA GRAND MASTER",
+            iconItemID = 18706,
+            frequencyHours = 3,
+            expectedWindowMinutes = 5,
+            note = "Expected spawn only; restarts and daylight-saving changes can temporarily shift the live realm cycle.",
+        },
+        DARKMOON = {
+            kind = "DARKMOON",
+            name = "DARKMOON FAIRE",
+            category = "MONTHLY  •  ELWYNN / MULGORE",
+            icon = "Interface\\Icons\\INV_Misc_Ticket_Darkmoon_01",
+            note = "Setup begins on the first Friday; the Faire opens the following Monday for one week.",
+        },
+        SEASONAL = {
+            kind = "SEASONAL",
+            name = "NEXT SEASONAL EVENT",
+            category = "CLASSIC ERA HOLIDAY",
+            icon = "Interface\\Icons\\INV_Misc_Gift_01",
+            note = "Shows the next tracked Classic Era holiday or its live time remaining.",
+        },
+    },
+}

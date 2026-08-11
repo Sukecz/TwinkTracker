@@ -19,6 +19,7 @@ assert(ns.PvPEventsData.brackets[19].events[1].startsAt == 1786802400 and ns.PvP
 assert(ns.PvPEventsData.brackets[19].events[2].startsAt == 1786888800 and ns.PvPEventsData.brackets[19].events[2].endsAt == 1786906800)
 for _, event in ipairs(ns.PvPEventsData.brackets[19].events) do
     assert(event.battleground == "WARSONG GULCH")
+    assert(event.queueLabel == "QUEUE FOR WSG")
     assert(event.realm == "FIREMAW CLUSTER" and event.scope == "ALL CONNECTED REALMS")
     assert(event.faction == "HORDE VS ALLIANCE")
     assert(event.time == "16:00-21:00 SERVER TIME")

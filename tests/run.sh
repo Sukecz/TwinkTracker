@@ -49,6 +49,8 @@ grep -Fq 'Data\BracketRegistry.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\PvPEvents.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'EventTimers.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\Events.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
@@ -93,11 +95,14 @@ grep -Fq 'self:CreateGearSectionButton(gear,"GEAR","GEAR",-216)' MainWindow.lua
 grep -Fq 'value:SetPoint("TOPRIGHT",x,-13)' MainWindow.lua
 grep -Fq 'self:CreateClassTiersPage(content)' MainWindow.lua
 grep -Fq 'self:CreatePvpPage(content)' MainWindow.lua
+grep -Fq 'self:CreateEventsPage(content)' MainWindow.lua
 grep -Fq 'https://discord.com/users/608587388184428544' Data/PvPEvents.lua
 grep -Fq 'Interface\\TargetingFrame\\UI-PVP-Horde' MainWindow.lua
 grep -Fq 'Interface\\TargetingFrame\\UI-PVP-Alliance' MainWindow.lua
 grep -Fq 'DISCORD PROFILE • ALL REALMS' MainWindow.lua
 grep -Fq 'BE READY FOR BATTLE!' MainWindow.lua
+grep -Fq 'WSG BONUS WEEKEND' MainWindow.lua
+grep -Fq '"EVENTS","EVENTS","TOPRIGHT",-180,100,-72' MainWindow.lua
 grep -Fq 'GetServerTime()' MainWindow.lua
 grep -Fq 'C_Timer.After' MainWindow.lua
 grep -Fq 'STARTS IN %dD %dH' MainWindow.lua

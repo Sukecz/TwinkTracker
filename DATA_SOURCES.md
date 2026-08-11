@@ -115,8 +115,10 @@ Rules for future changes:
 2. Never add a consumable above the selected bracket. Level 19 explicitly
    excludes Free Action Potion (5634), Minor Mana Oil (20745), Razor Arrow
    (3030) and Solid Shot (3033); those become valid in the level-29 profile.
-   Feathered Arrow (3464), Exploding Shot (3465), Crafted Solid Shot (8069) and
-   Lesser Wizard Oil (20746) require level 30 and are excluded from both.
+   Exploding Shot (3465), Crafted Solid Shot (8069) and Lesser Wizard Oil
+   (20746) require level 30 and are excluded from both. Feathered Arrow (3464)
+   is different: its acquisition quest requires level 30, but the transferable
+   ammunition itself has no use-level requirement and is valid at level 19.
 3. Distinguish a permanent enchant from a temporary weapon coating. Shaman
    weapon imbues replace oils/stones; a Druid's weapon damage does not improve
    Bear Form attacks; level-19 Rogue poisons and Warrior Dual Wield are absent.

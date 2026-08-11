@@ -46,8 +46,16 @@ game action.
   contact to `Lovepotion` by in-game mail on Firemaw EU Horde or, for every
   realm, through the copyable Discord profile
   `https://discord.com/users/608587388184428544`. Confirmed sessions use
-  Blizzard's native Horde and Alliance PvP icons, identify the full realm
-  cluster and show a live server-time countdown in days and hours.
+  Blizzard's native Horde and Alliance PvP icons, show a prominent bracket
+  label, explicitly tell players when to queue for WSG, identify the full realm
+  cluster and show a live server-time countdown in days and hours. A separate
+  automatic WSG bonus-weekend panel follows the Classic Era three-week rotation,
+  displaying the next server-time window or its live time remaining.
+- **Event Timers** — a separate automatic overview that intentionally repeats
+  the WSG bonus weekend beside the weekly Stranglethorn Fishing Extravaganza.
+  It also tracks expected Gurubashi Arena chest spawns, the monthly Darkmoon
+  Faire location and the next tracked seasonal holiday. Each card counts down
+  in server time and advances to the following occurrence automatically.
 - **Gear table** — the complete class build is visible as slot rows with compact
   40px icons and S/A/B columns. Equal same-tier choices are stacked vertically
   with identically sized icons and matching item-name styling; rows expand only

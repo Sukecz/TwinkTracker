@@ -14,8 +14,8 @@ end
 
 local validTier = { S=true, A=true, B=true, C=true }
 
-local function validate(data, expectedStatus)
-    assert(data.status == expectedStatus)
+local function validate(data)
+    assert(data.status == nil)
     assert(string.find(data.criteria,"OFFENSE",1,true))
     assert(string.find(data.criteria,"SURVIVAL",1,true))
     assert(string.find(data.criteria,"UTILITY",1,true))
@@ -34,8 +34,8 @@ local function validate(data, expectedStatus)
     end
 end
 
-validate(ns.ClassTiersData,"CURATED COMMUNITY OVERVIEW")
-validate(ns.Bracket29ClassTiersData,"CURATED COMMUNITY ESTIMATE")
+validate(ns.ClassTiersData)
+validate(ns.Bracket29ClassTiersData)
 assert(ns.ClassTiersData.classes.HUNTER.overall == "S")
 assert(ns.ClassTiersData.classes.PRIEST.overall == "S")
 assert(ns.ClassTiersData.classes.HUNTER.offense == 10)

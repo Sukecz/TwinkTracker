@@ -54,6 +54,7 @@ local catalog = {
     [20744]={name="Minor Wizard Oil",effect="8 spell damage for 30 min",requiredLevel=5,restrictions="Temporary weapon coating"},
     [2871]={name="Heavy Sharpening Stone",effect="4 damage to a sharp weapon for 30 min",requiredLevel=15,restrictions="Temporary weapon coating"},
     [3241]={name="Heavy Weightstone",effect="4 damage to a blunt weapon for 30 min",requiredLevel=15,restrictions="Temporary weapon coating"},
+    [3464]={name="Feathered Arrow",effect="9.5 ranged damage per second",restrictions="Top bow ammunition; the level-30 acquisition quest does not restrict use of the transferable arrows at level 19"},
     [2515]={name="Sharp Arrow",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Bow ammunition"},
     [2519]={name="Heavy Shot",effect="3.5 ranged damage per second",requiredLevel=10,restrictions="Gun ammunition"},
     [8068]={name="Crafted Heavy Shot",effect="4.5 ranged damage per second",requiredLevel=15,restrictions="Gun ammunition"},
@@ -190,7 +191,7 @@ addProfile("HUNTER", {
     ELIXIRS=physicalElixirs,
     SCROLLS={recommendation(3012,"CORE","ranged damage"),recommendation(955,"CORE","mana"),recommendation(1180,"OPTIONAL","survival"),recommendation(1478,"OPTIONAL","physical defense"),recommendation(1712,"OPTIONAL","regeneration")},
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
+    WEAPON={recommendation(2871,"OPTIONAL","sharp melee weapon"),recommendation(3241,"OPTIONAL","blunt melee weapon"),recommendation(3464,"CORE","best level-19 bow ammunition; obtain from another character or the Auction House"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
 })
 
 addProfile("MAGE", {
@@ -219,7 +220,7 @@ addProfile("ROGUE", {
     BANDAGES=bandage, FOOD_DRINK=physicalFood, POTIONS=physicalPotions,
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition")},
+    WEAPON={recommendation(2871,"CORE","dagger / sword"),recommendation(3241,"OPTIONAL","mace"),recommendation(3464,"CORE","best level-19 bow ammunition; obtain from another character or the Auction House"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition")},
     CLASS={recommendation(7676,"CORE","energy burst")},
 })
 
@@ -243,5 +244,5 @@ addProfile("WARRIOR", {
     POTIONS={recommendation(5631,"CORE","Rage burst"),recommendation(929,"CORE","emergency healing"),recommendation(2459,"CORE","mobility"),recommendation(3384,"OPTIONAL","all-school resistance"),recommendation(6048,"OPTIONAL","Shadow protection"),recommendation(6372,"OPTIONAL","world travel / escape")},
     ELIXIRS=physicalElixirs, SCROLLS=physicalScrolls,
     ENGINEERING=engineering, WORLD_UTILITY=worldUtility,
-    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(2515,"CORE","best legal bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
+    WEAPON={recommendation(2871,"CORE","sword / axe"),recommendation(3241,"CORE","mace"),recommendation(3464,"CORE","best level-19 bow ammunition; obtain from another character or the Auction House"),recommendation(2515,"ALTERNATIVE","vendor bow ammunition"),recommendation(8068,"CORE","best legal gun ammunition"),recommendation(2519,"ALTERNATIVE","vendor gun ammunition")},
 })

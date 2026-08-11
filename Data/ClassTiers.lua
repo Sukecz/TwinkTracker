@@ -6,7 +6,6 @@ end
 
 ns.ClassTiersData = {
     version = "2026-08-11",
-    status = "CURATED COMMUNITY OVERVIEW",
     intro = "A fast level-19 overview synthesized from Classic community guides and bracket discussions. Equal tiers are not ranked within the tier.",
     criteria = "OFFENSE = kill pressure   •   SURVIVAL = durability and escapes   •   UTILITY = control, healing, mobility and objectives",
     classOrder = ns.BisData.classOrder,
