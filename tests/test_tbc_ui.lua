@@ -7,12 +7,12 @@ end
 
 WOW_PROJECT_ID = 5
 WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
-C_AddOns = { GetAddOnMetadata = function() return "0.4.0" end }
+C_AddOns = { GetAddOnMetadata = function() return "0.4.1" end }
 
 for _, path in ipairs({
     "Client.lua", "Defaults.lua", "Data/Brackets.lua", "Data/Basics.lua", "Data/Bis.lua",
     "Data/Enchants.lua", "Data/Consumables.lua", "Data/Guides.lua", "Data/ClassTiers.lua",
-    "Data/PvPEvents.lua", "Data/Events.lua", "Data/Exploration.lua", "Data/BracketRegistry.lua",
+    "Data/PvPEvents.lua", "Data/Events.lua", "Data/TBC/Events.lua", "Data/Exploration.lua", "Data/BracketRegistry.lua",
     "Database.lua",
 }) do loadModule(path) end
 

@@ -80,6 +80,9 @@ Complete these checks in both an Era/Hardcore client and a TBC client:
    application rules before treating an expensive setup as obtainable.
 6. Confirm saved selection of the removed PvP page falls back to a valid page
    when entering TBC and remains stable through `/reload`.
+7. Confirm Event Timers shows the TBC battleground rotation rather than the Era
+   WSG cycle, rotates Darkmoon through Terokkar, and labels the footer/header as
+   Burning Crusade Classic.
 
 ## Release boundary
 

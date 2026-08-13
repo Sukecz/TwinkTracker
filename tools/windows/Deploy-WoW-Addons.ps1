@@ -2,7 +2,10 @@
 param(
     [string]$Server = "minipc",
     [string]$ProjectsRoot = "/home/msminipc/projects",
-    [string]$WowAddOnsPath = "C:\Games\World of Warcraft\_classic_era_\Interface\AddOns",
+    [string[]]$WowAddOnsPaths = @(
+        "C:\Games\World of Warcraft\_classic_era_\Interface\AddOns",
+        "C:\Games\World of Warcraft\_anniversary_\Interface\AddOns"
+    ),
     [switch]$NoPause
 )
 
@@ -20,7 +23,7 @@ $addons = @(
     [pscustomobject]@{ DisplayName="Simple Scrolling Loot"; ProjectDirectory="ssl"; AddonName="SimpleScrollingLoot"; PrimaryToc="SimpleScrollingLoot.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleScrollingLoot.toc","SimpleScrollingLoot_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\ssl.png") },
     [pscustomobject]@{ DisplayName="Better Loot Rolls"; ProjectDirectory="blr"; AddonName="BetterLootRolls"; PrimaryToc="BetterLootRolls.toc"; Directories=@("Locales","assets"); RequiredFiles=@("BetterLootRolls.toc","BetterLootRolls_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
     [pscustomobject]@{ DisplayName="Simple Arsenal Swap"; ProjectDirectory="sas"; AddonName="SimpleArsenalSwap"; PrimaryToc="SimpleArsenalSwap.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleArsenalSwap.toc","SimpleArsenalSwap_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
-    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","EventTimers.lua","Locales\enUS.lua","Data\Bis.lua","Data\ClassTiers.lua","Data\PvPEvents.lua","Data\Events.lua","Data\Brackets.lua","Data\BracketRegistry.lua","Data\Bracket29\ClassTiers.lua","Data\Bracket29\Register.lua","Data\Bracket39\ClassTiers.lua","Data\Bracket39\Register.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga","assets\bracket-19.tga","assets\bracket-29.tga","assets\bracket-39.tga") }
+    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","TwinkTracker_TBC.toc","Client.lua","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","EventTimers.lua","Locales\enUS.lua","Data\Bis.lua","Data\ClassTiers.lua","Data\PvPEvents.lua","Data\Events.lua","Data\Brackets.lua","Data\BracketRegistry.lua","Data\Bracket29\ClassTiers.lua","Data\Bracket29\Register.lua","Data\Bracket39\ClassTiers.lua","Data\Bracket39\Register.lua","Data\TBC\Base.lua","Data\TBC\Events.lua","Data\TBC\Register.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga","assets\bracket-19.tga","assets\bracket-29.tga","assets\bracket-39.tga") }
 )
 
 function Invoke-NativeCommand {
@@ -34,7 +37,9 @@ try {
     $scp = (Get-Command "scp.exe" -ErrorAction Stop).Source
     $tar = (Get-Command "tar.exe" -ErrorAction Stop).Source
     $robocopy = (Get-Command "robocopy.exe" -ErrorAction Stop).Source
-    if (-not (Test-Path -LiteralPath $WowAddOnsPath -PathType Container)) { throw "WoW AddOns folder does not exist: $WowAddOnsPath" }
+    foreach ($wowAddOnsPath in $WowAddOnsPaths) {
+        if (-not (Test-Path -LiteralPath $wowAddOnsPath -PathType Container)) { throw "WoW AddOns folder does not exist: $wowAddOnsPath" }
+    }
 
     Write-Host "1/3 Testing and preparing all addons on MINIPC..." -ForegroundColor Cyan
     $testCommands = @()
@@ -66,16 +71,19 @@ try {
         $versions[$addon.AddonName] = $match.Groups[1].Value.Trim()
     }
 
-    Write-Host "3/3 Synchronizing all addon folders..." -ForegroundColor Cyan
-    foreach ($addon in $addons) {
-        $source = Join-Path $stageRoot $addon.AddonName
-        $destination = Join-Path $WowAddOnsPath $addon.AddonName
-        New-Item -ItemType Directory -Path $destination -Force | Out-Null
-        Write-Host "  Updating $($addon.DisplayName) $($versions[$addon.AddonName])..." -ForegroundColor DarkCyan
-        & $robocopy $source $destination /MIR /R:2 /W:1 /NFL /NDL /NJH /NJS /NP
-        if ($LASTEXITCODE -ge 8) { throw "Robocopy failed while updating $destination (exit code $LASTEXITCODE)" }
+    Write-Host "3/3 Synchronizing all addon folders to Era and TBC..." -ForegroundColor Cyan
+    foreach ($wowAddOnsPath in $WowAddOnsPaths) {
+        Write-Host "  Target: $wowAddOnsPath" -ForegroundColor DarkCyan
+        foreach ($addon in $addons) {
+            $source = Join-Path $stageRoot $addon.AddonName
+            $destination = Join-Path $wowAddOnsPath $addon.AddonName
+            New-Item -ItemType Directory -Path $destination -Force | Out-Null
+            Write-Host "    Updating $($addon.DisplayName) $($versions[$addon.AddonName])..." -ForegroundColor DarkCyan
+            & $robocopy $source $destination /MIR /R:2 /W:1 /NFL /NDL /NJH /NJS /NP
+            if ($LASTEXITCODE -ge 8) { throw "Robocopy failed while updating $destination (exit code $LASTEXITCODE)" }
+        }
     }
-    Write-Host "All four addons are up to date. Enter /reload in WoW." -ForegroundColor Green
+    Write-Host "All four addons are up to date in Classic Era and Burning Crusade Classic. Enter /reload in WoW." -ForegroundColor Green
 }
 catch { $exitCode = 1; Write-Host ""; Write-Host "Deployment failed: $($_.Exception.Message)" -ForegroundColor Red }
 finally {

@@ -41,6 +41,7 @@ grep -qx '## AllowLoadGameType: tbc' TwinkTracker_TBC.toc
 test "$(sed -n 's/^## Version: //p' TwinkTracker.toc)" = "$(sed -n 's/^## Version: //p' TwinkTracker_TBC.toc)"
 test -f tools/windows/Deploy-WoW-Addons.cmd
 test -f tools/windows/Deploy-WoW-Addons.ps1
+test -f tools/windows/Run-From-MINIPC.ps1
 test -f assets/logo.png
 test -f assets/logo.tga
 test -f assets/minimap-icon-source.png
@@ -62,6 +63,12 @@ grep -Fq 'EventTimers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Events.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket39\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\TBC\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\TBC\Events.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'TwinkTracker_TBC.toc' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq '_classic_era_\Interface\AddOns' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq '_anniversary_\Interface\AddOns' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'foreach ($wowAddOnsPath in $WowAddOnsPaths)' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'tar -czf' tools/windows/Deploy-WoW-Addons.ps1

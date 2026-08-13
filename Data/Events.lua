@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 ns.EventTimersData = {
-    version = "2026-08-11",
+    version = "2026-08-13",
     order = { "WSG", "FISHING", "GURUBASHI", "DARKMOON", "SEASONAL" },
     events = {
         WSG = {
@@ -42,6 +42,8 @@ ns.EventTimersData = {
             name = "DARKMOON FAIRE",
             category = "MONTHLY  •  ELWYNN / MULGORE",
             icon = "Interface\\Icons\\INV_Misc_Ticket_Darkmoon_01",
+            locations = { "ELWYNN FOREST", "MULGORE" },
+            locationAnchor = { year=2026, month=7, index=1 },
             note = "Setup begins on the first Friday; the Faire opens the following Monday for one week.",
         },
         SEASONAL = {
@@ -49,6 +51,18 @@ ns.EventTimersData = {
             name = "NEXT SEASONAL EVENT",
             category = "CLASSIC ERA HOLIDAY",
             icon = "Interface\\Icons\\INV_Misc_Gift_01",
+            holidays = {
+                { name="NEW YEAR", icon="Interface\\Icons\\INV_Drink_05", start={12,31,6,0}, finish={1,1,6,0}, crossesYear=true },
+                { name="LUNAR FESTIVAL", icon="Interface\\Icons\\INV_Misc_ElvenCoins", lunar=true },
+                { name="LOVE IS IN THE AIR", icon="Interface\\Icons\\INV_ValentinesCandy", start={2,9,0,1}, finish={2,15,23,59} },
+                { name="NOBLEGARDEN", icon="Interface\\Icons\\INV_Egg_03", knownYears={ [2026]={{4,5,0,1},{4,6,0,0}} } },
+                { name="CHILDREN'S WEEK", icon="Interface\\Icons\\INV_Misc_Toy_04", knownYears={ [2026]={{4,27,0,1},{5,4,10,0}} } },
+                { name="MIDSUMMER FIRE FESTIVAL", icon="Interface\\Icons\\INV_SummerFest_FireSpirit", start={6,21,9,0}, finish={7,5,23,59} },
+                { name="HARVEST FESTIVAL", icon="Interface\\Icons\\INV_Misc_Food_10", knownYears={ [2026]={{9,21,0,1},{9,28,23,59}} } },
+                { name="BREWFEST", icon="Interface\\Icons\\INV_Drink_08", start={9,20,0,1}, finish={10,6,23,59} },
+                { name="HALLOW'S END", icon="Interface\\Icons\\INV_Misc_Bag_28_Halloween", start={10,18,9,0}, finish={11,1,23,59} },
+                { name="FEAST OF WINTER VEIL", icon="Interface\\Icons\\INV_Holiday_Christmas_Present_01", start={12,15,9,0}, finish={1,2,23,59}, crossesYear=true },
+            },
             note = "Shows the next tracked Classic Era holiday or its live time remaining.",
         },
     },

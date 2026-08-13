@@ -25,6 +25,12 @@ count.
 - [Wowhead TBC First Aid route](https://www.wowhead.com/tbc/guide/first-aid-leveling-1-375)
 - [Wowhead TBC Engineering route](https://www.wowhead.com/tbc/guide/professions/engineering-leveling-1-375)
 - [Wowhead TBC Jewelcrafting recipes](https://www.wowhead.com/tbc/guide/jewelcrafting-recipes-locations-1-300-burning-crusade-classic)
+- [Blizzard TBC hotfixes: corrected monthly Darkmoon schedule](https://us.forums.blizzard.com/en/wow/t/the-burning-crusade-hotfixes-updated-june-22/2227871/169)
+- [Wowhead TBC Darkmoon Faire locations and opening rule](https://www.wowhead.com/tbc/guide/darkmoon-faire-event-trinkets-buffs-burning-crusade-classic)
+- [Blizzard 2026 Children's Week dates and Classic availability](https://worldofwarcraft.blizzard.com/en-gb/news/24276749)
+- [Blizzard Brewfest dates](https://worldofwarcraft.blizzard.com/en-us/news/7237858/brewfest)
+- [Wowhead 2026 TBC Midsummer dates](https://www.wowhead.com/tbc/news/the-midsummer-fire-festival-burns-until-july-5th-the-burning-crusade-anniversary-381943)
+- [Wowhead TBC holiday guides and current Anniversary news](https://www.wowhead.com/tbc/news)
 - Individual TBC item and spell pages linked by every real entry.
 
 Historical XPOff, Wowhead forum, Reddit and video gear sets are secondary
@@ -68,3 +74,8 @@ separately.
 8. TBC class tiers are separate community estimates. Equal tiers are never
    ordered internally, and talent availability is checked against the bracket
    level.
+9. TBC event timing is not inherited from Classic Era. The battleground card
+   follows the current four-event Anniversary rotation, Darkmoon includes its
+   Terokkar stop, and all ten period holidays are tracked. Blizzard can apply
+   exceptional or emergency calendar changes, so future dates remain planning
+   estimates until confirmed in the live client or an official announcement.

@@ -2,6 +2,25 @@
 
 All notable changes are documented here.
 
+## 0.4.1 - 2026-08-13
+
+### Added
+
+- Added a dedicated TBC Anniversary event profile with the four-week Warsong
+  Gulch, Arathi Basin, Alterac Valley and Eye of the Storm bonus rotation.
+- Added New Year, Love is in the Air, Noblegarden, Children's Week, Harvest
+  Festival and Brewfest to the seasonal tracker alongside the four existing
+  holidays.
+
+### Changed
+
+- Extended the shared Windows deployment helper to validate and synchronize
+  all four local addons into both Classic Era and Burning Crusade Classic.
+- Corrected Darkmoon Faire to open on the first Monday and added the TBC
+  Elwynn, Mulgore and Terokkar location rotation.
+- Made the Event Timers heading client-aware and kept uncertain future holiday
+  dates explicitly described as planning estimates.
+
 ## 0.4.0 - 2026-08-13
 
 ### Added

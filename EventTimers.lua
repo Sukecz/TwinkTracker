@@ -101,6 +101,18 @@ local function intervalStatus(schedule,now)
     return statusFromWindow(schedule,now,start,finish)
 end
 
+local function rotationStatus(schedule,now)
+    local anchor=calendarSeconds(schedule.anchor)
+    local frequency=schedule.frequencyDays*DAY_SECONDS
+    local cycle=math.floor((now-anchor)/frequency)
+    if cycle<0 then cycle=0 end
+    local start=anchor+cycle*frequency
+    local finish=start+schedule.durationDays*DAY_SECONDS
+    if now>=finish then cycle=cycle+1; start=start+frequency; finish=start+schedule.durationDays*DAY_SECONDS end
+    local entry=schedule.rotation[(cycle%#schedule.rotation)+1]
+    return statusFromWindow(schedule,now,start,finish,{ name=entry.name, icon=entry.icon, iconItemID=entry.iconItemID })
+end
+
 local function clockStatus(schedule,now)
     local frequency=schedule.frequencyHours*3600
     local elapsed=now%frequency
@@ -128,8 +140,8 @@ end
 
 local function darkmoonWindow(year,month)
     local firstDay=civilDayNumber(year,month,1)
-    local firstFridayOffset=(2-(firstDay%7)+7)%7
-    local startDay=firstDay+firstFridayOffset+3
+    local firstMondayOffset=(5-(firstDay%7)+7)%7
+    local startDay=firstDay+firstMondayOffset
     return startDay*DAY_SECONDS+60,(startDay+6)*DAY_SECONDS+23*3600+59*60
 end
 
@@ -137,21 +149,34 @@ local function darkmoonStatus(schedule,now,calendar)
     local year,month=calendar.year,calendar.month
     local start,finish=darkmoonWindow(year,month)
     if now>=finish then year,month=nextMonth(year,month); start,finish=darkmoonWindow(year,month) end
-    local location=month%2==1 and "ELWYNN FOREST" or "MULGORE"
+    local anchor=schedule.locationAnchor or { year=2026, month=7, index=1 }
+    local monthOffset=(year-anchor.year)*12+(month-anchor.month)
+    local location=schedule.locations[((anchor.index-1+monthOffset)%#schedule.locations)+1]
     return statusFromWindow(schedule,now,start,finish,{ category="MONTHLY  •  "..location, note="The Faire is currently scheduled for "..location.."." })
 end
 
-local function seasonalWindows(year)
-    local values = {
-        { name="MIDSUMMER FIRE FESTIVAL", icon="Interface\\Icons\\INV_SummerFest_FireSpirit", start={year,6,21,9,0}, finish={year,7,5,23,59} },
-        { name="HALLOW'S END", icon="Interface\\Icons\\INV_Misc_Bag_28_Halloween", start={year,10,18,9,0}, finish={year,11,1,23,59} },
-        { name="FEAST OF WINTER VEIL", icon="Interface\\Icons\\INV_Holiday_Christmas_Present_01", start={year,12,15,9,0}, finish={year+1,1,2,23,59} },
-    }
-    local lunar=LUNAR_NEW_YEAR[year]
-    if lunar then
-        local newYearDay=civilDayNumber(year,lunar[1],lunar[2])
-        local startDate=civilDate(newYearDay-1); local endDate=civilDate(newYearDay+13)
-        values[#values+1]={ name="LUNAR FESTIVAL", icon="Interface\\Icons\\INV_Misc_ElvenCoins", start={startDate.year,startDate.month,startDate.day,9,0}, finish={endDate.year,endDate.month,endDate.day,23,59} }
+local function seasonalWindows(schedule,year)
+    local values={}
+    for _,definition in ipairs(schedule.holidays or {}) do
+        local startParts,finishParts
+        if definition.lunar then
+            local lunar=LUNAR_NEW_YEAR[year]
+            if lunar then
+                local newYearDay=civilDayNumber(year,lunar[1],lunar[2])
+                local startDate=civilDate(newYearDay-1); local endDate=civilDate(newYearDay+13)
+                startParts={startDate.year,startDate.month,startDate.day,9,0}
+                finishParts={endDate.year,endDate.month,endDate.day,23,59}
+            end
+        elseif definition.knownYears and definition.knownYears[year] then
+            local known=definition.knownYears[year]
+            startParts={year,known[1][1],known[1][2],known[1][3],known[1][4]}
+            finishParts={year,known[2][1],known[2][2],known[2][3],known[2][4]}
+        elseif definition.start then
+            startParts={year,definition.start[1],definition.start[2],definition.start[3],definition.start[4]}
+            local finishYear=definition.crossesYear and year+1 or year
+            finishParts={finishYear,definition.finish[1],definition.finish[2],definition.finish[3],definition.finish[4]}
+        end
+        if startParts then values[#values+1]={ name=definition.name, icon=definition.icon, start=startParts, finish=finishParts } end
     end
     return values
 end
@@ -163,14 +188,14 @@ end
 local function seasonalStatus(schedule,now,calendar)
     local candidates={}
     for year=calendar.year-1,calendar.year+1 do
-        for _,event in ipairs(seasonalWindows(year)) do
+        for _,event in ipairs(seasonalWindows(schedule,year)) do
             event.startSeconds=partsSeconds(event.start); event.finishSeconds=partsSeconds(event.finish)
             if now<event.finishSeconds then candidates[#candidates+1]=event end
         end
     end
     table.sort(candidates,function(a,b) return a.startSeconds<b.startSeconds end)
     local event=candidates[1]
-    for _,candidate in ipairs(candidates) do if now>=candidate.startSeconds and now<candidate.finishSeconds then event=candidate; break end end
+    for _,candidate in ipairs(candidates) do if now>=candidate.startSeconds and now<candidate.finishSeconds then event=candidate end end
     return statusFromWindow(schedule,now,event.startSeconds,event.finishSeconds,{ name=event.name, category="NEXT SEASONAL EVENT", icon=event.icon })
 end
 
@@ -180,6 +205,7 @@ function EventTimers:GetStatus(key,calendar)
     calendar=calendar or currentServerCalendar()
     local now=calendarSeconds(calendar)
     if schedule.kind=="INTERVAL" then return intervalStatus(schedule,now) end
+    if schedule.kind=="ROTATION" then return rotationStatus(schedule,now) end
     if schedule.kind=="CLOCK" then return clockStatus(schedule,now) end
     if schedule.kind=="DARKMOON" then return darkmoonStatus(schedule,now,calendar) end
     if schedule.kind=="SEASONAL" then return seasonalStatus(schedule,now,calendar) end

@@ -46,8 +46,11 @@ Classic Era and Hardcore also retain the **PvP Events** page for confirmed
 community battleground sessions and the Era WSG bonus-weekend estimate. This
 page is intentionally absent in Burning Crusade Classic because the bundled
 Era schedule and Firemaw community announcements must not be presented as TBC
-events. The separate recurring **Event Timers** overview remains a planning
-estimate and should always be checked against the live client.
+events. The separate recurring **Event Timers** overview loads an independent
+TBC profile: the WSG/AB/AV/Eye of the Storm bonus rotation, the three-location
+Darkmoon Faire, weekly fishing, Gurubashi and the complete set of TBC-era
+seasonal holidays. It remains a planning aid and emergency Blizzard calendar
+changes should always be checked against the live client.
 
 ## Automatic client support
 
@@ -102,5 +105,6 @@ TBC checks do not replace live-client validation of UI geometry, event timing,
 realm availability or protected game behavior.
 
 Releases are packaged for CurseForge project `1644210` by the repository
-release workflow. The existing shared Windows helper deploys only to the
-Classic Era client and preserves SavedVariables; it does not deploy TBC.
+release workflow. The shared Windows helper deploys all four local addons to
+both the Classic Era and Burning Crusade Classic clients while preserving
+SavedVariables.

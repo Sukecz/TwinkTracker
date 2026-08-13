@@ -13,17 +13,17 @@ local function loadClient(projectID, version)
     return ns.Client
 end
 
-local era = loadClient(2, "0.4.0")
+local era = loadClient(2, "0.4.1")
 assert(era.key == "ERA")
 assert(era.label == "CLASSIC ERA")
-assert(era:GetDisplayText() == "CLASSIC ERA 0.4.0")
+assert(era:GetDisplayText() == "CLASSIC ERA 0.4.1")
 assert(era:IsPageAvailable("PVP"))
 assert(era:IsPageAvailable("GEAR"))
 
-local tbc = loadClient(5, "0.4.0")
+local tbc = loadClient(5, "0.4.1")
 assert(tbc.key == "TBC")
 assert(tbc.label == "BURNING CRUSADE CLASSIC")
-assert(tbc:GetDisplayText() == "BURNING CRUSADE CLASSIC 0.4.0")
+assert(tbc:GetDisplayText() == "BURNING CRUSADE CLASSIC 0.4.1")
 assert(not tbc:IsPageAvailable("PVP"))
 assert(tbc:IsPageAvailable("GEAR"))
 

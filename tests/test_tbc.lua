@@ -16,7 +16,7 @@ for _, path in ipairs({
     "Data/Bracket39/BisPaladinPriestRogue.lua", "Data/Bracket39/BisShamanWarlockWarrior.lua",
     "Data/Bracket39/Enchants.lua", "Data/Bracket39/Consumables.lua", "Data/Bracket39/Basics.lua",
     "Data/Bracket39/Guides.lua", "Data/Bracket39/ClassTiers.lua", "Data/Bracket39/Exploration.lua",
-    "Data/Bracket39/Register.lua", "Data/TBC/Base.lua", "Data/TBC/Systems.lua",
+    "Data/Bracket39/Register.lua", "Data/TBC/Base.lua", "Data/TBC/Systems.lua", "Data/TBC/Events.lua",
     "Data/TBC/GearDruidHunterMage.lua", "Data/TBC/GearPaladinPriestRogue.lua",
     "Data/TBC/GearShamanWarlockWarrior.lua", "Data/TBC/ClassTiers.lua", "Data/TBC/Register.lua",
 }) do loadModule(path) end
@@ -136,6 +136,7 @@ end
 assert(changedCount > 0, "TBC audit contains no concrete gear changes")
 assert(hasAllianceShaman, "TBC data has no Alliance Shaman route")
 assert(hasHordePaladin, "TBC data has no Horde Paladin route")
-assert(ns.EventTimersData.events.WSG.category == "PVP  •  BURNING CRUSADE CLASSIC")
+assert(ns.EventTimersData.events.BATTLEGROUND.category == "PVP  •  BURNING CRUSADE CLASSIC")
+assert(ns.EventTimersData.events.WSG == nil)
 
 print("test_tbc.lua: ok")

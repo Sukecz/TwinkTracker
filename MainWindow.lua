@@ -521,7 +521,7 @@ end
 function MainWindow:CreateEventsPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.EVENTS=page
     local heading=label(page,"GameFontNormalHuge","EVENT TIMERS",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","Automatic recurring Classic Era schedules shown in server time.",C.muted); intro:SetPoint("TOPLEFT",7,-36)
+    local intro=label(page,"GameFontNormalSmall","Automatic recurring "..ns.Client.label.." schedules shown in server time.",C.muted); intro:SetPoint("TOPLEFT",7,-36)
     for index,key in ipairs(ns.EventTimersData.order) do
         local data=ns.EventTimersData.events[key]
         local card=frame(page); local row=math.floor((index-1)/2); local y=-64-row*110

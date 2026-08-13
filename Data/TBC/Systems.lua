@@ -114,16 +114,6 @@ local function addJewelcraftingGuide(bracket, level)
     guide.order[#guide.order + 1] = "JEWELCRAFTING"
 end
 
-if ns.EventTimersData then
-    for _, event in pairs(ns.EventTimersData.events) do
-        event.category = string.gsub(event.category or "", "CLASSIC ERA", "BURNING CRUSADE CLASSIC")
-    end
-    local wsg = ns.EventTimersData.events.WSG
-    if wsg then
-        wsg.note = "The recurring window is a planning estimate for TBC. Confirm the live in-client calendar before relying on bonus rewards."
-    end
-end
-
 for _, level in ipairs(ns.Brackets.order) do
     local bracket = TBC:GetBracket(level)
     addJewelcraftingGuide(bracket, level)
