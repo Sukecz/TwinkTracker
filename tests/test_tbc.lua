@@ -64,6 +64,13 @@ for _, level in ipairs({ 19, 29, 39 }) do
     assert(string.find(data.basicsIntro, "Burning Crusade Classic", 1, true))
     assert(data.enchants.sources and #data.enchants.sources >= 2)
     assert(data.enchants.catalog.tbcBoarsSpeed and data.enchants.catalog.tbcNethercleft)
+    for _, guideKey in ipairs(data.guides.order) do
+        local hasShoppingList = false
+        for _, guideStep in ipairs(data.guides.sections[guideKey].steps) do
+            if string.find(guideStep.title, "SHOPPING LIST", 1, true) then hasShoppingList = true end
+        end
+        assert(hasShoppingList, "TBC " .. level .. " " .. guideKey .. " is missing a shopping list")
+    end
 
     if level == 19 then
         assertTBCEnchantFallback(data.enchants.classes.MAGE, "CHEST", "19 MAGE Inferno Robe")

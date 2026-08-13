@@ -84,11 +84,26 @@ end
 local function addJewelcraftingGuide(bracket, level)
     local guide = bracket.guides
     local cap = level == 19 and 150 or (level == 29 and 225 or 300)
+    local shoppingLines = {
+        guideLine("COPPER", "120x Copper Bar and 20x Tigerseye or Malachite."),
+        guideLine("BRONZE", "100x Bronze Bar, 20x Small Lustrous Pearl and 20x Shadowgem."),
+        guideLine("STONE", "200x Heavy Stone and 20x Moss Agate."),
+        guideLine("BUFFER", "These are route totals; buy extra materials if yellow recipes do not grant enough skill points."),
+    }
+    if cap >= 225 then
+        table.insert(shoppingLines, 4, guideLine("MITHRIL", "90x Mithril Bar, 80x Solid Stone and 15x Truesilver Bar."))
+        table.insert(shoppingLines, 5, guideLine("EXPERT GEMS", "10x Citrine, 20x Elemental Water, 45x Aquamarine and 60x Flask of Mojo."))
+    end
+    if cap >= 300 then
+        table.insert(shoppingLines, #shoppingLines, guideLine("THORIUM", "50x Thorium Bar, 10x Star Ruby and 20x Large Opal."))
+        table.insert(shoppingLines, #shoppingLines, guideLine("FINAL GEMS", "5x Azerothian Diamond, 5x Blue Sapphire, 5x Essence of Undeath and 20x Huge Emerald."))
+    end
     guide.version = "2026-08-13-tbc"
     guide.sections.JEWELCRAFTING = {
         name = "Jewelcrafting",
         tagline = "TBC-only jewelry and self-crafted Bind-on-Pickup healing statues.",
         steps = {
+            guideStep("SHOPPING LIST TO " .. cap, shoppingLines),
             guideStep("TRAIN AND PLAN", {
                 guideLine("TRAINERS", "Learn Jewelcrafting in Silvermoon City or the Exodar; keep Mining only if it fits the final profession plan."),
                 guideLine("CAP", "This bracket route stops at skill " .. cap .. ". Do not assume a higher-rank recipe is usable without checking the character-level profession gate."),

@@ -24,13 +24,21 @@ assert(ns.GuidesData.sections.SUPPORT == nil)
 assert(#ns.ClassTiersData.classOrder == 9)
 assert(ns.PvPEventsData.brackets[19].contact.character == "Lovepotion")
 assert(#ns.EventTimersData.order == 5)
+local function hasGuideStep(guide, title)
+    for _, guideStep in ipairs(guide.steps) do
+        if guideStep.title == title then return true end
+    end
+    return false
+end
 for _, guideKey in ipairs(ns.GuidesData.order) do
     local guide = assert(ns.GuidesData.sections[guideKey])
     assert(type(guide.name) == "string" and guide.name ~= "")
     assert(#guide.steps >= 3 and #guide.items >= 3)
     local guideItemsByID = {}
+    local hasShoppingList = false
     for _, guideItem in ipairs(guide.items) do guideItemsByID[guideItem.id] = true end
     for _, guideStep in ipairs(guide.steps) do
+        if string.find(guideStep.title, "SHOPPING LIST", 1, true) then hasShoppingList = true end
         assert(type(guideStep.title) == "string" and guideStep.title ~= "")
         assert(type(guideStep.lines) == "table" and #guideStep.lines >= 2)
         for _, guideLine in ipairs(guideStep.lines) do
@@ -42,6 +50,7 @@ for _, guideKey in ipairs(ns.GuidesData.order) do
             end
         end
     end
+    assert(hasShoppingList, guideKey .. " is missing a shopping list")
     for _, guideItem in ipairs(guide.items) do
         assert(type(guideItem.id) == "number" and guideItem.id > 0)
         assert(type(guideItem.name) == "string" and guideItem.name ~= "")
@@ -50,7 +59,8 @@ for _, guideKey in ipairs(ns.GuidesData.order) do
 end
 assert(#ns.GuidesData.sections.FIRST_AID.steps >= 8)
 assert(#ns.GuidesData.sections.FIRST_AID.items >= 17)
-assert(ns.GuidesData.sections.FIRST_AID.steps[2].lines[1].itemIDs[1] == 1251)
+assert(hasGuideStep(ns.GuidesData.sections.FIRST_AID, "SHOPPING LIST 1-125"))
+assert(hasGuideStep(ns.GuidesData.sections.FIRST_AID, "SHOPPING LIST 125-225"))
 local firstAidText = ""
 for _, guideStep in ipairs(ns.GuidesData.sections.FIRST_AID.steps) do
     for _, guideLine in ipairs(guideStep.lines) do firstAidText = firstAidText .. " " .. guideLine.text end
@@ -66,7 +76,7 @@ local engineeringText = ""
 for _, guideStep in ipairs(ns.GuidesData.sections.ENGINEERING.steps) do
     for _, guideLine in ipairs(guideStep.lines) do engineeringText = engineeringText .. " " .. guideLine.text end
 end
-for _, requiredText in ipairs({ "60 Rough Stone", "66 Copper Bar", "50 Linen Cloth", "60 Coarse Stone", "5 Silver Bar", "60 Bronze Bar", "25 Weak Flux", "10 Moss Agate", "30 Heavy Stone", "5 Wool Cloth", "character level 20" }) do
+for _, requiredText in ipairs({ "60x Rough Stone", "66x Copper Bar", "50x Linen Cloth", "60x Coarse Stone", "5x Silver Bar", "80x Bronze Bar", "25x Weak Flux", "10x Moss Agate", "30x Heavy Stone", "15x Wool Cloth", "about 15x Whirring Bronze Gizmo", "character level 20" }) do
     assert(string.find(engineeringText, requiredText, 1, true), "Engineering progression is missing " .. requiredText)
 end
 local alternativeCount = 0

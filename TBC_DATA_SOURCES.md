@@ -24,6 +24,7 @@ count.
 - [Golden Spellthread tooltip and period comments](https://www.wowhead.com/tbc/item=24276/golden-spellthread)
 - [Wowhead TBC First Aid route](https://www.wowhead.com/tbc/guide/first-aid-leveling-1-375)
 - [Wowhead TBC Engineering route](https://www.wowhead.com/tbc/guide/professions/engineering-leveling-1-375)
+- [Wowhead TBC Jewelcrafting 1-300 route](https://www.wowhead.com/tbc/guide/jewelcrafting-leveling-1-300-burning-crusade-classic)
 - [Wowhead TBC Jewelcrafting recipes](https://www.wowhead.com/tbc/guide/jewelcrafting-recipes-locations-1-300-burning-crusade-classic)
 - [Blizzard TBC hotfixes: corrected monthly Darkmoon schedule](https://us.forums.blizzard.com/en/wow/t/the-burning-crusade-hotfixes-updated-june-22/2227871/169)
 - [Wowhead TBC Darkmoon Faire locations and opening rule](https://www.wowhead.com/tbc/guide/darkmoon-faire-event-trinkets-buffs-burning-crusade-classic)

@@ -2,6 +2,17 @@
 
 All notable changes are documented here.
 
+## 0.4.2 - 2026-08-13
+
+### Changed
+
+- Added explicit shopping lists to every First Aid, Fishing, Engineering and
+  TBC Jewelcrafting guide across the level-19, level-29 and level-39 profiles.
+- Split the First Aid cloth totals into clear 1-125 and 125-225 segments.
+- Corrected the level-19 Engineering 1-150 route to require 80x Bronze Bar,
+  15x Wool Cloth and about 15x saved Whirring Bronze Gizmo.
+- Standardized every profession-guide item quantity as `Nx Item Name`.
+
 ## 0.4.1 - 2026-08-13
 
 ### Added

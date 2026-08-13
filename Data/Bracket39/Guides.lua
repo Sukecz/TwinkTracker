@@ -12,11 +12,17 @@ ns.Bracket39GuidesData = {
             name = "First Aid",
             tagline = "Reach Artisan 300 at level 35 and self-craft the strongest Classic bandage.",
             steps = {
+                step("SHOPPING LIST 1-225",{
+                    line("1-125","160-180x Linen Cloth and 100-120x Wool Cloth.",{2589,2592}),
+                    line("125-225","100-120x Wool Cloth, 140-160x Silk Cloth and 20x Mageweave Cloth.",{2592,4306,4338}),
+                    line("BOOKS","Buy Expert First Aid - Under Wraps and both bandage manuals before starting the Expert segment.",{16084,16112,16113}),
+                    line("ALLOWANCE","The ranges include extra cloth for yellow and green skill-up variance."),
+                }),
                 step("REACH EXPERT 225",{
                     line("1-125","Use Linen and Wool Bandages, then read Expert First Aid - Under Wraps at skill 125.",{2589,2592,16084}),
                     line("125-180","Craft Heavy Wool and Silk Bandages; read the Heavy Silk manual at 180.",{3531,6450,16112}),
                     line("180-225","Craft Heavy Silk, read the Mageweave manual at 210 and finish with Mageweave Bandages.",{6451,16113,8544}),
-                    line("BOOKS","Alliance buys the three BoE books from Deneb Walker in Stromgarde; Horde uses Balai Lok'Wein in Brackenwall."),
+                    line("BOOKS","Alliance buys all 3x BoE book from Deneb Walker in Stromgarde; Horde uses Balai Lok'Wein in Brackenwall."),
                 }),
                 step("UNLOCK ARTISAN AT LEVEL 35",{
                     line("REQUIREMENT","Reach character level 35 and First Aid 225 before the faction Triage quest."),
@@ -25,12 +31,17 @@ ns.Bracket39GuidesData = {
                     line("TRIAGE","Save 15 patients before 6 die; prioritize Critically Injured, then Badly Injured, then Injured."),
                     line("XP SAFETY","The quest and travel award XP. Complete them with a planned buffer before the final level."),
                 }),
+                step("SHOPPING LIST 225-300",{
+                    line("MAGEWEAVE","80-100x Mageweave Cloth.",{4338}),
+                    line("RUNE","80-100x Runecloth.",{14047}),
+                    line("ALLOWANCE","The ranges include extra cloth for yellow and green skill-up variance."),
+                }),
                 step("SKILL 225-300",{
-                    line("225-240","Craft about 15 Mageweave Bandages.",{8544,4338}),
-                    line("240-260","Train and craft about 20 Heavy Mageweave Bandages.",{8545,4338}),
-                    line("260-290","Train and craft about 30 Runecloth Bandages.",{14529,14047}),
-                    line("290-300","Train and craft about 10 Heavy Runecloth Bandages.",{14530,14047}),
-                    line("BUFFER","Plan 80-100 Mageweave Cloth and 80-100 Runecloth for skill-up variance.",{4338,14047}),
+                    line("225-240","Craft about 15x Mageweave Bandage.",{8544,4338}),
+                    line("240-260","Train and craft about 20x Heavy Mageweave Bandage.",{8545,4338}),
+                    line("260-290","Train and craft about 30x Runecloth Bandage.",{14529,14047}),
+                    line("290-300","Train and craft about 10x Heavy Runecloth Bandage.",{14530,14047}),
+                    line("BUFFER","Plan 80-100x Mageweave Cloth and 80-100x Runecloth for skill-up variance.",{4338,14047}),
                 }),
                 step("COMBAT USE",{
                     line("BEST","Heavy Runecloth Bandage heals 2000 over 8 seconds and is now self-craftable.",{14530}),
@@ -45,6 +56,7 @@ ns.Bracket39GuidesData = {
                 item(16113,"Manual: Mageweave Bandage","BoE book used at First Aid 210."),
                 item(2589,"Linen Cloth","Early First Aid material."),
                 item(2592,"Wool Cloth","Early First Aid material."),
+                item(4306,"Silk Cloth","Expert First Aid material."),
                 item(3531,"Heavy Wool Bandage","Leveling craft for the Expert transition."),
                 item(6450,"Silk Bandage","Expert leveling bandage."),
                 item(6451,"Heavy Silk Bandage","Expert leveling and combat bandage."),
@@ -62,6 +74,13 @@ ns.Bracket39GuidesData = {
             name = "Fishing",
             tagline = "Complete the dangerous Artisan quest at level 35 and reach the 300 cap before level 39.",
             steps = {
+                step("SHOPPING LIST TO 300",{
+                    line("POLE","Buy 1x Fishing Pole; replace it with 1x Strong Fishing Pole when available.",{6256,6365}),
+                    line("LEVELING LURES","Carry at least 20x Shiny Bauble and replenish them as needed.",{6529}),
+                    line("EXPERT BOOK","Buy Expert Fishing - The Bass and You before skill 125.",{16083}),
+                    line("HIGH-SKILL LURES","Stock Aquadynamic Fish Attractors for dangerous water and the fishing event.",{6533}),
+                    line("ARTISAN","The Artisan book is the Nat Pagle quest reward; all 4x quest fish must be caught, not purchased.",{16082}),
+                }),
                 step("SKILL 1-225",{
                     line("1-150","Fish safe capital water, train Journeyman and use lures to reduce failed catches.",{6256,6365,6529}),
                     line("EXPERT","At level 20 and Fishing 125, read Expert Fishing - The Bass and You.",{16083}),
@@ -77,7 +96,7 @@ ns.Bracket39GuidesData = {
                     line("RISK","The quest awards XP and crosses level-40+ territory; explore first and use an escort."),
                 }),
                 step("SKILL 225-300",{
-                    line("ARTISAN","Turn in the four fish to receive Artisan Fishing and the 300 cap.",{16082}),
+                    line("ARTISAN","Turn in all 4x quest fish to receive Artisan Fishing and the 300 cap.",{16082}),
                     line("ROUTE","Fish any safe water you can successfully use; skill gains depend on successful catches, not zone difficulty."),
                     line("LURE","Use Aquadynamic Fish Attractors for dangerous high-skill water.",{6533}),
                     line("CAP","Stop at 300. Equipment and lures raise effective skill above the trained cap."),
@@ -102,6 +121,14 @@ ns.Bracket39GuidesData = {
             name = "Engineering",
             tagline = "Level 39 unlocks Artisan 300 and both Engineering specializations.",
             steps = {
+                step("SHOPPING LIST TO 300",{
+                    line("1-105","60x Rough Stone, 66x Copper Bar, 50x Linen Cloth, 60x Coarse Stone and 5x Silver Bar."),
+                    line("105-175","110x Bronze Bar, 25x Weak Flux, 10x Moss Agate, 30x Heavy Stone, 60x Wool Cloth and 15x Medium Leather."),
+                    line("175-250","4x Steel Bar, 120x Solid Stone, 170x Mithril Bar and 20x Mageweave Cloth.",{3860}),
+                    line("250-300","60x Dense Stone, 135x Thorium Bar and 35x Runecloth.",{12365,12359,14047}),
+                    line("SCHEMATICS","Buy Schematic: Thorium Widget; obtain Schematic: Thorium Shells or plan Thorium Tubes as the fallback.",{15994,15997,16000}),
+                    line("BUFFER","These are minimum route totals; yellow and green recipes can require extra materials."),
+                }),
                 step("REACH EXPERT 225",{
                     line("1-150","Follow the early route through blasting powder, bolts, bombs, tubes and scopes."),
                     line("150-200","Craft Bronze Frameworks, Explosive Sheep, Solid Blasting Powder and Mithril Tubes.",{4382,4384,10505,10559}),
@@ -115,11 +142,11 @@ ns.Bracket39GuidesData = {
                     line("XP SAFETY","Gadgetzan and specialization quests carry travel and quest XP; finish them before the final level."),
                 }),
                 step("SKILL 225-300",{
-                    line("225-238","Craft about 20-25 Mithril Casings; keep them.",{10561,3860}),
-                    line("238-250","Craft about 20 Hi-Explosive Bombs from saved casings and triggers.",{10562,10561,10560,10505}),
-                    line("250-260","Craft about 30 Dense Blasting Powder from 60 Dense Stone.",{15992,12365}),
-                    line("260-285","Craft about 35 Thorium Widgets from roughly 105 Thorium Bars and 35 Runecloth.",{15994,12359,14047}),
-                    line("285-300","Craft 15 Thorium Shells if the world-drop schematic is available; otherwise use Thorium Tubes.",{15997,16000}),
+                    line("225-238","Craft about 20-25x Mithril Casing; keep them.",{10561,3860}),
+                    line("238-250","Craft about 20x Hi-Explosive Bomb from saved casings and triggers.",{10562,10561,10560,10505}),
+                    line("250-260","Craft about 30x Dense Blasting Powder from 60x Dense Stone.",{15992,12365}),
+                    line("260-285","Craft about 35x Thorium Widget from roughly 105x Thorium Bar and 35x Runecloth.",{15994,12359,14047}),
+                    line("285-300","Craft 15x Thorium Shell if the world-drop schematic is available; otherwise use Thorium Tubes.",{15997,16000}),
                     line("BUFFER","Yellow recipes can require extra Mithril, Thorium, cloth and stone."),
                 }),
                 step("LEVEL-39 PAYOFF",{

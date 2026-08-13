@@ -196,15 +196,18 @@ for _, guideKey in ipairs(data.guides.order) do
     local guide = assert(data.guides.sections[guideKey])
     assert(#guide.steps >= 3 and #guide.items >= 3)
     local itemIDs = {}
+    local hasShoppingList = false
     for _, entry in ipairs(guide.items) do
         assert(entry.wowhead == "https://www.wowhead.com/classic/item=" .. entry.id)
         itemIDs[entry.id] = true
     end
     for _, guideStep in ipairs(guide.steps) do
+        if string.find(guideStep.title, "SHOPPING LIST", 1, true) then hasShoppingList = true end
         for _, guideLine in ipairs(guideStep.lines) do
             for _, itemID in ipairs(guideLine.itemIDs) do assert(itemIDs[itemID], guideKey .. " omits related item " .. itemID) end
         end
     end
+    assert(hasShoppingList, guideKey .. " is missing a shopping list")
 end
 
 print("test_bracket39.lua: ok")
