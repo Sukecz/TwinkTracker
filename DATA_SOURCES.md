@@ -1,6 +1,6 @@
 # Gear data sources and audit rules
 
-TwinkTracker targets levels 19 and 29 on WoW Classic Era / Hardcore. A guide is a
+TwinkTracker targets levels 19, 29 and 39 on WoW Classic Era / Hardcore. A guide is a
 candidate source, not proof that every listed item is currently obtainable or
 usable. Every recommendation must also be checked against its individual
 Wowhead Classic item page and, where noted, the live Era client.
@@ -198,6 +198,44 @@ The level-29 enchant profile shares the stable armor enchants with level 19 but
 adds target-item-level scope tiers and Blacksmithing-applied weapon/shield
 enhancements. Temporary oils, stones, poisons and Shaman imbues remain in
 Consumables because they coexist with permanent enchants but replace one another.
+
+## Level-39 audit sources and special rules
+
+Level 39 uses the same per-item audit rules as the earlier brackets. Candidate
+lists came from the Wowhead Classic level-39 overview and Warcraft Tavern's
+level-39 class guides, then each included ID, required level, faction route and
+Vanilla proficiency was checked against its individual Wowhead Classic page.
+
+- [Classic level-39 overview](https://www.wowhead.com/classic/guide/classic-level-39-twink-overview-9789)
+- [Level-39 Druid guide index](https://www.warcrafttavern.com/wow-classic/news/new-guides-added-for-aq40-39-twink-bracket-and-more/)
+- [Level-39 Hunter](https://www.warcrafttavern.com/wow-classic/guides/39-hunter-twink/)
+- [Level-39 Mage](https://www.warcrafttavern.com/wow-classic/guides/39-mage-twink/)
+- [Level-39 Paladin](https://www.warcrafttavern.com/wow-classic/guides/39-twink-paladin/)
+- [Level-39 Holy Priest](https://www.warcrafttavern.com/wow-classic/guides/39-twink-holy-priest/)
+- [Level-39 Shadow Priest](https://www.warcrafttavern.com/wow-classic/guides/39-twink-shadow-priest/)
+- [Level-39 Rogue](https://www.warcrafttavern.com/wow-classic/guides/39-twink-rogue/)
+- [Level-39 Shaman](https://www.warcrafttavern.com/wow-classic/guides/39-twink-restoration-shaman/)
+- [Level-39 Warlock](https://www.warcrafttavern.com/wow-classic/guides/39-twink-warlock/)
+- [Level-39 Warrior](https://www.warcrafttavern.com/wow-classic/guides/39-twink-warrior/)
+
+At level 39, Warrior and Paladin still use Mail and Hunter and Shaman still use
+Leather; the level-40 armor upgrade remains unavailable. Level 35 unlocks the
+Artisan profession routes, so First Aid, Fishing and Engineering can reach 300.
+Engineering specialization is available from level 30. Its BoP items must match
+the character's chosen specialization; tradeable items still require their own
+use-skill checks. Artisan quests, dungeon chains and dangerous travel routes
+carry XP risk and should be completed before the final level.
+
+Permanent endgame-applied enchants do not gain a level-39-only tier. This
+profile therefore reuses the audited armor, Arcanum, Naxx shoulder, weapon and
+shield lists from level 29. Scope selection remains dependent on the target
+ranged weapon's item level. Temporary oils, Dense stones, poisons, Shaman
+imbues and ammunition remain in Consumables.
+
+Classic Era does not use TBC's one-Battle-plus-one-Guardian elixir limit.
+Different elixir effects may coexist unless they provide a conflicting version
+of the same stat or effect. Bracket-39 notes therefore describe concrete
+replacement conflicts instead of importing TBC Battle/Guardian categories.
 
 ## Profession guides
 

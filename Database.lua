@@ -9,6 +9,22 @@ local validTabs = {
     BIS = true,
 }
 
+local validPages = {
+    GEAR = true,
+    BASICS = true,
+    CLASS_TIERS = true,
+    EVENTS = true,
+    PVP = true,
+    GUIDES = true,
+    EXPLORATION = true,
+    COMMUNITY = true,
+}
+
+local function isPageAvailable(page)
+    if not validPages[page] then return false end
+    return not ns.Client or not ns.Client.IsPageAvailable or ns.Client:IsPageAvailable(page)
+end
+
 local function copyDefaults(source)
     local target = {}
     for key, value in pairs(source) do
@@ -62,7 +78,7 @@ function Database:Initialize(saved)
         self.data.selectedClass = defaults.selectedClass
     end
     self.data.selectedTab = "BIS"
-    if self.data.selectedPage ~= "GEAR" and self.data.selectedPage ~= "BASICS" and self.data.selectedPage ~= "CLASS_TIERS" and self.data.selectedPage ~= "EVENTS" and self.data.selectedPage ~= "PVP" and self.data.selectedPage ~= "GUIDES" and self.data.selectedPage ~= "EXPLORATION" and self.data.selectedPage ~= "COMMUNITY" then
+    if not isPageAvailable(self.data.selectedPage) then
         self.data.selectedPage = defaults.selectedPage
     end
     if self.data.selectedGearSection ~= "GEAR" and self.data.selectedGearSection ~= "ENCHANTS" and self.data.selectedGearSection ~= "CONSUMABLES" then
@@ -144,7 +160,7 @@ function Database:SetSelectedSlot(slot)
 end
 
 function Database:SetSelectedPage(page)
-    if page ~= "GEAR" and page ~= "BASICS" and page ~= "CLASS_TIERS" and page ~= "EVENTS" and page ~= "PVP" and page ~= "GUIDES" and page ~= "EXPLORATION" and page ~= "COMMUNITY" then return false end
+    if not isPageAvailable(page) then return false end
     self.data.selectedPage = page
     return true
 end

@@ -5,7 +5,7 @@ chunk("TwinkTracker", ns)
 
 assert(ns.PvPEventsData.version == "2026-08-11")
 assert(string.find(ns.PvPEventsData.submissionFields,"Realm or cluster",1,true))
-for _, level in ipairs({ 19, 29 }) do
+for _, level in ipairs({ 19, 29, 39 }) do
     local data = assert(ns.PvPEventsData.brackets[level])
     assert(data.level == level)
     assert(data.contact.character == "Lovepotion")
@@ -15,6 +15,7 @@ for _, level in ipairs({ 19, 29 }) do
 end
 assert(#ns.PvPEventsData.brackets[19].events == 2)
 assert(#ns.PvPEventsData.brackets[29].events == 0)
+assert(#ns.PvPEventsData.brackets[39].events == 0)
 assert(ns.PvPEventsData.brackets[19].events[1].startsAt == 1786802400 and ns.PvPEventsData.brackets[19].events[1].endsAt == 1786820400)
 assert(ns.PvPEventsData.brackets[19].events[2].startsAt == 1786888800 and ns.PvPEventsData.brackets[19].events[2].endsAt == 1786906800)
 for _, event in ipairs(ns.PvPEventsData.brackets[19].events) do

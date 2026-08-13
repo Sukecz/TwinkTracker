@@ -11,6 +11,7 @@ ignore:
   - COMPATIBILITY.md
   - CURSEFORGE_DESCRIPTION.md
   - DATA_SOURCES.md
+  - TBC_DATA_SOURCES.md
   - README.md
   - tests
   - tools
@@ -23,5 +24,8 @@ ignore:
   - assets/bracket-29-source.png
   - assets/bracket-39-source.png
   - assets/logo1-1.png
+  - assets/screenshot1.png
+  - assets/screenshot2.png
+  - assets/screenshot3.png
   - assets/twinkortreat.webp
   - "*.code-workspace"

@@ -15,14 +15,16 @@ for test_file in tests/test_*.lua; do
     "$lua_bin" "$test_file"
 done
 
-toc_files="$(sed -n '/^[^#[:space:]].*\.lua$/p' TwinkTracker.toc)"
-while IFS= read -r toc_file; do
-    source_file="${toc_file//\\//}"
-    if [[ ! -f "$source_file" ]]; then
-        echo "TOC references missing file: $source_file" >&2
-        exit 1
-    fi
-done <<< "$toc_files"
+for toc in TwinkTracker.toc TwinkTracker_TBC.toc; do
+    toc_files="$(sed -n '/^[^#[:space:]].*\.lua$/p' "$toc")"
+    while IFS= read -r toc_file; do
+        source_file="${toc_file//\\//}"
+        if [[ ! -f "$source_file" ]]; then
+            echo "$toc references missing file: $source_file" >&2
+            exit 1
+        fi
+    done <<< "$toc_files"
+done
 
 grep -qx '## Interface: 11509' TwinkTracker.toc
 grep -Eq '^## Version: [0-9]+\.[0-9]+\.[0-9]+$' TwinkTracker.toc
@@ -30,6 +32,13 @@ grep -qx '## X-Curse-Project-ID: 1644210' TwinkTracker.toc
 grep -qx '## SavedVariablesPerCharacter: TwinkTrackerDB' TwinkTracker.toc
 grep -qx '## X-Flavor: Vanilla' TwinkTracker.toc
 grep -qx '## AllowLoadGameType: vanilla' TwinkTracker.toc
+grep -qx '## Interface: 20506' TwinkTracker_TBC.toc
+grep -Eq '^## Version: [0-9]+\.[0-9]+\.[0-9]+$' TwinkTracker_TBC.toc
+grep -qx '## X-Curse-Project-ID: 1644210' TwinkTracker_TBC.toc
+grep -qx '## SavedVariablesPerCharacter: TwinkTrackerDB' TwinkTracker_TBC.toc
+grep -qx '## X-Flavor: TBC' TwinkTracker_TBC.toc
+grep -qx '## AllowLoadGameType: tbc' TwinkTracker_TBC.toc
+test "$(sed -n 's/^## Version: //p' TwinkTracker.toc)" = "$(sed -n 's/^## Version: //p' TwinkTracker_TBC.toc)"
 test -f tools/windows/Deploy-WoW-Addons.cmd
 test -f tools/windows/Deploy-WoW-Addons.ps1
 test -f assets/logo.png
@@ -52,17 +61,19 @@ grep -Fq 'Data\PvPEvents.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'EventTimers.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Events.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\ClassTiers.lua' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Data\Bracket39\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'tar -czf' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.tga' MainWindow.lua
+grep -Fq 'ns.Client:GetDisplayText()' MainWindow.lua
 grep -Fq 'for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end' MainWindow.lua
 grep -Fq 'assets\\bracket-"..level..".tga' MainWindow.lua
 grep -Fq 'value.icon:SetDesaturated(not value.available)' MainWindow.lua
 grep -Fq 'GameTooltip:AddLine("Coming soon"' MainWindow.lua
 grep -Fq 'selectedBracket = 19' Defaults.lua
 grep -Fq '[29] = { level = 29, available = true }' Data/Brackets.lua
-grep -Fq '[39] = { level = 39, available = false }' Data/Brackets.lua
+grep -Fq '[39] = { level = 39, available = true }' Data/Brackets.lua
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga' MinimapButton.lua
 grep -Fq 'showMinimapIcon = true' Defaults.lua
 grep -Fq '"Show minimap icon"' MainWindow.lua
@@ -106,7 +117,11 @@ grep -Fq '"EVENTS","EVENTS","TOPRIGHT",-180,100,-72' MainWindow.lua
 grep -Fq 'GetServerTime()' MainWindow.lua
 grep -Fq 'C_Timer.After' MainWindow.lua
 grep -Fq 'STARTS IN %dD %dH' MainWindow.lua
-grep -Fq 'for row,tier in ipairs({"S","A","B","C"}) do' MainWindow.lua
+grep -Fq 'for _,tier in ipairs({"S","A","B","C"}) do' MainWindow.lua
+grep -Fq 'local classTierColumns=3' MainWindow.lua
+grep -Fq 'header:SetShown(classCount>0)' MainWindow.lua
+grep -Fq 'math.floor((column-1)/classTierColumns)' MainWindow.lua
+grep -Fq 'math.ceil(classCount/classTierColumns)*100' MainWindow.lua
 grep -Fq 'B={0.62,0.45,0.78,1}, C={0.67,0.70,0.78,1}' MainWindow.lua
 grep -Fq 'metric.bar:SetValue(score)' MainWindow.lua
 grep -Fq 'GameTooltip:AddLine(self.entry.summary' MainWindow.lua

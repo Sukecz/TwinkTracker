@@ -669,7 +669,8 @@ end
 function MainWindow:CreateCommunityPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.COMMUNITY=page
     local heading=label(page,"GameFontNormalHuge","COMMUNITY",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","Classic Era twink guilds and community links. Each listing states its bracket focus.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    local introText=ns.Client.key=="TBC" and "Community listings are client-specific. Era-only entries below are retained as contact references." or "Classic Era twink guilds and community links. Each listing states its bracket focus."
+    local intro=label(page,"GameFontNormalSmall",introText,C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
 
     local card=frame(page); card:SetPoint("TOPLEFT",6,-62); card:SetPoint("TOPRIGHT",-6,-62); card:SetHeight(190); skin(card,C.panel)
     local badge=frame(card); badge:SetSize(66,66); badge:SetPoint("TOPLEFT",16,-12); skin(badge,C.panel2,C.horde)
@@ -903,6 +904,7 @@ function MainWindow:Create()
     root:SetMovable(true); root:EnableMouse(true); root:RegisterForDrag("LeftButton"); root:SetScript("OnDragStart",root.StartMoving)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
     skin(root,C.window,C.border); root:Hide(); self.frame=root
+    local clientVersion=label(root,"GameFontNormalSmall",ns.Client:GetDisplayText(),C.muted); clientVersion:SetPoint("BOTTOMLEFT",10,6); self.clientVersion=clientVersion
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
     local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); increaseFontSize(logoFallback); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
@@ -911,7 +913,7 @@ function MainWindow:Create()
     self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20,88); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",116,88); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",212,88)
     self:CreatePageButton(root,"CLASS_TIERS","CLASS TIERS","TOPLEFT",20,112,-72)
     self:CreatePageButton(root,"EVENTS","EVENTS","TOPRIGHT",-180,100,-72)
-    self:CreatePageButton(root,"PVP","PVP","TOPRIGHT",-84,88,-72)
+    if ns.Client:IsPageAvailable("PVP") then self:CreatePageButton(root,"PVP","PVP","TOPRIGHT",-84,88,-72) end
     self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-192); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-84)
     local close=CreateFrame("Button",nil,root); close:SetSize(36,36); close:SetPoint("TOPRIGHT",-13,-11)
     local closeHighlight=close:CreateTexture(nil,"HIGHLIGHT"); closeHighlight:SetAllPoints(); closeHighlight:SetColorTexture(1,0.20,0.20,0.14)
@@ -946,7 +948,7 @@ function MainWindow:Create()
     self:CreateScrollBar(gear,scroll); self.gearViewFrames={header,scroll,self.scrollBar,self.gearLegend}
     self:CreateReferenceSection(gear,"ENCHANTS","ENCHANTS","Relevant equipment slots will replace the gear table here. Each class profile will reference a shared, source-verified enchant catalog.")
     self:CreateReferenceSection(gear,"CONSUMABLES","CONSUMABLES","A class-specific table grouped by bandages, food and drink, potions, elixirs, scrolls, Engineering, weapon consumables and class resources will appear here.")
-    self:CreateBasicsPage(content); self:CreateClassTiersPage(content); self:CreatePvpPage(content); self:CreateEventsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
+    self:CreateBasicsPage(content); self:CreateClassTiersPage(content); if ns.Client:IsPageAvailable("PVP") then self:CreatePvpPage(content) end; self:CreateEventsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
     root:SetScript("OnHide",function() if MainWindow.settingsPanel then MainWindow.settingsPanel:Hide() end end)
     root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
     self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectGuide(saved.selectedGuide); self:SelectPage(saved.selectedPage); return root
@@ -983,10 +985,11 @@ function MainWindow:RefreshPageButtons()
 end
 
 function MainWindow:SelectPage(page)
-    ns.Database:SetSelectedPage(page)
+    if not ns.Database:SetSelectedPage(page) then return false end
     for key,value in pairs(self.pages) do value:SetShown(key==page) end
     self:RefreshPageButtons()
     if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="CLASS_TIERS" then self:RefreshClassTiers() elseif page=="EVENTS" then self:RefreshEventsPage() elseif page=="PVP" then self:RefreshPvpPage() elseif page=="GUIDES" then self:SelectGuide(ns.Database:Get().selectedGuide) elseif page=="EXPLORATION" then self:RefreshExploration() end
+    return true
 end
 
 function MainWindow:Layout()
@@ -1019,20 +1022,26 @@ function MainWindow:Layout()
     for column,tier in ipairs({"S","A","B"}) do local title=self.tierHeaders[tier]; title:ClearAllPoints(); title:SetPoint("LEFT",122+(column-1)*tierWidth,0) end
     local guideWidth=math.max(390,(self.content:GetWidth()-18)/2)
     for index,card in ipairs(self.guideCards) do local column=(index-1)%2; local row=math.floor((index-1)/2); card:ClearAllPoints(); card:SetPoint("TOPLEFT",6+column*(guideWidth+6),-62-row*100); card:SetWidth(guideWidth); card.body:SetWidth(guideWidth-32) end
-    local classTierData=getActiveBracketData().classTiers; local classTierLeft=82; local classTierWidth=math.max(220,(self.content:GetWidth()-classTierLeft-24)/3)
+    local classTierData=getActiveBracketData().classTiers; local classTierLeft=82; local classTierColumns=3; local classTierWidth=math.max(220,(self.content:GetWidth()-classTierLeft-24)/classTierColumns)
     if self.classTierSpine then self.classTierSpine:ClearAllPoints(); self.classTierSpine:SetPoint("TOPLEFT",37,-91); self.classTierSpine:SetPoint("BOTTOMLEFT",37,16); self.classTierSpine:SetWidth(2) end
-    for row,tier in ipairs({"S","A","B","C"}) do
-        local top=72+(row-1)*100; local header=self.classTierHeaders[tier]; header:ClearAllPoints(); header:SetPoint("TOPLEFT",6,-top-27)
-        local branch=self.classTierBranches[tier]; branch:ClearAllPoints(); branch:SetPoint("LEFT",header,"RIGHT",0,0)
+    local top=72
+    for _,tier in ipairs({"S","A","B","C"}) do
+        local classCount=0
+        for _,token in ipairs(classTierData.classOrder) do if classTierData.classes[token].overall==tier then classCount=classCount+1 end end
+        local header=self.classTierHeaders[tier]; header:SetShown(classCount>0); header:ClearAllPoints(); header:SetPoint("TOPLEFT",6,-top-27)
+        local branch=self.classTierBranches[tier]; branch:SetShown(classCount>0); branch:ClearAllPoints(); branch:SetPoint("LEFT",header,"RIGHT",0,0)
         local column=0
         for _,token in ipairs(classTierData.classOrder) do
             local entry=classTierData.classes[token]; local card=self.classTierCards[token]
             if entry.overall==tier then
-                column=column+1; card:ClearAllPoints(); card:SetPoint("TOPLEFT",classTierLeft+(column-1)*(classTierWidth+6),-top); card:SetWidth(classTierWidth)
+                column=column+1
+                local cardRow=math.floor((column-1)/classTierColumns); local cardColumn=(column-1)%classTierColumns
+                card:ClearAllPoints(); card:SetPoint("TOPLEFT",classTierLeft+cardColumn*(classTierWidth+6),-top-cardRow*100); card:SetWidth(classTierWidth)
                 local metricWidth=(classTierWidth-32)/3
                 for metricIndex,key in ipairs({"offense","survival","utility"}) do local metric=card.metrics[key]; metric:ClearAllPoints(); metric:SetPoint("BOTTOMLEFT",10+(metricIndex-1)*(metricWidth+6),7); metric:SetWidth(metricWidth) end
             end
         end
+        if classCount>0 then top=top+math.ceil(classCount/classTierColumns)*100 end
     end
     local explorationWidth=math.max(390,(self.content:GetWidth()-18)/2)
     for index,faction in ipairs({"HORDE","ALLIANCE"}) do

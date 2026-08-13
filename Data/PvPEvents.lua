@@ -24,5 +24,6 @@ ns.PvPEventsData = {
     brackets = {
         [19] = bracket(19),
         [29] = bracket(29),
+        [39] = bracket(39),
     },
 }

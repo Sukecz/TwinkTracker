@@ -8,6 +8,7 @@ end
 for _, path in ipairs({
     "Data/Brackets.lua", "Data/Bis.lua", "Data/ClassTiers.lua",
     "Data/Bracket29/Bis.lua", "Data/Bracket29/ClassTiers.lua",
+    "Data/Bracket39/Bis.lua", "Data/Bracket39/ClassTiers.lua",
 }) do
     loadModule(path)
 end
@@ -36,11 +37,13 @@ end
 
 validate(ns.ClassTiersData)
 validate(ns.Bracket29ClassTiersData)
+validate(ns.Bracket39ClassTiersData)
 assert(ns.ClassTiersData.classes.HUNTER.overall == "S")
 assert(ns.ClassTiersData.classes.PRIEST.overall == "S")
 assert(ns.ClassTiersData.classes.HUNTER.offense == 10)
 assert(ns.Bracket29ClassTiersData.classes.MAGE.overall == "S")
 assert(ns.Bracket29ClassTiersData.classes.WARRIOR.overall == "C")
+assert(ns.Bracket39ClassTiersData.classes.WARRIOR.overall == "S")
 assert(string.find(ns.ClassTiersData.intro,"Equal tiers are not ranked",1,true))
 
 print("test_class_tiers.lua: ok")

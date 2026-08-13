@@ -2,6 +2,48 @@
 
 All notable changes are documented here.
 
+## 0.4.0 - 2026-08-13
+
+### Added
+
+- Added automatic Burning Crusade Classic support through a separate TBC TOC,
+  without an in-addon flavor switch.
+- Added TBC-specific S/A/B audits for all nine classes at levels 19, 29 and 39,
+  including Blood Elf Paladin and Draenei Shaman faction routes, TBC itemization
+  changes and TBC Wowhead links.
+- Added TBC enchant eligibility cautions and high-end leg, chest, bracer, boot
+  and weapon options, plus Jewelcrafting statues and a Jewelcrafting guide.
+- Added independent TBC class-tier estimates for all three brackets and a
+  source/audit document.
+- Added a non-interactive footer showing the detected client and addon version,
+  for example `CLASSIC ERA 0.4.0` or `BURNING CRUSADE CLASSIC 0.4.0`.
+- Completed the level-39 bracket with independent S/A/B gear profiles for all
+  nine Classic classes, explicit role and faction alternatives, second ring and
+  trinket slots, and Classic Era Wowhead links for every real item.
+- Added level-39 consumables, Artisan profession guides to skill 300,
+  Engineering specialization tools, exploration routes, class tiers, Twink
+  Basics and an empty bracket-aware PvP event profile.
+
+### Changed
+
+- Wrapped Class Tier cards after three columns and hid empty tier rows so the
+  level-39 overview stays inside the addon window at every supported size.
+- Re-audited all Classic Era level-39 gear against current class proficiencies,
+  item tooltips and multiple twink guides; removed invalid weapons, armor and
+  class-restricted rewards, corrected item effects and expanded role-specific
+  alternatives.
+- Corrected the level-39 consumable catalog and recommendations, including
+  Warlock-only Greater Healthstones, mana and food choices, poison effects,
+  Mana Jade, Exploding Shot and Major Recombobulator; clarified Classic Era
+  elixir stacking terminology.
+- Reworked the README and CurseForge description around automatic Era/Hardcore
+  and TBC support, the completed 19/29/39 profiles, current features and honest
+  live-validation limits; clarified that PvP Events remains Era-only.
+- Enabled level 39 in the persistent bracket selector.
+- Reused the audited endgame permanent-enchant profiles because level 39 does
+  not unlock a higher permanent enchant tier; target-item-level scope fallbacks
+  and role-specific weapon or shield choices remain explicit.
+
 ## 0.3.11 - 2026-08-11
 
 ### Changed
