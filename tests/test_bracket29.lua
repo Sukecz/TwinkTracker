@@ -137,10 +137,18 @@ for _, guideKey in ipairs(data.guides.order) do
     for _, guideStep in ipairs(guide.steps) do
         if string.find(guideStep.title, "SHOPPING LIST", 1, true) then hasShoppingList = true end
         for _, guideLine in ipairs(guideStep.lines) do
+            assert(not string.find(string.lower(guideLine.text), "follow the bracket", 1, true))
+            assert(not string.find(string.lower(guideLine.text), "follow the early route", 1, true))
             for _, itemID in ipairs(guideLine.itemIDs) do assert(itemIDs[itemID]) end
         end
     end
     assert(hasShoppingList, guideKey .. " is missing a shopping list")
+end
+
+local engineeringSteps = {}
+for _, guideStep in ipairs(data.guides.sections.ENGINEERING.steps) do engineeringSteps[guideStep.title] = true end
+for _, title in ipairs({ "SKILL 1-75", "SKILL 75-105", "SKILL 105-150", "SKILL 150-175", "SKILL 175-200", "SKILL 200-225" }) do
+    assert(engineeringSteps[title], "level-29 Engineering is missing " .. title)
 end
 
 print("test_bracket29.lua: ok")

@@ -30,7 +30,7 @@ end
 firstAid.items[#firstAid.items + 1] = item(8545,"Heavy Mageweave Bandage","Requires First Aid 175 to use; a level-29 character cannot reach its skill-240 craft recipe.")
 
 ns.Bracket29GuidesData = {
-    version = "2026-08-13",
+    version = "2026-08-14",
     order = { "FIRST_AID", "FISHING", "ENGINEERING" },
     sections = {
         FIRST_AID = firstAid,
@@ -102,11 +102,24 @@ ns.Bracket29GuidesData = {
                     line("FINISH","30x Heavy Stone and 15x Wool Cloth.",{2838,2592}),
                     line("BUFFER","Buy 10-20% extra for yellow and green skill-up variance."),
                 }),
-                step("REACH 150",{
-                    line("ROUTE","Follow the bracket-19 1-150 route: powder, bolts, bombs, tubes, scopes and saved components."),
-                    line("KEEP","Retain Heavy Blasting Powder, Whirring Bronze Gizmos and an Arclight Spanner for later crafts.",{4377,4375,6219}),
+                step("SKILL 1-75",{
+                    line("1-30","Craft about 60x Rough Blasting Powder from 60x Rough Stone; keep all powder.",{4357,2835}),
+                    line("30-50","Craft about 30x Handful of Copper Bolts from 30x Copper Bar; keep all bolts.",{4359,2840}),
+                    line("50-51","Craft 1x Arclight Spanner from 6x Copper Bar and keep it.",{6219,2840}),
+                    line("51-75","Craft about 30x Rough Copper Bomb from 30x Copper Bar, saved bolts and powder, and 30x Linen Cloth.",{4360,2840,2589}),
+                    line("TRAIN","Learn Journeyman Engineering between skill 50 and 75."),
+                }),
+                step("SKILL 75-105",{
+                    line("75-90","Craft about 60x Coarse Blasting Powder from 60x Coarse Stone; keep it.",{4364,2836}),
+                    line("90-100","Craft about 20x Coarse Dynamite from 60x saved powder and 20x Linen Cloth.",{4365,4364,2589}),
+                    line("100-105","Craft 5x Silver Contact from 5x Silver Bar.",{4404,2842}),
+                }),
+                step("SKILL 105-150",{
+                    line("105-125","Craft about 25x Bronze Tube from 50x Bronze Bar and 25x Weak Flux; keep at least 10x.",{4371,2841,2880}),
+                    line("125-135","Craft about 10x Standard Scope from 10x saved Bronze Tube and 10x Moss Agate.",{4406,4371,1206}),
+                    line("135-145","Craft about 30x Heavy Blasting Powder from 30x Heavy Stone; keep it.",{4377,2838}),
+                    line("145-150","Craft about 15x Whirring Bronze Gizmo from 30x Bronze Bar and 15x Wool Cloth; keep them.",{4375,2841,2592}),
                     line("EXPERT","At character level 20 and Engineering 125, train Expert to raise the cap to 225."),
-                    line("TRAINERS","Alliance: Springspindle Fizzlegear in Ironforge. Horde: Roxxik in Orgrimmar."),
                 }),
                 step("SHOPPING LIST 150-225",{
                     line("BRONZE","About 30x Bronze Bar, 15x Medium Leather and 45x Wool Cloth for frameworks and sheep.",{2841,2319,2592}),
@@ -157,6 +170,14 @@ ns.Bracket29GuidesData = {
                 item(2880,"Weak Flux","Buy 25x from an Engineering Supplies vendor."),
                 item(1206,"Moss Agate","Buy 10x for Standard Scopes."),
                 item(2838,"Heavy Stone","Buy 30x for Heavy Blasting Powder."),
+                item(4357,"Rough Blasting Powder","Craft about 60x at skill 1-30 and save it."),
+                item(4359,"Handful of Copper Bolts","Craft about 30x at skill 30-50 and save them."),
+                item(4360,"Rough Copper Bomb","Craft about 30x at skill 51-75."),
+                item(4364,"Coarse Blasting Powder","Craft about 60x at skill 75-90 and save it."),
+                item(4365,"Coarse Dynamite","Craft about 20x at skill 90-100."),
+                item(4404,"Silver Contact","Craft 5x at skill 100-105."),
+                item(4371,"Bronze Tube","Craft about 25x at skill 105-125."),
+                item(4406,"Standard Scope","Craft about 10x at skill 125-135."),
                 item(4377,"Heavy Blasting Powder","Saved input from the 135-145 route."),
                 item(4375,"Whirring Bronze Gizmo","Saved component for Explosive Sheep."),
                 item(6219,"Arclight Spanner","Engineering tool retained from the early route."),

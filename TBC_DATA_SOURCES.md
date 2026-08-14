@@ -75,7 +75,10 @@ separately.
 8. TBC class tiers are separate community estimates. Equal tiers are never
    ordered internally, and talent availability is checked against the bracket
    level.
-9. TBC event timing is not inherited from Classic Era. The battleground card
+9. Every TBC Jewelcrafting bracket guide contains its own skill 1-to-cap route.
+   The craft ranges and material counts follow the current Wowhead TBC 1-300
+   path; yellow recipes retain an explicit material buffer.
+10. TBC event timing is not inherited from Classic Era. The battleground card
    follows the current four-event Anniversary rotation, Darkmoon includes its
    Terokkar stop, and all ten period holidays are tracked. Blizzard can apply
    exceptional or emergency calendar changes, so future dates remain planning

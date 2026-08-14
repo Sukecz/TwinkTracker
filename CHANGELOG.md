@@ -2,6 +2,18 @@
 
 All notable changes are documented here.
 
+## 0.4.4 - 2026-08-14
+
+### Changed
+
+- Made every bracket profession guide self-contained from skill 1 to the
+  highest rank available at that character level, without cross-bracket route
+  references.
+- Expanded the level-29 and level-39 First Aid, Fishing and Engineering guides
+  into explicit skill intervals with concrete crafts, quantities and caps.
+- Added complete bracket-specific TBC Jewelcrafting routes for skill 1-150,
+  1-225 and 1-300.
+
 ## 0.4.3 - 2026-08-14
 
 ### Changed

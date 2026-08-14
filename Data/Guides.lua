@@ -17,7 +17,7 @@ end
 ns.GuideHelpers = { item=item, line=line, step=step }
 
 ns.GuidesData = {
-    version = "2026-08-13",
+    version = "2026-08-14",
     order = { "FIRST_AID", "FISHING", "ENGINEERING" },
     sections = {
         FIRST_AID = {

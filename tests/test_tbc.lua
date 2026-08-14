@@ -68,9 +68,21 @@ for _, level in ipairs({ 19, 29, 39 }) do
         local hasShoppingList = false
         for _, guideStep in ipairs(data.guides.sections[guideKey].steps) do
             if string.find(guideStep.title, "SHOPPING LIST", 1, true) then hasShoppingList = true end
+            for _, guideLine in ipairs(guideStep.lines) do
+                assert(not string.find(string.lower(guideLine.text), "follow the bracket", 1, true))
+                assert(not string.find(string.lower(guideLine.text), "follow the early route", 1, true))
+            end
         end
         assert(hasShoppingList, "TBC " .. level .. " " .. guideKey .. " is missing a shopping list")
     end
+
+    local jewelcraftingSteps = {}
+    for _, guideStep in ipairs(data.guides.sections.JEWELCRAFTING.steps) do jewelcraftingSteps[guideStep.title] = true end
+    assert(jewelcraftingSteps["SKILL 1-75"] and jewelcraftingSteps["SKILL 75-110"] and jewelcraftingSteps["SKILL 110-150"])
+    assert((level == 19) == (not jewelcraftingSteps["SKILL 150-185"]))
+    assert((level < 39) == (not jewelcraftingSteps["SKILL 225-260"]))
+    if level == 29 then assert(jewelcraftingSteps["SKILL 185-225"]) end
+    if level == 39 then assert(jewelcraftingSteps["SKILL 260-300"]) end
 
     if level == 19 then
         assertTBCEnchantFallback(data.enchants.classes.MAGE, "CHEST", "19 MAGE Inferno Robe")

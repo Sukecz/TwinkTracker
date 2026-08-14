@@ -17,8 +17,8 @@ viewing.
 - Class- and bracket-specific **enchants and consumables**
 - Clear cautions for item-level gates, professions, binding and unusual
   enchant application routes
-- Preparation guides for **First Aid, Fishing and Engineering**, plus
-  **Jewelcrafting in TBC**
+- Self-contained skill 1-to-cap preparation guides for **First Aid, Fishing
+  and Engineering**, plus **Jewelcrafting in TBC**
 - Bracket-specific **Class Tiers**, Twink Basics and automatic visible-map
   Exploration progress
 - Normal item tooltips, Shift-click handling and copyable **Wowhead Classic or

@@ -98,28 +98,79 @@ local function addJewelcraftingGuide(bracket, level)
         table.insert(shoppingLines, #shoppingLines, guideLine("THORIUM", "50x Thorium Bar, 10x Star Ruby and 20x Large Opal."))
         table.insert(shoppingLines, #shoppingLines, guideLine("FINAL GEMS", "5x Azerothian Diamond, 5x Blue Sapphire, 5x Essence of Undeath and 20x Huge Emerald."))
     end
-    guide.version = "2026-08-13-tbc"
+    local levelingSteps = {
+        guideStep("SKILL 1-75", {
+            guideLine("1-30", "Craft 40x Delicate Copper Wire from 80x Copper Bar; save at least 20x wire."),
+            guideLine("30-50", "Craft 20x Tigerseye Band or Malachite Pendant from 20x gems and 20x saved wire."),
+            guideLine("50-75", "Start the 40x Bronze Setting batch from 80x Bronze Bar; continue crafting settings to skill 80 and save them."),
+        }),
+        guideStep("SKILL 75-110", {
+            guideLine("75-80", "Finish the 40x Bronze Setting batch and keep every setting."),
+            guideLine("80-100", "Craft 20x Simple Pearl Ring from 20x Small Lustrous Pearl, 20x Bronze Setting and 40x Copper Bar."),
+            guideLine("100-110", "Craft 10x Ring of Twilight Shadows from 20x Shadowgem and 20x Bronze Bar."),
+        }),
+        guideStep("SKILL 110-150", {
+            guideLine("110-130", "Craft about 25x Heavy Stone Statue from 200x Heavy Stone."),
+            guideLine("130-150", "Craft about 20x Pendant of the Agate Shield from 20x Moss Agate and 20x saved Bronze Setting."),
+            guideLine("DESIGN", "Buy Design: Pendant of the Agate Shield from Neal Allen in Wetlands or Jandia in Thousand Needles before this segment."),
+            guideLine("CAP", cap == 150 and "Stop at 150: Expert Jewelcrafting requires character level 20." or "At character level 20, train Expert Jewelcrafting and continue to 225."),
+        }),
+    }
+    if cap >= 225 then
+        levelingSteps[#levelingSteps + 1] = guideStep("SKILL 150-185", {
+            guideLine("150-180", "Craft about 35x Mithril Filigree from 70x Mithril Bar; save at least 30x filigree."),
+            guideLine("180-185", "Craft about 8x Solid Stone Statue from 80x Solid Stone."),
+            guideLine("BUFFER", "Both recipes become yellow; keep extra Mithril and Solid Stone for missed skill points."),
+        })
+        levelingSteps[#levelingSteps + 1] = guideStep("SKILL 185-225", {
+            guideLine("185-200", "Craft 15x Engraved Truesilver Ring from 15x Truesilver Bar and 30x saved Mithril Filigree."),
+            guideLine("200-210", "Craft 10x Citrine Ring of Rapid Healing from 10x Citrine, 20x Elemental Water and 20x Mithril Bar."),
+            guideLine("210-225", "Craft 15x Aquamarine Signet from 45x Aquamarine and 60x Flask of Mojo."),
+            guideLine("CAP", cap == 225 and "Stop at 225: Artisan Jewelcrafting requires character level 35." or "At character level 35, train Artisan Jewelcrafting and continue to 300."),
+        })
+    end
+    if cap >= 300 then
+        levelingSteps[#levelingSteps + 1] = guideStep("SKILL 225-260", {
+            guideLine("225-250", "Craft 50x Thorium Setting from 50x Thorium Bar; keep every setting for the final crafts."),
+            guideLine("250-260", "Craft 10x Ruby Pendant of Fire from 10x Star Ruby and 10x saved Thorium Setting."),
+            guideLine("BUFFER", "Continue the yellow recipe if needed; keep extra Thorium Bar and Star Ruby."),
+        })
+        levelingSteps[#levelingSteps + 1] = guideStep("SKILL 260-300", {
+            guideLine("260-280", "Craft 20x Simple Opal Ring from 20x Large Opal and 20x saved Thorium Setting."),
+            guideLine("280-285", "Craft 5x Diamond Focus Ring from 5x Azerothian Diamond and 5x saved Thorium Setting."),
+            guideLine("285-290", "Craft 5x Sapphire Pendant of Winter Night from 5x Blue Sapphire, 5x Essence of Undeath and 5x saved Thorium Setting."),
+            guideLine("290-300", "Craft 10x Emerald Lion Ring from 20x Huge Emerald and 10x saved Thorium Setting."),
+            guideLine("CAP", "Stop at 300; this is the maximum Jewelcrafting skill available to a level-39 character."),
+        })
+    end
+    local guideSteps = {
+        guideStep("SHOPPING LIST TO " .. cap, shoppingLines),
+        guideStep("TRAINERS AND RANKS", {
+            guideLine("TRAINERS", "Learn Jewelcrafting in Silvermoon City or the Exodar; keep Mining only if it fits the final profession plan."),
+            guideLine("RANKS", "Train Journeyman between skill 50 and 75, Expert at level 20, and Artisan at level 35."),
+            guideLine("CAP", "This bracket's complete route runs from skill 1 to " .. cap .. "."),
+        }),
+    }
+    for _, levelingStep in ipairs(levelingSteps) do guideSteps[#guideSteps + 1] = levelingStep end
+    local statueLines = {
+        guideLine("HEAVY", "Heavy Stone Statue is trained at Jewelcrafting 110 and is the level-19 combat-heal option.", { 25881 }),
+        guideLine("CRAFT", "Stone Statues bind on pickup, so the twink must craft its own supply before using one."),
+    }
+    if cap >= 225 then
+        statueLines[#statueLines + 1] = guideLine("SOLID", "Solid Stone Statue is trained at Jewelcrafting 175 and is the Expert-rank combat-heal option.", { 25882 })
+        statueLines[#statueLines + 1] = guideLine("DENSE", "Dense Stone Statue is trained at Jewelcrafting 225 and is the strongest available Azeroth statue in TBC.", { 25883 })
+    end
+    guideSteps[#guideSteps + 1] = guideStep("STONE STATUES", statueLines)
+    guideSteps[#guideSteps + 1] = guideStep("COMBAT CAUTIONS", {
+        guideLine("OWNER", "Statues bind on pickup; the twink must personally hold the required Jewelcrafting skill when crafting them."),
+        guideLine("COUNTERPLAY", "A placed statue can be attacked and may stop healing when it engages a target."),
+        guideLine("COOLDOWN", "Statues share cooldowns with several conjured and Engineering tools. Verify the exact current-client cooldown group before choosing both professions."),
+    })
+    guide.version = "2026-08-14-tbc"
     guide.sections.JEWELCRAFTING = {
         name = "Jewelcrafting",
         tagline = "TBC-only jewelry and self-crafted Bind-on-Pickup healing statues.",
-        steps = {
-            guideStep("SHOPPING LIST TO " .. cap, shoppingLines),
-            guideStep("TRAIN AND PLAN", {
-                guideLine("TRAINERS", "Learn Jewelcrafting in Silvermoon City or the Exodar; keep Mining only if it fits the final profession plan."),
-                guideLine("CAP", "This bracket route stops at skill " .. cap .. ". Do not assume a higher-rank recipe is usable without checking the character-level profession gate."),
-                guideLine("SOURCE", "The route follows the TBC 1-300 trainer recipe list and individual TBC item pages."),
-            }),
-            guideStep("STONE STATUES", {
-                guideLine("HEAVY", "Heavy Stone Statue is trained at Jewelcrafting 110 and is the level-19 combat-heal option.", { 25881 }),
-                guideLine("SOLID", "Solid Stone Statue is trained at 175 for brackets that can reach Expert Jewelcrafting.", { 25882 }),
-                guideLine("DENSE", "Dense Stone Statue is trained at 225 and is the strongest available Azeroth statue in TBC.", { 25883 }),
-            }),
-            guideStep("COMBAT CAUTIONS", {
-                guideLine("OWNER", "Statues bind on pickup; the twink must personally hold the required Jewelcrafting skill when crafting them."),
-                guideLine("COUNTERPLAY", "A placed statue can be attacked and may stop healing when it engages a target."),
-                guideLine("COOLDOWN", "Statues share cooldowns with several conjured and Engineering tools. Verify the exact current-client cooldown group before choosing both professions."),
-            }),
-        },
+        steps = guideSteps,
         items = {
             guideItem(25881, "Heavy Stone Statue", "Jewelcrafting 110 healing statue; TBC-only and Bind on Pickup."),
             guideItem(25882, "Solid Stone Statue", "Jewelcrafting 175 healing statue; TBC-only and Bind on Pickup."),

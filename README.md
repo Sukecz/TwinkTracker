@@ -27,9 +27,9 @@ and addon version.
 - **Enchants and consumables** — class- and bracket-specific choices with their
   effects, charges, cooldowns, profession requirements, target item-level
   restrictions and other important application cautions.
-- **Preparation guides** — step-by-step First Aid, Fishing and Engineering
-  routes, plus Jewelcrafting in TBC, with trainers, skill breakpoints and
-  interactive item references.
+- **Preparation guides** — self-contained First Aid, Fishing and Engineering
+  routes from skill 1 to each bracket's maximum, plus Jewelcrafting in TBC,
+  with concrete skill ranges, craft counts, trainers and interactive items.
 - **Class Tiers** — a quick community-oriented overview with role, Offense,
   Survival and Utility scores for the selected bracket, with dense tiers
   wrapped into readable rows inside the window.

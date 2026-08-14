@@ -5,7 +5,7 @@ local line = ns.GuideHelpers.line
 local step = ns.GuideHelpers.step
 
 ns.Bracket39GuidesData = {
-    version = "2026-08-13",
+    version = "2026-08-14",
     order = { "FIRST_AID", "FISHING", "ENGINEERING" },
     sections = {
         FIRST_AID = {
@@ -18,11 +18,18 @@ ns.Bracket39GuidesData = {
                     line("BOOKS","Buy Expert First Aid - Under Wraps and both bandage manuals before starting the Expert segment.",{16084,16112,16113}),
                     line("ALLOWANCE","The ranges include extra cloth for yellow and green skill-up variance."),
                 }),
-                step("REACH EXPERT 225",{
-                    line("1-125","Use Linen and Wool Bandages, then read Expert First Aid - Under Wraps at skill 125.",{2589,2592,16084}),
-                    line("125-180","Craft Heavy Wool and Silk Bandages; read the Heavy Silk manual at 180.",{3531,6450,16112}),
-                    line("180-225","Craft Heavy Silk, read the Mageweave manual at 210 and finish with Mageweave Bandages.",{6451,16113,8544}),
-                    line("BOOKS","Alliance buys all 3x BoE book from Deneb Walker in Stromgarde; Horde uses Balai Lok'Wein in Brackenwall."),
+                step("SKILL 1-125",{
+                    line("1-40","Craft about 40x Linen Bandage from 40x Linen Cloth.",{1251,2589}),
+                    line("40-80","Craft about 40x Heavy Linen Bandage from 80x Linen Cloth; train Journeyman between skill 50 and 75.",{2581,2589}),
+                    line("80-115","Craft about 35x Wool Bandage from 35x Wool Cloth.",{3530,2592}),
+                    line("115-125","Craft about 10x Heavy Wool Bandage from 20x Wool Cloth, then read the Expert book.",{3531,2592,16084}),
+                }),
+                step("SKILL 125-225",{
+                    line("125-150","Craft about 25x Heavy Wool Bandage from 50x Wool Cloth.",{3531,2592}),
+                    line("150-180","Craft about 30x Silk Bandage from 30x Silk Cloth.",{6450,4306}),
+                    line("180-210","Read the manual, then craft about 30x Heavy Silk Bandage from 60x Silk Cloth.",{16112,6451,4306}),
+                    line("210-225","Read the manual, then craft about 15x Mageweave Bandage from 15x Mageweave Cloth.",{16113,8544,4338}),
+                    line("BOOKS","Alliance buys all 3x BoE books from Deneb Walker in Stromgarde; Horde uses Balai Lok'Wein in Brackenwall."),
                 }),
                 step("UNLOCK ARTISAN AT LEVEL 35",{
                     line("REQUIREMENT","Reach character level 35 and First Aid 225 before the faction Triage quest."),
@@ -57,6 +64,9 @@ ns.Bracket39GuidesData = {
                 item(2589,"Linen Cloth","Early First Aid material."),
                 item(2592,"Wool Cloth","Early First Aid material."),
                 item(4306,"Silk Cloth","Expert First Aid material."),
+                item(1251,"Linen Bandage","Leveling craft from skill 1-40."),
+                item(2581,"Heavy Linen Bandage","Leveling craft from skill 40-80."),
+                item(3530,"Wool Bandage","Leveling craft from skill 80-115."),
                 item(3531,"Heavy Wool Bandage","Leveling craft for the Expert transition."),
                 item(6450,"Silk Bandage","Expert leveling bandage."),
                 item(6451,"Heavy Silk Bandage","Expert leveling and combat bandage."),
@@ -81,11 +91,25 @@ ns.Bracket39GuidesData = {
                     line("HIGH-SKILL LURES","Stock Aquadynamic Fish Attractors for dangerous water and the fishing event.",{6533}),
                     line("ARTISAN","The Artisan book is the Nat Pagle quest reward; all 4x quest fish must be caught, not purchased.",{16082}),
                 }),
-                step("SKILL 1-225",{
-                    line("1-150","Fish safe capital water, train Journeyman and use lures to reduce failed catches.",{6256,6365,6529}),
-                    line("EXPERT","At level 20 and Fishing 125, read Expert Fishing - The Bass and You.",{16083}),
-                    line("125-225","Continue in safe water; harder zones do not improve the chance of a skill point."),
-                    line("BUFFER","Expect several hundred successful catches and carry extra lures."),
+                step("SKILL 1-75",{
+                    line("WHERE","Fish starting-zone water with a Shiny Bauble; only successful catches can grant skill.",{6256,6529}),
+                    line("CATCHES","Plan roughly 75 successful catches for this segment."),
+                    line("TRAIN","Learn Journeyman Fishing between skill 50 and 75."),
+                }),
+                step("SKILL 75-125",{
+                    line("WHERE","Move to safe capital-city water; harder zones do not improve skill-up chance."),
+                    line("CATCHES","Plan roughly 100-150 successful catches as gains begin to slow."),
+                    line("BOOK","At level 20 and Fishing 125, read Expert Fishing - The Bass and You.",{16083}),
+                }),
+                step("SKILL 125-175",{
+                    line("WHERE","Remain in safe capital water and keep a lure active to reduce failed catches."),
+                    line("CATCHES","Plan roughly 150-200 successful catches for this segment."),
+                    line("RULE","A successful catch can raise Fishing anywhere; choose safer water over higher-level zones."),
+                }),
+                step("SKILL 175-225",{
+                    line("WHERE","Continue in safe water where catches do not get away."),
+                    line("CATCHES","Plan roughly 250-350 successful catches as gains become progressively slower."),
+                    line("CAP","Reach raw Fishing 225 before starting the Artisan quest."),
                 }),
                 step("NAT PAGLE ARTISAN QUEST",{
                     line("REQUIREMENT","Reach level 35 and raw Fishing 225, then visit Nat Pagle southwest of Theramore at (58.6, 60.0)."),
@@ -95,10 +119,19 @@ ns.Bracket39GuidesData = {
                     line("STRANGLETHORN","Catch Savage Coast Blue Sailfin near the Savage Coast at (33, 32)."),
                     line("RISK","The quest awards XP and crosses level-40+ territory; explore first and use an escort."),
                 }),
-                step("SKILL 225-300",{
+                step("SKILL 225-250",{
                     line("ARTISAN","Turn in all 4x quest fish to receive Artisan Fishing and the 300 cap.",{16082}),
-                    line("ROUTE","Fish any safe water you can successfully use; skill gains depend on successful catches, not zone difficulty."),
+                    line("ROUTE","Fish safe water where every cast succeeds; zone difficulty does not improve skill-up chance."),
+                    line("CATCHES","Expect roughly 125-175 successful catches for these 25 skill points."),
+                }),
+                step("SKILL 250-275",{
+                    line("ROUTE","Continue in safe water and keep the same pole-and-lure setup."),
                     line("LURE","Use Aquadynamic Fish Attractors for dangerous high-skill water.",{6533}),
+                    line("CATCHES","Expect roughly 150-225 successful catches for these 25 skill points."),
+                }),
+                step("SKILL 275-300",{
+                    line("ROUTE","Finish in any water where catches reliably succeed; travel is optional for skill gains."),
+                    line("CATCHES","Expect roughly 200-300 successful catches for the final 25 skill points."),
                     line("CAP","Stop at 300. Equipment and lures raise effective skill above the trained cap."),
                 }),
                 step("TWINK REWARDS",{
@@ -129,11 +162,32 @@ ns.Bracket39GuidesData = {
                     line("SCHEMATICS","Buy Schematic: Thorium Widget; obtain Schematic: Thorium Shells or plan Thorium Tubes as the fallback.",{15994,15997,16000}),
                     line("BUFFER","These are minimum route totals; yellow and green recipes can require extra materials."),
                 }),
-                step("REACH EXPERT 225",{
-                    line("1-150","Follow the early route through blasting powder, bolts, bombs, tubes and scopes."),
-                    line("150-200","Craft Bronze Frameworks, Explosive Sheep, Solid Blasting Powder and Mithril Tubes.",{4382,4384,10505,10559}),
-                    line("200-225","Craft Unstable Triggers and Mithril Casings; retain both for later bombs.",{10560,10561}),
-                    line("TOOLS","Keep an Arclight Spanner and Gyromatic Micro-Adjustor.",{6219,10498}),
+                step("SKILL 1-75",{
+                    line("1-30","Craft about 60x Rough Blasting Powder; keep all powder."),
+                    line("30-50","Craft about 30x Handful of Copper Bolts; keep all bolts."),
+                    line("50-51","Craft 1x Arclight Spanner and keep it.",{6219}),
+                    line("51-75","Craft about 30x Rough Copper Bomb from the saved components."),
+                }),
+                step("SKILL 75-150",{
+                    line("75-90","Craft about 60x Coarse Blasting Powder; keep it."),
+                    line("90-100","Craft about 20x Coarse Dynamite."),
+                    line("100-105","Craft 5x Silver Contact."),
+                    line("105-125","Craft about 25x Bronze Tube; keep at least 10x."),
+                    line("125-135","Craft about 10x Standard Scope from saved tubes."),
+                    line("135-145","Craft about 30x Heavy Blasting Powder; keep it."),
+                    line("145-150","Craft about 15x Whirring Bronze Gizmo; keep them."),
+                }),
+                step("SKILL 150-200",{
+                    line("150-160","Craft about 15x Bronze Framework; keep them.",{4382}),
+                    line("160-175","Craft about 15x Explosive Sheep from saved frameworks, gizmos and powder.",{4384,4382}),
+                    line("175-176","Craft 1x Gyromatic Micro-Adjustor and keep it.",{10498}),
+                    line("176-195","Craft about 60x Solid Blasting Powder; keep it.",{10505}),
+                    line("195-200","Craft about 7x Mithril Tube and keep them.",{10559,3860}),
+                }),
+                step("SKILL 200-225",{
+                    line("200-215","Craft about 20x Unstable Trigger and keep them.",{10560}),
+                    line("215-225","Craft about 10-15x Mithril Casing and keep them for the Artisan segment.",{10561,3860}),
+                    line("TRAIN","At level 35 and Engineering 200, train Artisan from Buzzek Bracketswing in Gadgetzan."),
                 }),
                 step("ARTISAN AND SPECIALIZATION",{
                     line("ARTISAN","At level 35 and Engineering 200, train Artisan from Buzzek Bracketswing in Gadgetzan."),

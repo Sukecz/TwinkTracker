@@ -44,6 +44,8 @@ for _, guideKey in ipairs(ns.GuidesData.order) do
         for _, guideLine in ipairs(guideStep.lines) do
             assert(type(guideLine.label) == "string" and guideLine.label ~= "")
             assert(type(guideLine.text) == "string" and guideLine.text ~= "")
+            assert(not string.find(string.lower(guideLine.text), "follow the bracket", 1, true))
+            assert(not string.find(string.lower(guideLine.text), "follow the early route", 1, true))
             assert(type(guideLine.itemIDs) == "table")
             for _, itemID in ipairs(guideLine.itemIDs) do
                 assert(guideItemsByID[itemID], guideKey .. " line references unknown inline item " .. tostring(itemID))
@@ -72,6 +74,9 @@ assert(#ns.GuidesData.sections.FISHING.steps >= 8)
 assert(#ns.GuidesData.sections.FISHING.items >= 12)
 assert(#ns.GuidesData.sections.ENGINEERING.steps >= 8)
 assert(#ns.GuidesData.sections.ENGINEERING.items >= 27)
+for _, title in ipairs({ "SKILL 1-75", "SKILL 75-105", "SKILL 105-135", "SKILL 135-150" }) do
+    assert(hasGuideStep(ns.GuidesData.sections.ENGINEERING, title), "level-19 Engineering is missing " .. title)
+end
 local engineeringText = ""
 for _, guideStep in ipairs(ns.GuidesData.sections.ENGINEERING.steps) do
     for _, guideLine in ipairs(guideStep.lines) do engineeringText = engineeringText .. " " .. guideLine.text end
