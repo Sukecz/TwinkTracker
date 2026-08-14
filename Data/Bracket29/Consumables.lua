@@ -8,7 +8,7 @@ local function deepCopy(value)
 end
 
 local data = deepCopy(ns.ConsumablesData)
-data.version = "2026-08-11"
+data.version = "2026-08-14"
 data.classes = {}
 
 local function add(itemID, name, effect, requiredLevel, profession, restrictions)
@@ -67,6 +67,7 @@ add(10577,"Goblin Mortar","383-517 Fire damage and a 3 sec area stun",nil,"Engin
 add(10726,"Gnomish Mind Control Cap","Attempts to control a humanoid for 20 sec",nil,"Engineering 215 to use","BoE specialist craft from a level-30+ engineer; can backfire; combat behavior needs live verification")
 add(10724,"Gnomish Rocket Boots","Greatly increases run speed for 20 sec",nil,"Engineering 225 to use","BoE specialist craft from a level-30+ engineer; can malfunction; 30 min cooldown")
 add(4852,"Flash Bomb","Causes nearby beasts to flee for 10 sec",27,nil,"Situational PvE control")
+add(4376,"Flame Deflector","Absorbs 500 Fire damage for 1 min",15,nil,"5 charges; 15 min cooldown; does not require Engineering to use")
 add(4941,"Really Sticky Glue","Roots a target for 10 sec",nil,nil,"Horde-only BoP quest supply; one use; 1 min cooldown")
 add(3434,"Slumber Sand","Puts a target to sleep for 20 sec",nil,nil,"Horde-only BoP quest supply; one use; damage breaks sleep")
 add(5816,"Light of Elune","Immune to damage and spells for 10 sec",nil,nil,"Alliance-only Unique BoP one-use quest reward; shares potion cooldown")
@@ -94,6 +95,17 @@ add(19007,"Lesser Healthstone (2/2 Improved)","Restores 300 health",nil,nil,"War
 data.catalog[14530].restrictions = "A level-29 character cannot craft this; obtain finished bandages elsewhere; damage interrupts; Recently Bandaged for 60 sec"
 data.catalog[14529].restrictions = "Weaker Runecloth fallback; a level-29 character cannot craft this; obtain finished bandages elsewhere; damage interrupts; Recently Bandaged for 60 sec"
 data.catalog[8544].restrictions = "Best bandage a level-29 character can craft personally; damage interrupts; Recently Bandaged for 60 sec"
+data.catalog[6453].restrictions = "Situational poison removal; 1 min cooldown; does not use the potion cooldown"
+data.catalog[4381].restrictions = "Equipped Engineering 140 trinket; 10 charges; 5 min cooldown"
+data.catalog[7676].profession = "Cooking 60"
+data.catalog[7676].restrictions = "Rogue only; recipe comes from the level-20 poison class quest; 5 min cooldown"
+data.catalog[5332].restrictions = "Unique; binds when picked up; one charge; rare Ghost Saber drop in Darkshore; 10 min cooldown"
+data.catalog[4852].restrictions = "PvP and PvE anti-Beast control, including Hunter pets and beast forms; 1 min cooldown"
+data.catalog[10726].restrictions = "BoE specialist craft from a level-30+ engineer; can backfire; 30 min cooldown; combat behavior needs live verification"
+data.catalog[5237].effect = "20% chance to increase cast time by 40% for 10 sec; 50 charges"
+data.catalog[5237].restrictions = "Rogue only; 30 min temporary weapon poison"
+data.catalog[3434].restrictions = "Horde-only BoP quest supply; one use; damage breaks sleep; 1 min cooldown"
+data.catalog[1191].restrictions = "Alliance-only BoP quest reward; 10 charges; 1 min cooldown"
 
 local function rec(itemID, priority, roles, note)
     return { itemID=itemID, priority=priority, roles=roles, note=note }
@@ -115,6 +127,11 @@ local casterScrolls={R(2290,"Intellect"),R(1711,"Stamina"),R(1712,"Spirit"),O(14
 local hybridScrolls={R(2290,"Intellect"),R(1477,"Agility"),R(1711,"Stamina"),A(2289,"Strength"),O(1712,"Spirit"),O(1478,"Armor")}
 local engineering={R(4390,"control / interrupt"),R(4394,"larger-area control"),A(10514,"wide-area control"),O(10646,"burst; avoid on Hardcore"),R(4388,"debuff / slow"),R(4392,"PvE / Hardcore escape"),R(10518,"fall safety"),O(10720,"root with backfire risk"),O(10716,"melee debuff with backfire risk"),O(10577,"charged area stun"),O(10726,"humanoid control; live validation"),O(10724,"mobility with malfunction risk"),O(7189,"mobility; avoid on Hardcore"),O(4852,"beast control")}
 local worldUtility={R(2091,"break-on-damage crowd control"),O(4941,"Horde-only limited root"),O(3434,"Horde-only limited sleep"),O(5816,"Alliance-only one-use immunity"),O(1191,"Alliance-only limited hit debuff"),O(5332,"aggressive one-use guardian; unsafe on Hardcore"),O(1187,"aggressive one-use guardian; unsafe on Hardcore")}
+local rogueEngineering=deepCopy(engineering)
+rogueEngineering[#rogueEngineering+1]=O(4381,"friendly Polymorph removal / emergency healing")
+rogueEngineering[#rogueEngineering+1]=O(4376,"extra Fire absorb on its own cooldown")
+local rogueWorldUtility=deepCopy(worldUtility)
+rogueWorldUtility[#rogueWorldUtility+1]=O(4945,"Horde-only one-use life steal")
 
 local function addProfile(classToken,categories)
     local order={}
@@ -129,7 +146,7 @@ addProfile("HUNTER",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS=casterPotions,ELI
 addProfile("MAGE",{BANDAGES=bandages,FOOD_DRINK=casterFood,POTIONS=casterPotions,ELIXIRS=casterElixirs,SCROLLS=casterScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(20744,"spell pressure"),A(20745,"mana sustain")},CLASS={R(5514,"conjured mana gem"),R(3772,"conjured drink"),A(1487,"conjured food"),R(17056,"Slow Fall reagent; consumed"),O(17031,"Teleport reagent")}})
 addProfile("PALADIN",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS=casterPotions,ELIXIRS=hybridElixirs,SCROLLS=hybridScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(20745,"healer sustain"),R(7964,"sharp melee weapon"),R(7965,"blunt melee weapon"),O(20744,"spell pressure")}})
 addProfile("PRIEST",{BANDAGES=bandages,FOOD_DRINK=casterFood,POTIONS=casterPotions,ELIXIRS=casterElixirs,SCROLLS=casterScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(20745,"healer sustain"),R(20744,"Shadow pressure")}})
-addProfile("ROGUE",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS=physicalPotions,ELIXIRS=physicalElixirs,SCROLLS=physicalScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(6949,"damage poison"),R(3775,"movement control poison"),R(5237,"caster-control poison"),O(7964,"poison-free sharp weapon")},CLASS={R(7676,"energy burst"),R(5140,"Vanish reagent")}})
+addProfile("ROGUE",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS=physicalPotions,ELIXIRS=physicalElixirs,SCROLLS=physicalScrolls,ENGINEERING=rogueEngineering,WORLD_UTILITY=rogueWorldUtility,WEAPON={R(6949,"damage poison"),R(3775,"movement control poison"),R(5237,"caster-control poison"),O(7964,"poison-free sharp weapon")},CLASS={R(7676,"energy burst"),R(5140,"Vanish reagent")}})
 addProfile("SHAMAN",{BANDAGES=bandages,FOOD_DRINK=casterFood,POTIONS=casterPotions,ELIXIRS=hybridElixirs,SCROLLS=hybridScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(20745,"Restoration sustain"),R(20744,"Elemental pressure"),A(7964,"sharp Enhancement weapon"),A(7965,"blunt Enhancement weapon","Replaces the Shaman weapon imbue")},CLASS={R(17057,"Water Breathing reagent"),R(17058,"Water Walking reagent")}})
 addProfile("WARLOCK",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS=casterPotions,ELIXIRS=casterElixirs,SCROLLS=casterScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(20744,"spell pressure"),A(20745,"mana sustain","Conflicts with Firestone")},CLASS={R(19007,"maximum Improved Lesser Healthstone"),A(19006,"one-talent Lesser Healthstone"),A(5511,"base Lesser Healthstone"),R(6265,"spell resource"),O(5232,"Era resurrection only","Does not resurrect on Hardcore")}})
 addProfile("WARRIOR",{BANDAGES=bandages,FOOD_DRINK=food,POTIONS={R(5633,"Rage burst"),R(1710,"emergency healing"),R(5634,"PvP control immunity"),R(2459,"mobility"),O(6049,"Fire protection"),O(6050,"Frost protection"),O(6052,"Nature protection"),O(6048,"Shadow protection")},ELIXIRS=physicalElixirs,SCROLLS=physicalScrolls,ENGINEERING=engineering,WORLD_UTILITY=worldUtility,WEAPON={R(7964,"sharp weapon"),R(7965,"blunt weapon"),A(3824,"Shadow proc"),R(3464,"best bow ammunition; externally acquired"),A(3030,"vendor bow ammunition"),R(3033,"gun ammunition")}})

@@ -94,6 +94,29 @@ for _, bandageID in ipairs({ 14530, 14529, 8545 }) do
     assert(string.find(data.consumables.catalog[bandageID].restrictions, "cannot craft", 1, true), "bandage lacks the level-29 crafting prohibition")
 end
 
+local rogue = data.consumables.classes.ROGUE.categories
+local function hasRecommendation(category, itemID)
+    for _, recommendation in ipairs(category) do
+        if recommendation.itemID == itemID then return true end
+    end
+    return false
+end
+assert(hasRecommendation(rogue.ENGINEERING, 4381), "Rogue lacks Minor Recombobulator utility")
+assert(hasRecommendation(rogue.ENGINEERING, 4376), "Rogue lacks Flame Deflector utility")
+assert(hasRecommendation(rogue.WORLD_UTILITY, 4945), "Rogue lacks Horde Faintly Glowing Skull utility")
+assert(data.consumables.catalog[7676].profession == "Cooking 60")
+assert(string.find(data.consumables.catalog[7676].restrictions, "level-20 poison class quest", 1, true))
+assert(string.find(data.consumables.catalog[6453].restrictions, "1 min cooldown", 1, true))
+assert(string.find(data.consumables.catalog[4852].restrictions, "PvP and PvE anti-Beast", 1, true))
+assert(string.find(data.consumables.catalog[10726].restrictions, "30 min cooldown", 1, true))
+assert(string.find(data.consumables.catalog[5237].effect, "50 charges", 1, true))
+assert(data.consumables.catalog[3775].effect == "30% chance to reduce movement speed by 50% for 12 sec")
+assert(data.consumables.catalog[6949].effect == "20% chance for 30-38 Nature damage; 55 charges")
+
+local rogueGear = data.bis.classes.ROGUE.slots
+assert(string.find(rogueGear.ONE_HAND.B[1].note, "mutually exclusive with Nail Spitter", 1, true))
+assert(string.find(rogueGear.RANGED.B[3].note, "mutually exclusive with Skullbreaker", 1, true))
+
 for key, itemID in pairs({ deadlyScope=10546, sniperScope=10548, steelWeaponChain=6041, ironCounterweight=6043, thoriumShieldSpike=12645 }) do
     assert(data.enchants.catalog[key].itemID == itemID)
 end

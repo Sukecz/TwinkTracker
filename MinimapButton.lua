@@ -51,7 +51,7 @@ function MinimapButton:Create()
     icon:SetSize(24,24)
     icon:SetPoint("CENTER",0,1)
     icon:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga")
-    icon:SetTexCoord(0.06,0.94,0.06,0.94)
+    icon:SetTexCoord(0,1,0,1)
 
     local border=button:CreateTexture(nil,"OVERLAY")
     border:SetSize(54,54)

@@ -2,6 +2,18 @@
 
 All notable changes are documented here.
 
+## 0.4.3 - 2026-08-14
+
+### Changed
+
+- Reduced the logo inside the minimap icon and removed its extra texture crop
+  so the gold `T` remains legible inside Blizzard's circular minimap border.
+- Audited the level-29 Rogue profile: documented the mutually exclusive Horde
+  quest rewards Skullbreaker and Nail Spitter, and added verified Flame
+  Deflector, Minor Recombobulator and Faintly Glowing Skull utility choices.
+- Corrected level-29 Rogue consumable details for Thistle Tea, Strong
+  Anti-Venom, Flash Bomb, Mind-numbing Poison and charged utility cooldowns.
+
 ## 0.4.2 - 2026-08-13
 
 ### Changed

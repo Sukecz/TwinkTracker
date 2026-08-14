@@ -25,8 +25,8 @@ and addon version.
   copyable expansion-correct Wowhead links and live green highlighting for
   equipped recommendations.
 - **Enchants and consumables** — class- and bracket-specific choices with their
-  effects, profession requirements, target item-level restrictions and other
-  important application cautions.
+  effects, charges, cooldowns, profession requirements, target item-level
+  restrictions and other important application cautions.
 - **Preparation guides** — step-by-step First Aid, Fishing and Engineering
   routes, plus Jewelcrafting in TBC, with trainers, skill breakpoints and
   interactive item references.
