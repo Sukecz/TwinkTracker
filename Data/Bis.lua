@@ -1,6 +1,12 @@
 local addonName, ns = ...
 
 local WOWHEAD_CLASSIC_ITEM_URL = "https://www.wowhead.com/classic/item="
+local NAXX_ENCHANT_SHOULDER_IDS = {
+    [4314] = true,
+    [4315] = true,
+    [5404] = true,
+    [15313] = true,
+}
 
 local function item(id, name, note, faction)
     if not faction and note then
@@ -9,7 +15,14 @@ local function item(id, name, note, faction)
         if alliance and not horde then faction = "ALLIANCE" end
         if horde and not alliance then faction = "HORDE" end
     end
-    return { id = id, name = name, note = note, faction = faction, wowhead = id and WOWHEAD_CLASSIC_ITEM_URL .. id or nil }
+    return {
+        id = id,
+        name = name,
+        note = note,
+        faction = faction,
+        wowhead = id and WOWHEAD_CLASSIC_ITEM_URL .. id or nil,
+        requiresNaxxEnchant = id and NAXX_ENCHANT_SHOULDER_IDS[id] or nil,
+    }
 end
 
 local function tiers(s, a, b)
@@ -160,7 +173,7 @@ end
 local physicalRingOne = tiers(
     factionChoices(20429, "Legionnaire's Band", 20439, "Protector's Band", "WSG physical ring"),
     factionChoices(6414, "Seal of Sylvanas", 2933, "Seal of Wrynn", "quest ring"),
-    { item(4998, "Blood Ring", "Stamina alternative"), item(12006, "Meadow Ring", "Physical random-suffix alternative") }
+    { item(4998, "Blood Ring", "Stamina alternative"), item(12006, "Meadow Ring of the Monkey", "Agility / stamina random-suffix alternative") }
 )
 local physicalRingTwo = tiers(physicalRingOne.A, physicalRingOne.S, physicalRingOne.B)
 local casterRingOne = tiers(
@@ -179,7 +192,7 @@ local warriorRings = tiers(
         item(2933, "Seal of Wrynn", "Alliance quest ring", "ALLIANCE"),
         item(6414, "Seal of Sylvanas", "Horde quest ring", "HORDE"),
     },
-    { item(4998, "Blood Ring", "Faction-neutral stamina alternative"), item(12006, "Meadow Ring", "Physical random-suffix alternative") }
+    { item(4998, "Blood Ring", "Faction-neutral stamina alternative"), item(12006, "Meadow Ring of the Tiger", "Strength / agility random-suffix alternative") }
 )
 
 local warriorTwoHand = tiers(
@@ -272,7 +285,7 @@ ns.BisData = {
             FINGER_1=tiers({item(20431,"Lorekeeper's Ring","Alliance WSG caster ring","ALLIANCE"),item(20439,"Protector's Band","Alliance WSG physical ring","ALLIANCE")},item(2933,"Seal of Wrynn","Alliance quest ring","ALLIANCE"),{item(1156,"Lavishly Jeweled Ring","Healer mana"),item(4998,"Blood Ring","Survival")}),
             FINGER_2=tiers(item(2933,"Seal of Wrynn","Alliance quest ring","ALLIANCE"),{item(20431,"Lorekeeper's Ring","Alliance WSG caster ring","ALLIANCE"),item(20439,"Protector's Band","Alliance WSG physical ring","ALLIANCE")},{item(1156,"Lavishly Jeweled Ring","Healer mana"),item(4998,"Blood Ring","Survival")}),
             TRINKET_1=trinkets(nil,18864),TRINKET_2=secondTrinkets(nil,18864),
-            ONE_HAND=tiers({item(790,"Forester's Axe of the Eagle","Healer random suffix; maximum roll needs live / AH validation"),item(1482,"Shadowfang","Melee proc weapon")},{item(935,"Night Watch Shortsword","Stamina healer weapon"),item(5191,"Cruel Barb","Melee alternative"),item(20440,"Protector's Sword","Alliance Revered WSG physical weapon","ALLIANCE")},item(1483,"Face Smasher","Melee survival fallback")),
+            ONE_HAND=tiers({item(790,"Forester's Axe of the Eagle","Healer random suffix"),item(1482,"Shadowfang","Melee proc weapon")},{item(935,"Night Watch Shortsword","Stamina healer weapon"),item(5191,"Cruel Barb","Melee alternative"),item(20440,"Protector's Sword","Alliance Revered WSG physical weapon","ALLIANCE")},item(1483,"Face Smasher","Melee survival fallback")),
             TWO_HAND=tiers({item(5815,"Glacial Stone","Alliance quest burst weapon","ALLIANCE"),item(7230,"Smite's Mighty Hammer","High-stat dungeon alternative")},{item(1318,"Night Reaver","Shadow-proc alternative"),item(12992,"Searing Blade","Fire-proc alternative")},noVerified("Alliance two-hand alternative")),
             OFF_HAND=tiers({item(7002,"Arctic Buckler","Neutral high-armor BFD quest"),item(12997,"Redbeard Crest","Damage / survival shield")},{item(13245,"Kresh's Back","Dungeon shield"),item(6572,"Defender Shield of Stamina","Random-suffix shield")},noVerified("shield alternative")),
         }, {"ONE_HAND","TWO_HAND","OFF_HAND"}),
@@ -300,7 +313,7 @@ ns.BisData = {
             BACK=tiers(item(2059,"Sentry Cloak","Agility and stamina"),{item(6449,"Glowing Lizardscale Cloak","Pure agility"),item(6667,"Engineer's Cloak","Stamina fallback")},item(12979,"Firebane Cloak","Situational fire resistance")),
             CHEST=tiers({item(2041,"Tunic of Westfall","Alliance burst quest","ALLIANCE"),item(10399,"Blackened Defias Armor","Neutral stamina alternative")},item(1486,"Tree Bark Jacket","Stamina fallback"),noVerified("chest alternative")),
             WRISTS=tiers({item(15331,"Wrangler's Wristbands of the Monkey","Agility / stamina suffix"),item(3202,"Forest Leather Bracers","Fixed agility")},{item(15331,"Wrangler's Wristbands of Stamina","Stamina suffix"),item(15331,"Wrangler's Wristbands of Agility","Agility suffix")},noVerified("wrist alternative")),
-            HANDS=tiers({item(6586,"Scouting Gloves of the Monkey","Agility / stamina suffix"),item(14572,"Bristlebark Gloves","Fixed physical stats")},{item(15115,"Rigid Gloves of the Monkey","Budget agility / stamina"),item(6586,"Scouting Gloves of Agility","Pure agility suffix")},item(15115,"Rigid Gloves of Agility","Budget agility suffix")),
+            HANDS=tiers({item(6586,"Scouting Gloves of the Monkey","Agility / stamina suffix"),item(14572,"Bristlebark Gloves","Fixed physical stats")},item(15115,"Rigid Gloves of the Monkey","Budget agility / stamina"),noVerified("hand fallback")),
             WAIST=tiers(item(6468,"Deviate Scale Belt","Burst / survival"),{item(14567,"Bristlebark Belt","Agility / stamina"),item(16987,"Screecher Belt","Horde attack power / stamina quest","HORDE")},{item(10412,"Belt of the Fang","Balanced fallback"),item(10403,"Blackened Defias Belt","Strength / set fallback")}),
             LEGS=tiers(item(10410,"Leggings of the Fang","Agility / stamina"),{item(6587,"Scouting Trousers of the Monkey","Agility / stamina suffix"),item(6587,"Scouting Trousers of Agility","Pure agility suffix")},noVerified("leg alternative")),
             FEET=tiers({item(1121,"Feet of the Lynx","Burst: 3 Strength and 8 Agility"),item(19969,"Nat Pagle's Extreme Anglin' Boots","Flag carrier: 12 Stamina"),item(10653,"Trailblazer Boots","Horde balanced: 7 Agility and 3 Stamina","HORDE")},{item(6335,"Grizzled Boots","Horde stamina quest","HORDE"),item(6668,"Draftsman Boots","Neutral physical quest")},item(6582,"Scouting Boots of the Monkey","Budget suffix")),
@@ -313,12 +326,12 @@ ns.BisData = {
         SHAMAN = profile("Shaman", "Melee / Healer / Elemental Support", leather, {
             NECK=factionNeck(20442,nil),
             SHOULDERS=tiers({item(10657,"Talbar Mantle","Healer / elemental stamina"),item(15313,"Feral Shoulder Pads","Melee armor")},item(5404,"Serpent's Shoulders","Melee armor fallback"),{item(4315,"Reinforced Woolen Shoulders","Caster fallback"),item(4314,"Double-stitched Woolen Shoulders","Budget fallback")}),
-            BACK=tiers({item(20427,"Battle Healer's Cloak","Horde WSG healer cloak","HORDE"),item(2059,"Sentry Cloak","Melee survival")},{item(6667,"Engineer's Cloak","Hybrid survival"),item(14179,"Watcher's Cape of the Eagle","Balanced elemental suffix; maximum roll needs live / AH validation")},{item(14179,"Watcher's Cape of Healing","Healing-power suffix; maximum roll needs live / AH validation"),item(12979,"Firebane Cloak","Situational resistance")}),
-            CHEST=tiers({item(1486,"Tree Bark Jacket","Healer / elemental survival"),item(10399,"Blackened Defias Armor","Melee stats")},item(6465,"Robe of the Moccasin","Caster alternative"),{item(14127,"Ritual Shroud of the Eagle","Balanced elemental / healer suffix; maximum roll needs live / AH validation"),item(14562,"Prospector's Chestpiece","Fixed agility / stamina melee fallback")}),
-            WRISTS=tiers({item(15331,"Wrangler's Wristbands of the Eagle","Healer / elemental suffix"),item(15331,"Wrangler's Wristbands of Stamina","Survival suffix")},{item(1974,"Mindthrust Bracers","Mana with stamina penalty"),item(15331,"Wrangler's Wristbands of Nature's Wrath","Nature-damage suffix; maximum roll needs live / AH validation")},{item(15331,"Wrangler's Wristbands of the Monkey","Melee suffix"),item(9768,"Greenweave Bracers of the Eagle","Caster fallback")}),
-            HANDS=tiers({item(6586,"Scouting Gloves of the Eagle","Healer / elemental suffix"),item(14572,"Bristlebark Gloves","Melee stats")},{item(12977,"Magefist Gloves","Caster alternative"),item(6586,"Scouting Gloves of the Monkey","Melee survival suffix")},{item(6586,"Scouting Gloves of Healing","Healing-power suffix; maximum roll needs live / AH validation"),item(6467,"Deviate Scale Gloves","Melee fallback")}),
-            WAIST=tiers({item(2911,"Keller's Girdle","Caster mana"),item(6468,"Deviate Scale Belt","Melee survival")},{item(9766,"Greenweave Sash of Healing","Healing-power suffix; maximum roll needs live / AH validation"),item(15329,"Wrangler's Belt of the Eagle","Leather hybrid suffix")},{item(16987,"Screecher Belt","Horde attack power / stamina quest","HORDE"),item(6460,"Cobrahn's Grasp","Melee damage")}),
-            LEGS=tiers({item(6587,"Scouting Trousers of the Eagle","Healer / elemental suffix"),item(10410,"Leggings of the Fang","Melee survival")},{item(12987,"Darkweave Breeches","Caster stats"),item(6587,"Scouting Trousers of the Monkey","Melee suffix")},item(6587,"Scouting Trousers of Healing","Healing-power suffix; maximum roll needs live / AH validation")),
+            BACK=tiers({item(20427,"Battle Healer's Cloak","Horde WSG healer cloak","HORDE"),item(2059,"Sentry Cloak","Melee survival")},{item(6667,"Engineer's Cloak","Hybrid survival"),item(14179,"Watcher's Cape of the Eagle","Balanced elemental suffix")},{item(14179,"Watcher's Cape of Healing","Healing-power suffix"),item(12979,"Firebane Cloak","Situational resistance")}),
+            CHEST=tiers({item(1486,"Tree Bark Jacket","Healer / elemental survival"),item(10399,"Blackened Defias Armor","Melee stats")},item(6465,"Robe of the Moccasin","Caster alternative"),{item(14127,"Ritual Shroud of the Eagle","Balanced elemental / healer suffix"),item(14562,"Prospector's Chestpiece","Fixed agility / stamina melee fallback")}),
+            WRISTS=tiers({item(15331,"Wrangler's Wristbands of the Eagle","Healer / elemental suffix"),item(15331,"Wrangler's Wristbands of Stamina","Survival suffix")},{item(1974,"Mindthrust Bracers","Mana with stamina penalty"),item(15331,"Wrangler's Wristbands of Nature's Wrath","Nature-damage suffix")},{item(15331,"Wrangler's Wristbands of the Monkey","Melee suffix"),item(9768,"Greenweave Bracers of the Eagle","Caster fallback")}),
+            HANDS=tiers({item(6586,"Scouting Gloves of the Eagle","Healer / elemental suffix"),item(14572,"Bristlebark Gloves","Melee stats")},{item(12977,"Magefist Gloves","Caster alternative"),item(6586,"Scouting Gloves of the Monkey","Melee survival suffix")},{item(6586,"Scouting Gloves of Healing","Healing-power suffix"),item(6467,"Deviate Scale Gloves","Melee fallback")}),
+            WAIST=tiers({item(2911,"Keller's Girdle","Caster mana"),item(6468,"Deviate Scale Belt","Melee survival")},{item(9766,"Greenweave Sash of Healing","Healing-power suffix"),item(15329,"Wrangler's Belt of the Eagle","Leather hybrid suffix")},item(16987,"Screecher Belt","Horde attack power / stamina quest","HORDE")),
+            LEGS=tiers({item(6587,"Scouting Trousers of the Eagle","Healer / elemental suffix"),item(10410,"Leggings of the Fang","Melee survival")},{item(12987,"Darkweave Breeches","Caster stats"),item(6587,"Scouting Trousers of the Monkey","Melee suffix")},item(6587,"Scouting Trousers of Healing","Healing-power suffix")),
             FEET=tiers(item(19969,"Nat Pagle's Extreme Anglin' Boots","Maximum stamina"),{item(1121,"Feet of the Lynx","Melee agility"),item(14374,"Sanguine Sandals","Caster stats")},{item(9767,"Greenweave Sandals of the Eagle","Caster suffix"),item(6335,"Grizzled Boots","Horde stamina quest","HORDE")}),
             FINGER_1=tiers({item(20426,"Advisor's Ring","Horde WSG caster ring","HORDE"),item(20429,"Legionnaire's Band","Horde WSG physical ring","HORDE")},item(6414,"Seal of Sylvanas","Horde survival quest ring","HORDE"),{item(1156,"Lavishly Jeweled Ring","Caster mana"),item(4998,"Blood Ring","Survival")}),
             FINGER_2=tiers(item(6414,"Seal of Sylvanas","Horde survival quest ring","HORDE"),{item(20426,"Advisor's Ring","Horde WSG caster ring","HORDE"),item(20429,"Legionnaire's Band","Horde WSG physical ring","HORDE")},{item(1156,"Lavishly Jeweled Ring","Caster mana"),item(4998,"Blood Ring","Survival")}),
@@ -331,16 +344,16 @@ ns.BisData = {
             HEAD=tiers(item(19972,"Lucky Fishing Hat","Stamina survival"),{item(4385,"Green Tinted Goggles","Stamina Engineering"),item(4373,"Shadow Goggles","Mana Engineering")},noVerified("head alternative")),
             NECK=factionNeck(20442,20444),
             SHOULDERS=tiers(item(10657,"Talbar Mantle","Stamina / mana"),item(4315,"Reinforced Woolen Shoulders","Crafted armor fallback"),item(4314,"Double-stitched Woolen Shoulders","Budget fallback")),
-            BACK=tiers({item(6667,"Engineer's Cloak","Survival / mana"),item(14179,"Watcher's Cape of Shadow Wrath","Shadow-damage suffix; maximum roll needs live / AH validation")},item(12979,"Firebane Cloak","Situational fire resistance"),item(5444,"Miner's Cape","Guide-supported accessible stamina fallback")),
+            BACK=tiers({item(6667,"Engineer's Cloak","Survival / mana"),item(14179,"Watcher's Cape of Shadow Wrath","Shadow-damage suffix")},item(12979,"Firebane Cloak","Situational fire resistance"),item(5444,"Miner's Cape","Guide-supported accessible stamina fallback")),
             CHEST=tiers({item(1486,"Tree Bark Jacket","Stamina / mana"),item(14127,"Ritual Shroud of Shadow Wrath","Shadow-damage suffix")},{item(14127,"Ritual Shroud of Stamina","Survival suffix"),item(14127,"Ritual Shroud of the Eagle","Balanced suffix")},item(6465,"Robe of the Moccasin","Spirit fallback")),
             WRISTS=tiers({item(9768,"Greenweave Bracers of Stamina","Survival suffix"),item(9768,"Greenweave Bracers of Shadow Wrath","Shadow-damage suffix")},{item(9768,"Greenweave Bracers of the Eagle","Balanced suffix"),item(1974,"Mindthrust Bracers","Mana with stamina penalty")},noVerified("wrist alternative")),
-            HANDS=tiers({item(12977,"Magefist Gloves","Survival / mana"),item(892,"Gnoll Casting Gloves","General spell damage")},{item(14162,"Pagan Mitts of the Eagle","Balanced suffix; maximum roll needs live / AH validation"),item(14162,"Pagan Mitts of Fiery Wrath","Fire-pressure suffix; maximum roll needs live / AH validation")},noVerified("glove fallback")),
-            WAIST=tiers(item(2911,"Keller's Girdle","Survival / mana"),{item(9766,"Greenweave Sash of the Eagle","Balanced suffix; maximum roll needs live / AH validation"),item(9766,"Greenweave Sash of the Whale","Stamina / spirit suffix; maximum roll needs live / AH validation")},item(14173,"Buccaneer's Cord of the Eagle","Budget balanced suffix; maximum roll needs live / AH validation")),
-            LEGS=tiers({item(12987,"Darkweave Breeches","Stamina / mana"),item(10043,"Pious Legwraps","Alliance survival quest","ALLIANCE")},{item(6568,"Shimmering Trousers of the Eagle","Balanced suffix; maximum roll needs live / AH validation"),item(6568,"Shimmering Trousers of the Whale","Stamina / spirit suffix; maximum roll needs live / AH validation")},item(14125,"Ritual Leggings of the Eagle","Budget balanced suffix; maximum roll needs live / AH validation")),
+            HANDS=tiers({item(12977,"Magefist Gloves","Survival / mana"),item(892,"Gnoll Casting Gloves","General spell damage")},{item(14162,"Pagan Mitts of the Eagle","Balanced suffix"),item(14162,"Pagan Mitts of Fiery Wrath","Fire-pressure suffix")},noVerified("glove fallback")),
+            WAIST=tiers(item(2911,"Keller's Girdle","Survival / mana"),{item(9766,"Greenweave Sash of the Eagle","Balanced suffix"),item(9766,"Greenweave Sash of the Whale","Stamina / spirit suffix")},item(14173,"Buccaneer's Cord of the Eagle","Budget balanced suffix")),
+            LEGS=tiers({item(12987,"Darkweave Breeches","Stamina / mana"),item(10043,"Pious Legwraps","Alliance survival quest","ALLIANCE")},{item(6568,"Shimmering Trousers of the Eagle","Balanced suffix"),item(6568,"Shimmering Trousers of the Whale","Stamina / spirit suffix")},item(14125,"Ritual Leggings of the Eagle","Budget balanced suffix")),
             FEET=tiers(item(19969,"Nat Pagle's Extreme Anglin' Boots","Maximum stamina"),{item(14374,"Sanguine Sandals","Balanced caster stats"),item(9767,"Greenweave Sandals of Stamina","Survival suffix")},{item(9767,"Greenweave Sandals of Shadow Wrath","Shadow-damage suffix"),item(9767,"Greenweave Sandals of the Eagle","Mana suffix")}),
             FINGER_1=casterRingOne,FINGER_2=casterRingTwo,
             TRINKET_1=trinkets(18852,18858),TRINKET_2=secondTrinkets(18852,18858),
-            ONE_HAND=tiers(item(935,"Night Watch Shortsword","Stamina weapon"),{item(2567,"Evocator's Blade","Mana weapon"),item(3184,"Hook Dagger of Stamina","Survival suffix; maximum roll needs live / AH validation")},noVerified("one-hand fallback")),
+            ONE_HAND=tiers(item(935,"Night Watch Shortsword","Stamina weapon"),{item(2567,"Evocator's Blade","Mana weapon"),item(3184,"Hook Dagger of Stamina","Survival suffix")},noVerified("one-hand fallback")),
             TWO_HAND=tiers({item(1484,"Witching Stave","Shadow-damage staff"),item(890,"Twisted Chanter's Staff","Stamina / mana staff")},item(3415,"Staff of the Friar","Spirit staff"),noVerified("two-hand alternative")),
             OFF_HAND=tiers(item(16768,"Furbolg Medicine Pouch","Maximum stamina off-hand"),{item(6341,"Eerie Stable Lantern","Stamina fallback"),item(5183,"Pulsating Hydra Heart","Fire-damage niche")},item(1131,"Totem of Infliction","Alliance armor / retaliation quest","ALLIANCE")),
             RANGED=tiers(item(7001,"Gravestone Scepter","Neutral BFD shadow wand"),item(5198,"Cookie's Stirring Rod","Dungeon wand alternative"),item(12984,"Skycaller","BoE wand fallback")),

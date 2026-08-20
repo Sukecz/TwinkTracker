@@ -94,6 +94,41 @@ Before adding or changing an item:
 9. Keep uncertain current vendor, quest, event, or drop availability marked for
    live Firemaw Era validation rather than claiming it is confirmed.
 
+## Binding and acquisition labels
+
+Every real S/A/B gear item has an expansion-aware binding and source entry in
+`Data/GearAcquisition.lua`. Binding comes from the matching Classic Era or TBC
+client item data; acquisition is cross-checked against the item's individual
+Wowhead page and source data. The UI deliberately keeps these as two facts so a
+player can distinguish, for example, a BoE dungeon drop worth searching for on
+the Auction House from a BoP dungeon drop that must be farmed personally.
+
+The normalized binding values are `BOE`, `BOP` and `UNBOUND`. Source values are
+`QUEST`, `DUNGEON DROP`, `WORLD DROP`, `CRAFTED`, `VENDOR`,
+`HONOR / REPUTATION`, `EVENT`, `FISHING` and `OTHER`. The UI shortens only the
+display wording (`UNBOUND` becomes `NO BIND`, for example); tests require every
+real runtime gear ID in both clients to resolve to the full catalog values.
+
+## Random properties and class legality
+
+Every random-stat runtime recommendation resolves through
+`Data/GearRandomProperties.lua` by client, base item ID and exact displayed
+name. The stored value is the audited legacy random-property ID (or the
+negative random-suffix ID used by the TBC Silvermoon Robes), producing an exact
+`item:<ID>:0:0:0:0:0:<property>` link for tooltips and Shift-click handling.
+
+Property membership and stats are checked against the matching Era/TBC client
+DB2 tables, the base item's random-selection group and the Wowhead random
+enchantment range. A suffix advertised on some items is not assumed to be
+valid on every base. Unrollable combinations are removed or replaced with a
+role-appropriate roll that the base can actually generate. Runtime tests also
+require every known random-property base to have an exact name/property pair.
+
+Class legality is checked separately per client because class masks can change
+between Era and TBC. The audit covers allowable-class masks, armor proficiency,
+weapon proficiency and class-quest ownership; a choice is removed only from
+the affected class/client context when the other client remains legal.
+
 ## Enchants and consumables
 
 Enchant and consumable candidates were audited independently for all nine

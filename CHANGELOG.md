@@ -2,6 +2,22 @@
 
 All notable changes are documented here.
 
+## 0.4.5 - 2026-08-20
+
+### Changed
+
+- Marked white Classic Era shoulder recommendations with a visible `+ NAXX`
+  enchant label so they are not mistaken for strong unenchanted items.
+- Added an expansion-aware binding and acquisition label to every real item in
+  every S/A/B gear tier, covering BoE, BoP, non-binding, quest, dungeon,
+  world-drop, crafted, vendor, Honor/Reputation, event and fishing sources.
+- Added audited exact random-property itemStrings for every random-stat gear
+  recommendation. Tooltips now show the chosen suffix stats and Shift-click
+  passes the exact named variant to chat or Auction House search.
+- Removed impossible random-suffix combinations and corrected class-invalid
+  Mage, Paladin, Priest, Hunter, Shaman, Warlock and Warrior recommendations;
+  retained Era-only choices where the class restriction exists only in TBC.
+
 ## 0.4.4 - 2026-08-14
 
 ### Changed

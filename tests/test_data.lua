@@ -348,6 +348,17 @@ assert(rogue.FEET.S[1].id == 1121 and rogue.FEET.S[2].id == 19969 and rogue.FEET
 assert(rogue.FEET.S[3].faction == "HORDE", "Trailblazer Boots must remain Horde-only")
 assert(rogue.RANGED.S[1].id == 20437 and rogue.RANGED.S[2].id == 20438, "Rogue WSG bows are not faction-equivalent S-tier choices")
 assert(rogue.SHOULDERS.S[1].id == 15313 and rogue.SHOULDERS.S[2].id == 5404, "Rogue Naxx-compatible white shoulders are not S tier")
+local naxxEnchantShoulderIDs = { [4314]=true, [4315]=true, [5404]=true, [15313]=true }
+for _, classToken in ipairs(ns.BisData.classOrder) do
+    local shoulders = ns.BisData.classes[classToken].slots.SHOULDERS
+    for _, tier in ipairs({ "S", "A", "B" }) do
+        for _, shoulder in ipairs(shoulders[tier]) do
+            if naxxEnchantShoulderIDs[shoulder.id] then
+                assert(shoulder.requiresNaxxEnchant == true, classToken .. " white Naxx shoulder is missing its enchant requirement")
+            end
+        end
+    end
+end
 assert(rogue.SHOULDERS.A[1].id == 10657, "Talbar Mantle should remain the no-Naxx Rogue alternative")
 assert(alternativeCount >= 30)
 assert(linkedItemCount > 0)

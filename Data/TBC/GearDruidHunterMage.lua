@@ -154,7 +154,19 @@ TBC:AuditClass(39, "DRUID", {
 
 TBC:AuditClass(39, "HUNTER", {
     sources = bracket39Sources,
-    note = "All level-39 S/A/B items, weapon proficiencies, faction routes and XP warnings were checked against the TBC upgrade-list project and TBC item catalog. No unsupported gear reorder was introduced.",
+    note = "All level-39 S/A/B items, weapon proficiencies, faction routes and XP warnings were checked against the TBC upgrade-list project and TBC item catalog. Rogue/Druid-only AB leather rewards are excluded.",
+    slots = {
+        WAIST = tiers(
+            item(13117, "Ogron's Sash", "Balanced high-stat BoE"),
+            item(10721, "Gnomish Harm Prevention Belt", "Engineering 215 absorb swap"),
+            item(nil, "No verified TBC belt fallback", "No lower recommendation is promoted without TBC evidence")
+        ),
+        FEET = tiers(
+            item(2276, "Swampwalker Boots", "Agility / stamina BoE; legal replacement for class-restricted AB leather boots"),
+            { item(10724, "Gnomish Rocket Boots", "Engineering 225 sprint swap"), item(7189, "Goblin Rocket Boots", "Goblin Engineering sprint swap; break risk") },
+            item(nil, "No verified TBC boot fallback", "No lower recommendation is promoted without TBC evidence")
+        ),
+    },
 })
 
 TBC:AuditClass(39, "MAGE", {

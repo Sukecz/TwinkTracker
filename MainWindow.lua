@@ -79,10 +79,38 @@ local function getItemIcon(itemID)
     return icon or "Interface\\Icons\\INV_Misc_QuestionMark"
 end
 
+local function getItemString(itemData)
+    if not itemData or not itemData.id then return nil end
+    local clientKey=ns.Client and ns.Client.key or "ERA"
+    local randomPropertyID=ns.GearRandomProperties and ns.GearRandomProperties:Get(itemData.id,itemData.name,clientKey)
+    if randomPropertyID then return string.format("item:%d:0:0:0:0:0:%d",itemData.id,randomPropertyID) end
+    return "item:"..itemData.id
+end
+
+local function getItemHyperlink(itemData)
+    local itemString=getItemString(itemData)
+    if not itemString then return nil end
+    local itemLink=GetItemInfo and select(2,GetItemInfo(itemString))
+    if itemLink then return itemLink end
+    local quality=GetItemInfo and select(3,GetItemInfo(itemData.id))
+    local qualityColor=quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+    return string.format("|c%s|H%s|h[%s]|h|r",qualityColor and qualityColor.hex or "ffffffff",itemString,itemData.name)
+end
+
+local function getGearAcquisitionText(itemData)
+    if not ns.GearAcquisition or not itemData or not itemData.id then return nil end
+    return ns.GearAcquisition:Format(itemData,ns.Client and ns.Client.key or "ERA")
+end
+
 local function showHyperlinkTooltip(owner,hyperlink)
     GameTooltip:SetOwner(owner,"ANCHOR_CURSOR")
     GameTooltip:SetHyperlink(hyperlink)
     GameTooltip:Show()
+end
+
+local function showItemTooltip(owner,itemData)
+    local itemString=getItemString(itemData)
+    if itemString then showHyperlinkTooltip(owner,itemString) end
 end
 
 local function getFactionColor(faction)
@@ -118,9 +146,14 @@ local function addMissingExplorationAreas(tooltip, missing)
     end
 end
 
-local function handleModifiedItemLink(itemID)
-    if not itemID or not IsShiftKeyDown or not IsShiftKeyDown() then return end
-    local itemLink = GetItemInfo and select(2,GetItemInfo(itemID))
+local function handleModifiedItemLink(itemData)
+    if type(itemData) == "number" then
+        local itemID=itemData
+        local itemName=GetItemInfo and GetItemInfo(itemID)
+        itemData={ id=itemID, name=itemName or ("Item "..itemID) }
+    end
+    if not itemData or not itemData.id or not IsShiftKeyDown or not IsShiftKeyDown() then return end
+    local itemLink=getItemHyperlink(itemData)
     if not itemLink then return end
     if HandleModifiedItemClick then
         HandleModifiedItemClick(itemLink)
@@ -132,7 +165,7 @@ end
 local function handleItemClick(itemData)
     if not itemData then return end
     if IsShiftKeyDown and IsShiftKeyDown() then
-        handleModifiedItemLink(itemData.id)
+        handleModifiedItemLink(itemData)
     else
         MainWindow:ShowWowheadLink(itemData)
     end
@@ -140,7 +173,7 @@ end
 
 local function handleGuideItemClick(itemData)
     if not itemData then return end
-    if IsShiftKeyDown and IsShiftKeyDown() then handleModifiedItemLink(itemData.id); return end
+    if IsShiftKeyDown and IsShiftKeyDown() then handleModifiedItemLink(itemData); return end
     local panel=MainWindow.guidesPanel; if not panel or not panel.link then return end
     panel.link.itemData=itemData; panel.link.value=itemData.wowhead; panel.link:SetText(panel.link.value); panel.link:SetFocus(); panel.link:HighlightText()
 end
@@ -177,6 +210,7 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local factionBg=cell:CreateTexture(nil,"OVERLAY"); factionBg:SetSize(16,16); factionBg:SetPoint("BOTTOMRIGHT",icon,"BOTTOMRIGHT",1,-1); factionBg:Hide(); cell.factionBg=factionBg
     local factionText=label(cell,"GameFontNormalSmall","",C.text); factionText:SetPoint("CENTER",factionBg,"CENTER",0,1); factionText:Hide(); cell.factionText=factionText
     local name=label(cell,"GameFontNormalSmall","Item",C.text); name:SetPoint("TOPLEFT",56,-9); name:SetWidth(160); name:SetHeight(16); name:SetJustifyH("LEFT"); cell.name=name
+    local acquisition=label(cell,"GameFontNormalSmall","",C.muted); acquisition:SetPoint("TOPLEFT",56,-27); acquisition:SetWidth(160); acquisition:SetHeight(14); acquisition:SetJustifyH("LEFT"); acquisition:Hide(); cell.acquisition=acquisition
     local status=label(cell,"GameFontNormalSmall","EQUIPPED",C.equipped); status:SetPoint("TOPRIGHT",-6,-28); status:Hide(); cell.status=status
     local alternative=CreateFrame("Button",nil,cell); alternative:SetSize(214,44); alternative:SetPoint("TOPLEFT",4,-50); alternative:Hide(); cell.alternative=alternative
     local altState=alternative:CreateTexture(nil,"BACKGROUND"); altState:SetAllPoints(); altState:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); alternative.state=altState
@@ -187,7 +221,8 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local altFactionBg=alternative:CreateTexture(nil,"OVERLAY"); altFactionBg:SetSize(16,16); altFactionBg:SetPoint("BOTTOMRIGHT",altIcon,"BOTTOMRIGHT",1,-1); alternative.factionBg=altFactionBg
     local altFactionText=label(alternative,"GameFontNormalSmall","",C.text); altFactionText:SetPoint("CENTER",altFactionBg,"CENTER",0,1); alternative.factionText=altFactionText
     local altName=label(alternative,"GameFontNormalSmall","Item",C.text); altName:SetPoint("LEFT",52,0); altName:SetJustifyH("LEFT"); alternative.name=altName
-    alternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then showHyperlinkTooltip(self,"item:"..self.itemID) end end)
+    local altAcquisition=label(alternative,"GameFontNormalSmall","",C.muted); altAcquisition:SetPoint("TOPLEFT",52,-23); altAcquisition:SetWidth(160); altAcquisition:SetHeight(14); altAcquisition:SetJustifyH("LEFT"); altAcquisition:Hide(); alternative.acquisition=altAcquisition
+    alternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
     alternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     alternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
     local thirdAlternative=CreateFrame("Button",nil,cell); thirdAlternative:SetSize(214,44); thirdAlternative:SetPoint("TOPLEFT",4,-96); thirdAlternative:Hide(); cell.thirdAlternative=thirdAlternative
@@ -198,10 +233,11 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local thirdFactionBg=thirdAlternative:CreateTexture(nil,"OVERLAY"); thirdFactionBg:SetSize(16,16); thirdFactionBg:SetPoint("BOTTOMRIGHT",thirdIcon,"BOTTOMRIGHT",1,-1); thirdAlternative.factionBg=thirdFactionBg
     local thirdFactionText=label(thirdAlternative,"GameFontNormalSmall","",C.text); thirdFactionText:SetPoint("CENTER",thirdFactionBg,"CENTER",0,1); thirdAlternative.factionText=thirdFactionText
     local thirdName=label(thirdAlternative,"GameFontNormalSmall","Item",C.text); thirdName:SetPoint("LEFT",52,0); thirdName:SetJustifyH("LEFT"); thirdAlternative.name=thirdName
-    thirdAlternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then showHyperlinkTooltip(self,"item:"..self.itemID) end end)
+    local thirdAcquisition=label(thirdAlternative,"GameFontNormalSmall","",C.muted); thirdAcquisition:SetPoint("TOPLEFT",52,-23); thirdAcquisition:SetWidth(160); thirdAcquisition:SetHeight(14); thirdAcquisition:SetJustifyH("LEFT"); thirdAcquisition:Hide(); thirdAlternative.acquisition=thirdAcquisition
+    thirdAlternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
     thirdAlternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     thirdAlternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
-    cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then showHyperlinkTooltip(self,"item:"..self.itemID) end end)
+    cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
     cell:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     cell:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
     return cell
@@ -1071,13 +1107,17 @@ function MainWindow:RefreshGear(resetScroll)
             for _,tier in ipairs({"S","A","B"}) do
                 local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local thirdAlternative=choices[3]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
                 cell.itemID=data.id; cell.itemData=data; cell.equipped=isEquipped; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name)
+                local acquisitionText=getGearAcquisitionText(data); local hasAcquisition=acquisitionText~=nil
+                cell.acquisition:SetText(acquisitionText or ""); cell.acquisition:SetShown(hasAcquisition)
                 cell.state:SetHeight(alternative and 48 or ROW_HEIGHT); cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and 0.16 or 0)
                 local borderColor=isEquipped and C.equipped or C.tier[tier]; cell.iconBorder:SetColorTexture(borderColor[1],borderColor[2],borderColor[3],isEquipped and 1 or 0.72)
-                cell.hasAlternative=alternative~=nil; cell.status:SetShown(isEquipped and not alternative); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",-6,-28)
+                local showEquippedStatus=isEquipped and not alternative
+                cell.hasAlternative=alternative~=nil; cell.status:SetShown(showEquippedStatus); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",-6,-8)
+                cell.acquisition:SetWidth(160)
                 cell.name:SetTextColor(unpack(isEquipped and C.equipped or C.text))
-                cell.name:ClearAllPoints(); cell.name:SetPoint("TOPLEFT",56,isEquipped and not alternative and -9 or -17)
+                cell.name:ClearAllPoints(); cell.name:SetPoint("TOPLEFT",56,hasAcquisition and -7 or (isEquipped and not alternative and -9 or -17))
                 cell.hover:SetHeight(alternative and 48 or ROW_HEIGHT)
-                cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-(isEquipped and not alternative and 62 or 0)))
+                cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-(showEquippedStatus and 62 or 0)))
                 local factionColor=getFactionColor(data.faction)
                 cell.factionBg:SetShown(factionColor~=nil); cell.factionText:SetShown(factionColor~=nil)
                 if factionColor then cell.factionBg:SetColorTexture(unpack(factionColor)); cell.factionText:SetText(string.sub(data.faction,1,1)) end
@@ -1088,6 +1128,9 @@ function MainWindow:RefreshGear(resetScroll)
                     cell.alternative.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],altEquipped and 0.16 or 0)
                     cell.alternative.itemID=alternative.id; cell.alternative.itemData=alternative; cell.alternative.icon:SetTexture(getItemIcon(alternative.id)); cell.alternative.border:SetColorTexture(altColor[1],altColor[2],altColor[3],altEquipped and 1 or 0.72)
                     cell.alternative.name:SetText(alternative.name); cell.alternative.name:SetTextColor(unpack(altEquipped and C.equipped or C.text))
+                    local altAcquisitionText=getGearAcquisitionText(alternative); local altHasAcquisition=altAcquisitionText~=nil
+                    cell.alternative.acquisition:SetText(altAcquisitionText or ""); cell.alternative.acquisition:SetShown(altHasAcquisition)
+                    cell.alternative.name:ClearAllPoints(); cell.alternative.name:SetPoint(altHasAcquisition and "TOPLEFT" or "LEFT",52,altHasAcquisition and -5 or 0)
                     local altFactionColor=getFactionColor(alternative.faction); cell.alternative.factionBg:SetShown(altFactionColor~=nil); cell.alternative.factionText:SetShown(altFactionColor~=nil)
                     if altFactionColor then cell.alternative.factionBg:SetColorTexture(unpack(altFactionColor)); cell.alternative.factionText:SetText(string.sub(alternative.faction,1,1)) end
                     if alternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(alternative.id) end
@@ -1098,6 +1141,9 @@ function MainWindow:RefreshGear(resetScroll)
                     cell.thirdAlternative.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],thirdEquipped and 0.16 or 0)
                     cell.thirdAlternative.itemID=thirdAlternative.id; cell.thirdAlternative.itemData=thirdAlternative; cell.thirdAlternative.icon:SetTexture(getItemIcon(thirdAlternative.id)); cell.thirdAlternative.border:SetColorTexture(thirdColor[1],thirdColor[2],thirdColor[3],thirdEquipped and 1 or 0.72)
                     cell.thirdAlternative.name:SetText(thirdAlternative.name); cell.thirdAlternative.name:SetTextColor(unpack(thirdEquipped and C.equipped or C.text))
+                    local thirdAcquisitionText=getGearAcquisitionText(thirdAlternative); local thirdHasAcquisition=thirdAcquisitionText~=nil
+                    cell.thirdAlternative.acquisition:SetText(thirdAcquisitionText or ""); cell.thirdAlternative.acquisition:SetShown(thirdHasAcquisition)
+                    cell.thirdAlternative.name:ClearAllPoints(); cell.thirdAlternative.name:SetPoint(thirdHasAcquisition and "TOPLEFT" or "LEFT",52,thirdHasAcquisition and -5 or 0)
                     local thirdFactionColor=getFactionColor(thirdAlternative.faction); cell.thirdAlternative.factionBg:SetShown(thirdFactionColor~=nil); cell.thirdAlternative.factionText:SetShown(thirdFactionColor~=nil)
                     if thirdFactionColor then cell.thirdAlternative.factionBg:SetColorTexture(unpack(thirdFactionColor)); cell.thirdAlternative.factionText:SetText(string.sub(thirdAlternative.faction,1,1)) end
                     if thirdAlternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(thirdAlternative.id) end

@@ -155,6 +155,16 @@ TBC:AuditClass(29, "PALADIN", {
             { item(10518, "Parachute Cloak", "TBC-enchantable Engineering agility cloak"), item(2953, "Watch Master's Cloak", "TBC +7 Agility Alliance quest cloak", "ALLIANCE") },
             item(4716, "Combat Cloak", "Stamina fallback")
         ),
+        WAIST = tiers(
+            { item(20108, "Highlander's Lamellar Girdle", "Alliance level-28 AB hybrid mail belt", "ALLIANCE"), item(20126, "Highlander's Plate Girdle", "Alliance level-28 AB physical mail belt", "ALLIANCE") },
+            { item(9405, "Girdle of Golem Strength", "Retribution / defense"), item(15554, "Pillager's Girdle of Healing", "Holy healing suffix"), item(15554, "Pillager's Girdle of the Eagle", "Holy intellect / stamina suffix") },
+            { item(15554, "Pillager's Girdle of the Bear", "Melee strength / stamina suffix"), item(6911, "Moss Cinch", "Holy stamina / intellect"), item(4717, "Mail Combat Belt", "Fixed physical fallback") }
+        ),
+        FEET = tiers(
+            { item(9510, "Caverndeep Trudgers", "Flag-defense all-round mail"), item(20111, "Highlander's Lamellar Greaves", "Alliance level-28 AB hybrid mail boots with run speed", "ALLIANCE") },
+            { item(20129, "Highlander's Plate Greaves", "Alliance level-28 AB physical mail boots with run speed", "ALLIANCE"), item(9454, "Acidic Walkers", "Holy caster alternative") },
+            item(9450, "Gnomebot Operating Boots", "Stamina fallback")
+        ),
         FINGER_1 = tiers(
             { item(19513, "Legionnaire's Band", "Horde level-28 WSG physical ring", "HORDE"), item(19517, "Protector's Band", "Alliance level-28 WSG physical ring", "ALLIANCE"), item(2039, "Plains Ring", "Defense / Holy ring") },
             { item(19521, "Advisor's Ring", "Horde level-28 WSG caster ring", "HORDE"), item(19525, "Lorekeeper's Ring", "Alliance level-28 WSG caster ring", "ALLIANCE") },
@@ -297,7 +307,7 @@ TBC:AuditClass(39, "PRIEST", {
         ),
         WRISTS = tiers(
             { item(11469, "Bloodband Bracers", "Item-level 46 quest bracers; TBC spell-power / stamina enchant base and major XP risk"), item(14260, "Bloodwoven Bracers of Healing", "Healing suffix with TBC enchant eligibility"), item(14260, "Bloodwoven Bracers of Shadow Wrath", "Shadow suffix with TBC enchant eligibility") },
-            { item(9428, "Unearthed Bands of Healing", "Uldaman healing alternative"), item(4045, "Mistscape Bracers", "Fixed caster fallback") },
+            item(4045, "Mistscape Bracers", "Fixed caster fallback"),
             item(9909, "Royal Bands of the Owl", "Regeneration fallback")
         ),
     },

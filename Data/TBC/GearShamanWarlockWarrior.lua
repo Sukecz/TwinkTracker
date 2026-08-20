@@ -130,7 +130,7 @@ TBC:AuditClass(19, "SHAMAN", {
         ),
         ONE_HAND = auditedShamanSlot(19, "ONE_HAND"),
         TWO_HAND = tiers(
-            { item(5815, "Glacial Stone", "Alliance quest two-hand mace; TBC weapon-master training and quest XP", "ALLIANCE"), item(3822, "Runic Darkblade", "Horde quest two-hand axe; TBC weapon-master training and high quest XP", "HORDE") },
+            { item(5815, "Glacial Stone", "Alliance quest two-hand mace; TBC weapon-master training and quest XP", "ALLIANCE"), item(5322, "Demolition Hammer", "Horde quest two-hand mace; TBC weapon-master training and quest XP", "HORDE") },
             { item(1318, "Night Reaver", "Neutral Shadow-proc axe; TBC weapon-master training"), item(2271, "Staff of the Blessed Seer", "Restoration staff") },
             item(890, "Twisted Chanter's Staff", "Balanced Elemental / Restoration staff")
         ),

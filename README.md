@@ -22,8 +22,14 @@ and addon version.
   meaningful role, faction, survivability, random-suffix and budget
   alternatives. Equal-tier items are not secretly ranked.
 - **Gear you can act on** — normal game tooltips, Shift-click item handling,
-  copyable expansion-correct Wowhead links and live green highlighting for
-  equipped recommendations.
+  copyable expansion-correct Wowhead links, live green highlighting for
+  equipped recommendations and a compact binding/source line on every real
+  item (`BOE · DUNGEON`, `BOP · QUEST`, `NO BIND · VENDOR`, and similar).
+  Random-stat recommendations use an exact rollable suffix itemString, so the
+  tooltip shows the selected stats and Shift-click searches the precise named
+  variant instead of the generic base item.
+  White Era shoulders whose listed value depends on a Naxxramas enchant also
+  retain a visible `+ NAXX` enchant warning on that line.
 - **Enchants and consumables** — class- and bracket-specific choices with their
   effects, charges, cooldowns, profession requirements, target item-level
   restrictions and other important application cautions.
