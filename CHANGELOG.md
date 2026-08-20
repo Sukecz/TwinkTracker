@@ -2,6 +2,18 @@
 
 All notable changes are documented here.
 
+## 0.4.6 - 2026-08-20
+
+### Fixed
+
+- Completed random-property item links so native tooltips render the selected
+  suffix statistics for every recommended random-stat item.
+
+### Changed
+
+- Added the Horde-only Jutebraid Gloves as an equal Tier S Shaman option, with
+  their level-29 elite quest and 2950 XP risk stated explicitly.
+
 ## 0.4.5 - 2026-08-20
 
 ### Changed

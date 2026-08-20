@@ -110,7 +110,7 @@ assert(ns.GearRandomProperties:Get(3184,"Hook Dagger of Stamina","ERA") == 22)
 assert(ns.GearRandomProperties:Get(3184,"Hook Dagger","ERA") == nil)
 
 local mainWindow = assert(io.open("MainWindow.lua","r")):read("*a")
-assert(string.find(mainWindow,"item:%d:0:0:0:0:0:%d",1,true))
+assert(string.find(mainWindow,"item:%d:0:0:0:0:0:%d:0:0",1,true), "random-property links need suffix, unique and link-level fields")
 assert(string.find(mainWindow,"ns.GearRandomProperties:Get(itemData.id,itemData.name,clientKey)",1,true))
 assert(string.find(mainWindow,"showItemTooltip(owner,itemData)",1,true))
 

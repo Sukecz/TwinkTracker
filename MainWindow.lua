@@ -83,7 +83,7 @@ local function getItemString(itemData)
     if not itemData or not itemData.id then return nil end
     local clientKey=ns.Client and ns.Client.key or "ERA"
     local randomPropertyID=ns.GearRandomProperties and ns.GearRandomProperties:Get(itemData.id,itemData.name,clientKey)
-    if randomPropertyID then return string.format("item:%d:0:0:0:0:0:%d",itemData.id,randomPropertyID) end
+    if randomPropertyID then return string.format("item:%d:0:0:0:0:0:%d:0:0",itemData.id,randomPropertyID) end
     return "item:"..itemData.id
 end
 

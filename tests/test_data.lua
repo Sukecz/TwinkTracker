@@ -333,6 +333,7 @@ assert(not profileHasItem("SHAMAN", 2933), "Shaman contains an Alliance quest ri
 assert(not profileHasItem("SHAMAN", 20444), "Shaman contains an Alliance WSG neck")
 assert(not profileHasItem("SHAMAN", 5815), "Level-19 Shaman contains a two-hand mace")
 assert(not profileHasItem("SHAMAN", 1318), "Level-19 Shaman contains a two-hand axe")
+assert(profileHasItem("SHAMAN", 10654), "Shaman is missing the Horde Jutebraid Gloves quest alternative")
 assert(ns.BisData.classes.WARRIOR.slots.OFF_HAND.S[2].id == 7002)
 assert(ns.BisData.classes.WARRIOR.slots.OFF_HAND.S[2].faction == nil, "Arctic Buckler is not faction restricted")
 for _, invalidItemID in ipairs({ 6630, 9772, 9799, 15336, 15337 }) do

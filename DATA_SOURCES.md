@@ -88,9 +88,13 @@ Before adding or changing an item:
    Alliance-only and Shaman is Horde-only in Vanilla Era.
 6. Keep role alternatives explicit: survival, healer/caster, physical damage,
    and proc setups are not a single universal ranking.
-7. Define Ring 2 and Trinket 2 deliberately; never derive them by rotating the
+7. Treat quest level and XP separately from an item's required level. For
+   example, Horde-only [Jutebraid Gloves](https://www.wowhead.com/classic/item=10654)
+   require level 15, but their level-29 elite reward quest grants 2950 XP and
+   must retain an XP-risk note in a level-19 recommendation.
+8. Define Ring 2 and Trinket 2 deliberately; never derive them by rotating the
    first slot's tiers.
-8. Treat random suffix names and maximum rolls as live/AH validation points.
+9. Treat random suffix names and maximum rolls as live/AH validation points.
 9. Keep uncertain current vendor, quest, event, or drop availability marked for
    live Firemaw Era validation rather than claiming it is confirmed.
 
