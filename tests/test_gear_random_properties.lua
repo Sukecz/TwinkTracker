@@ -107,6 +107,8 @@ assert(ns.GearRandomProperties:Get(12006,"Meadow Ring of the Tiger","TBC") == 67
 assert(ns.GearRandomProperties:Get(31264,"Silvermoon Robes of the Sun","TBC") == -58)
 assert(ns.GearRandomProperties:Get(31264,"Silvermoon Robes of the Moon","TBC") == -59)
 assert(ns.GearRandomProperties:Get(3184,"Hook Dagger of Stamina","ERA") == 22)
+assert(ns.GearRandomProperties:Get(2819,"Cross Dagger of Power","ERA") == 1551)
+assert(ns.GearRandomProperties:Get(15242,"Honed Stiletto of Power","ERA") == 1551)
 assert(ns.GearRandomProperties:Get(3184,"Hook Dagger","ERA") == nil)
 
 local mainWindow = assert(io.open("MainWindow.lua","r")):read("*a")

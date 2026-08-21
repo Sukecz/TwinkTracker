@@ -32,7 +32,8 @@ and addon version.
   retain a visible `+ NAXX` enchant warning on that line.
 - **Enchants and consumables** — class- and bracket-specific choices with their
   effects, charges, cooldowns, profession requirements, target item-level
-  restrictions and other important application cautions.
+  restrictions, role-specific weapon/off-hand choices and other important
+  application cautions.
 - **Preparation guides** — self-contained First Aid, Fishing and Engineering
   routes from skill 1 to each bracket's maximum, plus Jewelcrafting in TBC,
   with concrete skill ranges, craft counts, trainers and interactive items.

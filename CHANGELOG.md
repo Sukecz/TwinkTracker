@@ -2,6 +2,22 @@
 
 All notable changes are documented here.
 
+## 0.4.7 - 2026-08-21
+
+### Changed
+
+- Promoted Superior Striking as a level-29 Rogue Ambush / Backstab main-hand
+  enchant and added Cross Dagger of Power, Honed Stiletto of Power and Daring
+  Dirk as conservative TIER B fast/stat off-hand alternatives.
+- Added the missing level-29 Ambush Rogue alternatives Meteor Shard, Warsong
+  Boots, Insignia Boots and Rune of Duty, with explicit faction, acquisition,
+  crowd-control and non-scaling Fire-damage cautions.
+
+### Fixed
+
+- Corrected the exact Cross Dagger and Honed Stiletto of Power links from the
+  +8 AP suffix property to the intended maximum +10 AP roll.
+
 ## 0.4.6 - 2026-08-20
 
 ### Fixed

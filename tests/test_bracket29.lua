@@ -116,6 +116,16 @@ assert(data.consumables.catalog[6949].effect == "20% chance for 30-38 Nature dam
 local rogueGear = data.bis.classes.ROGUE.slots
 assert(string.find(rogueGear.ONE_HAND.B[1].note, "mutually exclusive with Nail Spitter", 1, true))
 assert(string.find(rogueGear.RANGED.B[3].note, "mutually exclusive with Skullbreaker", 1, true))
+assert(rogueGear.OFF_HAND.B[1].id == 2819 and rogueGear.OFF_HAND.B[1].name == "Cross Dagger of Power")
+assert(rogueGear.OFF_HAND.B[2].id == 15242 and rogueGear.OFF_HAND.B[2].name == "Honed Stiletto of Power")
+assert(rogueGear.OFF_HAND.B[3].id == 12248 and rogueGear.OFF_HAND.B[3].name == "Daring Dirk")
+assert(rogueGear.ONE_HAND.A[2].id == 6220 and rogueGear.ONE_HAND.A[2].name == "Meteor Shard")
+assert(string.find(rogueGear.ONE_HAND.A[3].note, "does not scale Ambush", 1, true))
+assert(rogueGear.FEET.A[1].id == 16977 and rogueGear.FEET.A[1].faction == "HORDE")
+assert(rogueGear.FEET.A[2].id == 4055)
+assert(rogueGear.TRINKET_1.B[1].id == 21568 and rogueGear.TRINKET_2.B[1].id == 21568)
+assert(data.enchants.classes.ROGUE.slots.ONE_HAND[1].key == "superiorStriking")
+assert(string.find(data.enchants.classes.ROGUE.slots.ONE_HAND[1].roles, "Ambush", 1, true))
 
 for key, itemID in pairs({ deadlyScope=10546, sniperScope=10548, steelWeaponChain=6041, ironCounterweight=6043, thoriumShieldSpike=12645 }) do
     assert(data.enchants.catalog[key].itemID == itemID)

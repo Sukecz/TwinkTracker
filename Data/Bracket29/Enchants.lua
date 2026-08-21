@@ -8,7 +8,7 @@ local function deepCopy(value)
 end
 
 local data = deepCopy(ns.EnchantsData)
-data.version = "2026-08-11"
+data.version = "2026-08-21"
 
 local function addItem(key, name, effect, itemID, restrictions)
     data.catalog[key] = {
@@ -82,9 +82,9 @@ setSlot("PALADIN", "OFF_HAND", {
 })
 
 setSlot("ROGUE", "ONE_HAND", {
+    recommendation("superiorStriking", "PRIMARY", "Ambush / Backstab main hand", "+5 weapon damage is multiplied by dagger opener damage"),
     recommendation("weaponAgility", "PRIMARY", "reliable MH / OH"),
     recommendation("lifestealing", "PRIMARY", "main-hand sustain proc"),
-    recommendation("crusader", "ALTERNATIVE", "high-variance burst"),
     recommendation("steelWeaponChain", "ALTERNATIVE", "anti-Disarm weapon"),
 })
 

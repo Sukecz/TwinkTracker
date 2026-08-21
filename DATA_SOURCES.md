@@ -237,6 +237,16 @@ The level-29 enchant profile shares the stable armor enchants with level 19 but
 adds target-item-level scope tiers and Blacksmithing-applied weapon/shield
 enhancements. Temporary oils, stones, poisons and Shaman imbues remain in
 Consumables because they coexist with permanent enchants but replace one another.
+For Rogue dagger builds, Superior Striking is a main-hand Ambush / Backstab
+choice because its flat weapon damage participates in those weapon-damage
+multipliers. Fast off-hand daggers are evaluated separately for poison
+application and stats; Cross Dagger and Honed Stiletto require an exact useful
+random suffix, while Daring Dirk is a fixed-stat vendor item.
+The Ambush-specific pass also compares physical dagger damage separately from
+proc text: Meteor Shard is retained as a strong fixed opener, while Torturing
+Poker's bonus Fire damage is not described as part of the Ambush multiplier.
+Warsong Boots, Insignia Boots and the level-20 Rune of Duty remain explicit
+faction, BoE and passive-survival alternatives rather than universal winners.
 
 ## Level-39 audit sources and special rules
 
