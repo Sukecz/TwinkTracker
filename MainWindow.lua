@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
-local MainWindow = { classButtons = {}, rows = {}, pageButtons = {}, pages = {}, guideCards = {}, tierHeaders = {} }
+local MainWindow = { bracketButtons = {}, classButtons = {}, rows = {}, pageButtons = {}, pages = {}, eventTimerCards = {}, guideCards = {}, classTierCards = {}, classTierHeaders = {}, classTierBranches = {}, pvpEventRows = {}, professionGuideButtons = {}, professionGuideSteps = {}, professionGuideRows = {}, tierHeaders = {}, explorationRows = {}, explorationPanels = {}, gearSectionButtons = {}, gearSections = {} }
 ns.MainWindow = MainWindow
 
 local ROW_HEIGHT = 52
@@ -9,9 +9,38 @@ local C = {
     window = { 0.022, 0.029, 0.044, 0.99 }, panel = { 0.050, 0.065, 0.095, 0.98 },
     panel2 = { 0.070, 0.090, 0.128, 0.98 }, border = { 0.15, 0.20, 0.29, 1 },
     accent = { 0.20, 0.62, 1.00, 1 }, text = { 0.92, 0.95, 1.00, 1 },
-    muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.67,0.70,0.78,1} },
+    secondary = { 0.72, 0.78, 0.88, 1 }, muted = { 0.53, 0.60, 0.70, 1 }, tier = { S={1.00,0.57,0.14,1}, A={0.43,0.73,1.00,1}, B={0.62,0.45,0.78,1}, C={0.67,0.70,0.78,1} },
     equipped = { 0.25, 0.85, 0.43, 1 }, alliance = { 0.36, 0.66, 1.00, 1 }, horde = { 1.00, 0.31, 0.36, 1 },
+    guideAccent = { 0.95, 0.68, 0.30, 1 }, guideText = { 0.82, 0.82, 0.79, 1 }, guideMuted = { 0.64, 0.64, 0.61, 1 },
 }
+
+local function getActiveBracketData()
+    local database = ns.Database and ns.Database:Get()
+    local level = database and database.selectedBracket or ns.Defaults.selectedBracket
+    return ns.Brackets:GetData(level) or ns.Brackets:GetData(ns.Defaults.selectedBracket)
+end
+
+local function getTierColor(tier)
+    return C.tier[tier] or C.muted
+end
+
+local function getPvpTime()
+    if GetServerTime then return GetServerTime() end
+    if time then return time() end
+    return 0
+end
+
+local function formatPvpCountdown(event,now)
+    if event.recurringLabel then return event.recurringLabel end
+    if now<event.startsAt then
+        local remaining=event.startsAt-now; local days=math.floor(remaining/86400); local hours=math.floor((remaining%86400)/3600)
+        if days>0 then return string.format("STARTS IN %dD %dH",days,hours) end
+        if hours>0 then return string.format("STARTS IN %dH",hours) end
+        return "STARTS IN <1H"
+    end
+    if now<event.endsAt then return string.format("LIVE  •  %dH LEFT",math.max(1,math.ceil((event.endsAt-now)/3600))) end
+    return "ENDED"
+end
 
 local CLASS_COORDS = CLASS_ICON_TCOORDS or {
     WARRIOR={0,0.25,0,0.25}, MAGE={0.25,0.496,0,0.25}, ROGUE={0.496,0.742,0,0.25}, DRUID={0.742,0.988,0,0.25},
@@ -30,15 +59,59 @@ local function skin(box, color, border)
     box:SetBackdropColor(unpack(color or C.panel)); box:SetBackdropBorderColor(unpack(border or C.border))
 end
 
+local function increaseFontSize(value)
+    local fontPath, fontSize, fontFlags = value:GetFont()
+    if fontPath and fontSize then value:SetFont(fontPath, fontSize + 1, fontFlags) end
+    return value
+end
+
 local function label(parent, font, text, color)
     local value = parent:CreateFontString(nil, "OVERLAY", font or "GameFontNormal")
+    increaseFontSize(value)
     value:SetText(text or ""); value:SetTextColor(unpack(color or C.text)); return value
 end
 
 local function getItemIcon(itemID)
     if not itemID then return "Interface\\Icons\\INV_Misc_QuestionMark" end
-    local icon = GetItemIcon and GetItemIcon(itemID)
+    local icon
+    if GetItemInfoInstant then icon = select(5, GetItemInfoInstant(itemID)) end
+    if not icon and C_Item and C_Item.GetItemIconByID then icon = C_Item.GetItemIconByID(itemID) end
+    if not icon and GetItemIcon then icon = GetItemIcon(itemID) end
     return icon or "Interface\\Icons\\INV_Misc_QuestionMark"
+end
+
+local function getItemString(itemData)
+    if not itemData or not itemData.id then return nil end
+    local clientKey=ns.Client and ns.Client.key or "ERA"
+    local randomPropertyID=ns.GearRandomProperties and ns.GearRandomProperties:Get(itemData.id,itemData.name,clientKey)
+    if randomPropertyID then return string.format("item:%d:0:0:0:0:0:%d:0:0",itemData.id,randomPropertyID) end
+    return "item:"..itemData.id
+end
+
+local function getItemHyperlink(itemData)
+    local itemString=getItemString(itemData)
+    if not itemString then return nil end
+    local itemLink=GetItemInfo and select(2,GetItemInfo(itemString))
+    if itemLink then return itemLink end
+    local quality=GetItemInfo and select(3,GetItemInfo(itemData.id))
+    local qualityColor=quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+    return string.format("|c%s|H%s|h[%s]|h|r",qualityColor and qualityColor.hex or "ffffffff",itemString,itemData.name)
+end
+
+local function getGearAcquisitionText(itemData)
+    if not ns.GearAcquisition or not itemData or not itemData.id then return nil end
+    return ns.GearAcquisition:Format(itemData,ns.Client and ns.Client.key or "ERA")
+end
+
+local function showHyperlinkTooltip(owner,hyperlink)
+    GameTooltip:SetOwner(owner,"ANCHOR_CURSOR")
+    GameTooltip:SetHyperlink(hyperlink)
+    GameTooltip:Show()
+end
+
+local function showItemTooltip(owner,itemData)
+    local itemString=getItemString(itemData)
+    if itemString then showHyperlinkTooltip(owner,itemString) end
 end
 
 local function getFactionColor(faction)
@@ -46,29 +119,83 @@ local function getFactionColor(faction)
     if faction == "HORDE" then return C.horde end
 end
 
-local function insertItemLink(itemID)
-    if not itemID or not IsShiftKeyDown or not IsShiftKeyDown() then return end
-    local itemLink = GetItemInfo and select(2,GetItemInfo(itemID))
-    if itemLink and ChatEdit_InsertLink then ChatEdit_InsertLink(itemLink) end
+local function addFactionSymbols(text)
+    if not text then return "" end
+    text = string.gsub(text,"Alliance","|cff5ca9ffA|r Alliance")
+    text = string.gsub(text,"Horde","|cffff505cH|r Horde")
+    return text
+end
+
+local function getExplorationProgressColor(percent, available)
+    if not available or percent <= 0 then return C.muted end
+    if percent >= 100 then return C.equipped end
+    if percent >= 70 then return C.alliance end
+    if percent >= 40 then return C.tier.S end
+    return C.horde
+end
+
+local function addMissingExplorationAreas(tooltip, missing)
+    if not missing or #missing == 0 then return end
+    tooltip:AddLine(" ")
+    tooltip:AddLine("Missing map areas:",1,0.82,0.35)
+    local visibleCount=math.min(#missing,5)
+    for index=1,visibleCount do
+        tooltip:AddLine("• "..missing[index],0.85,0.88,0.95,true)
+    end
+    if #missing>visibleCount then
+        tooltip:AddLine(string.format("...and %d more.",#missing-visibleCount),C.muted[1],C.muted[2],C.muted[3])
+    end
+end
+
+local function handleModifiedItemLink(itemData)
+    if type(itemData) == "number" then
+        local itemID=itemData
+        local itemName=GetItemInfo and GetItemInfo(itemID)
+        itemData={ id=itemID, name=itemName or ("Item "..itemID) }
+    end
+    if not itemData or not itemData.id or not IsShiftKeyDown or not IsShiftKeyDown() then return end
+    local itemLink=getItemHyperlink(itemData)
+    if not itemLink then return end
+    if HandleModifiedItemClick then
+        HandleModifiedItemClick(itemLink)
+    elseif ChatEdit_InsertLink then
+        ChatEdit_InsertLink(itemLink)
+    end
 end
 
 local function handleItemClick(itemData)
     if not itemData then return end
     if IsShiftKeyDown and IsShiftKeyDown() then
-        insertItemLink(itemData.id)
+        handleModifiedItemLink(itemData)
     else
         MainWindow:ShowWowheadLink(itemData)
     end
 end
 
+local function handleGuideItemClick(itemData)
+    if not itemData then return end
+    if IsShiftKeyDown and IsShiftKeyDown() then handleModifiedItemLink(itemData); return end
+    local panel=MainWindow.guidesPanel; if not panel or not panel.link then return end
+    panel.link.itemData=itemData; panel.link.value=itemData.wowhead; panel.link:SetText(panel.link.value); panel.link:SetFocus(); panel.link:HighlightText()
+end
+
+local function formatReferenceDetails(entry,recommendation)
+    local details={}
+    if entry.effect then details[#details+1]="|cffeaf2ff"..entry.effect.."|r" end
+    if recommendation.roles then details[#details+1]="|cff52a0ffROLE:|r |cffb8c7df"..recommendation.roles.."|r" end
+    if entry.restrictions then details[#details+1]="|cffffbd5aCAUTION:|r |cffb8c7df"..entry.restrictions.."|r" end
+    if recommendation.note then details[#details+1]="|cff8799b3NOTE: "..recommendation.note.."|r" end
+    return table.concat(details,"  |cff627089•|r  ")
+end
+
 function MainWindow:CreateClassButton(parent, token, index)
-    local value = CreateFrame("Button", nil, parent); value:SetSize(52,52)
-    value:SetPoint("TOPLEFT",14+((index-1)%3)*62,-50-math.floor((index-1)/3)*73)
+    local value = CreateFrame("Button", nil, parent); value:SetSize(42,42)
+    value:SetPoint("TOP",parent,"TOP",(index-5)*64,-7)
     local border=value:CreateTexture(nil,"BACKGROUND"); border:SetPoint("TOPLEFT",-2,2); border:SetPoint("BOTTOMRIGHT",2,-2); border:SetColorTexture(unpack(C.border)); value.border=border
     local icon=value:CreateTexture(nil,"ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
     local coords=CLASS_COORDS[token]; if coords then icon:SetTexCoord(unpack(coords)) end
-    local name=label(value,"GameFontNormalSmall",ns.BisData.classes[token].name,C.muted); name:SetPoint("TOP",value,"BOTTOM",0,-3)
-    value:SetScript("OnClick",function() ns.Database:SetSelectedClass(token); MainWindow:RefreshGear(true) end)
+    local name=label(value,"GameFontNormalSmall",getActiveBracketData().bis.classes[token].name,C.muted); name:SetPoint("TOP",value,"BOTTOM",0,-2); name:SetWidth(60); value.nameLabel=name
+    value:SetScript("OnClick",function() ns.Database:SetSelectedClass(token); MainWindow:RefreshActiveGearSection(true) end)
     value:SetScript("OnEnter",function() border:SetColorTexture(unpack(C.accent)) end)
     value:SetScript("OnLeave",function() MainWindow:RefreshClassButtons() end)
     self.classButtons[token]=value
@@ -76,7 +203,7 @@ end
 
 function MainWindow:CreateItemCell(parent, tier, column)
     local cell=CreateFrame("Button",nil,parent); cell:SetSize(222,ROW_HEIGHT); cell:SetPoint("LEFT",110+(column-1)*226,0)
-    local state=cell:CreateTexture(nil,"BACKGROUND"); state:SetAllPoints(); state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); cell.state=state
+    local state=cell:CreateTexture(nil,"BACKGROUND"); state:SetPoint("TOPLEFT"); state:SetPoint("TOPRIGHT"); state:SetHeight(ROW_HEIGHT); state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); cell.state=state
     local hover=cell:CreateTexture(nil,"BACKGROUND"); hover:SetPoint("TOPLEFT"); hover:SetPoint("TOPRIGHT"); hover:SetHeight(ROW_HEIGHT); hover:SetColorTexture(0.10,0.14,0.20,0); cell.hover=hover
     local tierColor=C.tier[tier]
     local iconBorder=cell:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(44,44); iconBorder:SetPoint("TOPLEFT",4,-4); iconBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); cell.iconBorder=iconBorder; cell.tier=tier
@@ -84,8 +211,10 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local factionBg=cell:CreateTexture(nil,"OVERLAY"); factionBg:SetSize(16,16); factionBg:SetPoint("BOTTOMRIGHT",icon,"BOTTOMRIGHT",1,-1); factionBg:Hide(); cell.factionBg=factionBg
     local factionText=label(cell,"GameFontNormalSmall","",C.text); factionText:SetPoint("CENTER",factionBg,"CENTER",0,1); factionText:Hide(); cell.factionText=factionText
     local name=label(cell,"GameFontNormalSmall","Item",C.text); name:SetPoint("TOPLEFT",56,-9); name:SetWidth(160); name:SetHeight(16); name:SetJustifyH("LEFT"); cell.name=name
+    local acquisition=label(cell,"GameFontNormalSmall","",C.muted); acquisition:SetPoint("TOPLEFT",56,-27); acquisition:SetWidth(160); acquisition:SetHeight(14); acquisition:SetJustifyH("LEFT"); acquisition:Hide(); cell.acquisition=acquisition
     local status=label(cell,"GameFontNormalSmall","EQUIPPED",C.equipped); status:SetPoint("TOPRIGHT",-6,-28); status:Hide(); cell.status=status
     local alternative=CreateFrame("Button",nil,cell); alternative:SetSize(214,44); alternative:SetPoint("TOPLEFT",4,-50); alternative:Hide(); cell.alternative=alternative
+    local altState=alternative:CreateTexture(nil,"BACKGROUND"); altState:SetAllPoints(); altState:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); alternative.state=altState
     local altHover=alternative:CreateTexture(nil,"BACKGROUND"); altHover:SetAllPoints(); altHover:SetColorTexture(0.10,0.14,0.20,0); alternative.hover=altHover
     local altBorder=alternative:CreateTexture(nil,"BACKGROUND"); altBorder:SetSize(44,44); altBorder:SetPoint("LEFT"); altBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); alternative.border=altBorder
     local altIcon=alternative:CreateTexture(nil,"ARTWORK"); altIcon:SetSize(40,40); altIcon:SetPoint("CENTER"); altIcon:SetTexCoord(0.07,0.93,0.07,0.93); alternative.icon=altIcon
@@ -93,10 +222,23 @@ function MainWindow:CreateItemCell(parent, tier, column)
     local altFactionBg=alternative:CreateTexture(nil,"OVERLAY"); altFactionBg:SetSize(16,16); altFactionBg:SetPoint("BOTTOMRIGHT",altIcon,"BOTTOMRIGHT",1,-1); alternative.factionBg=altFactionBg
     local altFactionText=label(alternative,"GameFontNormalSmall","",C.text); altFactionText:SetPoint("CENTER",altFactionBg,"CENTER",0,1); alternative.factionText=altFactionText
     local altName=label(alternative,"GameFontNormalSmall","Item",C.text); altName:SetPoint("LEFT",52,0); altName:SetJustifyH("LEFT"); alternative.name=altName
-    alternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
+    local altAcquisition=label(alternative,"GameFontNormalSmall","",C.muted); altAcquisition:SetPoint("TOPLEFT",52,-23); altAcquisition:SetWidth(160); altAcquisition:SetHeight(14); altAcquisition:SetJustifyH("LEFT"); altAcquisition:Hide(); alternative.acquisition=altAcquisition
+    alternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
     alternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     alternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
-    cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); if self.itemID then GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetHyperlink("item:"..self.itemID); GameTooltip:Show() end end)
+    local thirdAlternative=CreateFrame("Button",nil,cell); thirdAlternative:SetSize(214,44); thirdAlternative:SetPoint("TOPLEFT",4,-96); thirdAlternative:Hide(); cell.thirdAlternative=thirdAlternative
+    local thirdState=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdState:SetAllPoints(); thirdState:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],0); thirdAlternative.state=thirdState
+    local thirdHover=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdHover:SetAllPoints(); thirdHover:SetColorTexture(0.10,0.14,0.20,0); thirdAlternative.hover=thirdHover
+    local thirdBorder=thirdAlternative:CreateTexture(nil,"BACKGROUND"); thirdBorder:SetSize(44,44); thirdBorder:SetPoint("LEFT"); thirdBorder:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.72); thirdAlternative.border=thirdBorder
+    local thirdIcon=thirdAlternative:CreateTexture(nil,"ARTWORK"); thirdIcon:SetSize(40,40); thirdIcon:SetPoint("CENTER",thirdBorder); thirdIcon:SetTexCoord(0.07,0.93,0.07,0.93); thirdAlternative.icon=thirdIcon
+    local thirdFactionBg=thirdAlternative:CreateTexture(nil,"OVERLAY"); thirdFactionBg:SetSize(16,16); thirdFactionBg:SetPoint("BOTTOMRIGHT",thirdIcon,"BOTTOMRIGHT",1,-1); thirdAlternative.factionBg=thirdFactionBg
+    local thirdFactionText=label(thirdAlternative,"GameFontNormalSmall","",C.text); thirdFactionText:SetPoint("CENTER",thirdFactionBg,"CENTER",0,1); thirdAlternative.factionText=thirdFactionText
+    local thirdName=label(thirdAlternative,"GameFontNormalSmall","Item",C.text); thirdName:SetPoint("LEFT",52,0); thirdName:SetJustifyH("LEFT"); thirdAlternative.name=thirdName
+    local thirdAcquisition=label(thirdAlternative,"GameFontNormalSmall","",C.muted); thirdAcquisition:SetPoint("TOPLEFT",52,-23); thirdAcquisition:SetWidth(160); thirdAcquisition:SetHeight(14); thirdAcquisition:SetJustifyH("LEFT"); thirdAcquisition:Hide(); thirdAlternative.acquisition=thirdAcquisition
+    thirdAlternative:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
+    thirdAlternative:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
+    thirdAlternative:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
+    cell:SetScript("OnEnter",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0.72); showItemTooltip(self,self.itemData) end)
     cell:SetScript("OnLeave",function(self) self.hover:SetColorTexture(0.10,0.14,0.20,0); GameTooltip:Hide() end)
     cell:SetScript("OnClick",function(self) handleItemClick(self.itemData) end)
     return cell
@@ -121,8 +263,8 @@ function MainWindow:CreateScrollBar(parent,scrollFrame)
     self.scrollBar=bar
 end
 
-function MainWindow:CreatePageButton(parent,key,text,x)
-    local value=CreateFrame("Button",nil,parent); value:SetSize(100,30); value:SetPoint("TOPLEFT",x,-35)
+function MainWindow:CreatePageButton(parent,key,text,anchor,x,width,y)
+    local value=CreateFrame("Button",nil,parent); value:SetSize(width or 100,30); value:SetPoint(anchor,x,y or -35)
     local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
     local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
     local title=label(value,"GameFontNormalSmall",text,C.muted); title:SetPoint("CENTER"); value.title=title
@@ -132,35 +274,453 @@ function MainWindow:CreatePageButton(parent,key,text,x)
     self.pageButtons[key]=value
 end
 
+function MainWindow:CreateBracketButton(parent,level,index)
+    local profile=ns.Brackets.profiles[level]
+    local value=CreateFrame("Button",nil,parent); value:SetSize(34,34); value:SetPoint("TOP",(index-2)*40,-72); value.level=level; value.available=profile.available
+    local icon=value:CreateTexture(nil,"ARTWORK"); icon:SetAllPoints(); icon:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\bracket-"..level..".tga"); value.icon=icon
+    value:SetScript("OnClick",function(self)
+        if ns.Database:SetSelectedBracket(self.level) then MainWindow:RefreshBracketContent() end
+    end)
+    value:SetScript("OnEnter",function(self)
+        if not self.available then
+            GameTooltip:SetOwner(self,"ANCHOR_BOTTOM")
+            GameTooltip:AddLine("Level "..self.level.." bracket",0.92,0.95,1.00)
+            GameTooltip:AddLine("Coming soon",0.53,0.60,0.70)
+            GameTooltip:Show()
+        end
+    end)
+    value:SetScript("OnLeave",function() GameTooltip:Hide(); MainWindow:RefreshBracketButtons() end)
+    self.bracketButtons[level]=value
+end
+
+function MainWindow:RefreshBracketButtons()
+    local selected=ns.Database:Get().selectedBracket
+    for level,value in pairs(self.bracketButtons) do
+        local active=level==selected and value.available
+        value.icon:SetDesaturated(not value.available)
+        if active then value.icon:SetVertexColor(1,1,1,1) else value.icon:SetVertexColor(0.52,0.55,0.60,0.82) end
+    end
+end
+
+function MainWindow:RefreshBracketContent()
+    local bracketData=getActiveBracketData()
+    self:RefreshBracketButtons()
+    for token,value in pairs(self.classButtons) do
+        local profile=bracketData.bis.classes[token]
+        if value.nameLabel and profile then value.nameLabel:SetText(profile.name) end
+    end
+    for key,value in pairs(self.professionGuideButtons) do
+        local guide=bracketData.guides.sections[key]
+        value:SetShown(guide~=nil)
+        if guide then value.title:SetText(string.upper(guide.name)) end
+    end
+    if self.guidesIntro then self.guidesIntro:SetText("Level-"..bracketData.level.." profession routes and related items. Informational only; every item opens its normal tooltip.") end
+    self:RefreshBasicsPage()
+    self:RefreshClassTiers()
+    self:RefreshPvpPage()
+    self:RefreshExplorationBracketData()
+    self:RefreshActiveGearSection(true)
+    if bracketData.guides.sections[ns.Database:Get().selectedGuide] then
+        self:SelectGuide(ns.Database:Get().selectedGuide)
+    end
+    if ns.Database:Get().selectedPage=="EXPLORATION" then self:RefreshExploration() end
+    self:Layout()
+end
+
+function MainWindow:CreateGearSectionButton(parent,key,text,x)
+    local value=CreateFrame("Button",nil,parent); value:SetSize(96,25); value:SetPoint("TOPRIGHT",x,-13)
+    local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
+    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(0.2,0.62,1,0); value.accent=accent
+    local title=label(value,"GameFontNormalSmall",text,C.muted); title:SetPoint("CENTER"); value.title=title
+    value:SetScript("OnClick",function() MainWindow:SelectGearSection(key) end)
+    value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
+    value:SetScript("OnLeave",function() MainWindow:RefreshGearSectionButtons() end)
+    self.gearSectionButtons[key]=value
+end
+
+function MainWindow:CreateReferenceSection(parent,key,titleText,description)
+    local section=frame(parent); section:SetPoint("TOPLEFT",10,-103); section:SetPoint("BOTTOMRIGHT",-14,12); section:Hide(); skin(section,C.window)
+    section.key=key
+    local heading=label(section,"GameFontNormalLarge",titleText,C.text); heading:SetPoint("TOPLEFT",16,-13)
+    local className=label(section,"GameFontNormalSmall","",C.accent); className:SetPoint("TOPRIGHT",-18,-16); section.className=className
+    local header=frame(section); header:SetPoint("TOPLEFT",8,-42); header:SetPoint("TOPRIGHT",-24,-42); header:SetHeight(30); skin(header,C.panel2)
+    local groupHeader=label(header,"GameFontNormalSmall",key=="ENCHANTS" and "SLOT" or "TYPE",C.muted); groupHeader:SetPoint("LEFT",10,0); groupHeader:SetWidth(118); groupHeader:SetJustifyH("LEFT")
+    local itemHeader=label(header,"GameFontNormalSmall",key=="ENCHANTS" and "ENCHANT" or "ITEM",C.muted); itemHeader:SetPoint("LEFT",key=="CONSUMABLES" and 178 or 138,0); itemHeader:SetWidth(key=="CONSUMABLES" and 170 or 210); itemHeader:SetJustifyH("LEFT")
+    local detailHeader=label(header,"GameFontNormalSmall","EFFECT / ROLE / RESTRICTIONS",C.muted); detailHeader:SetPoint("LEFT",358,0); detailHeader:SetJustifyH("LEFT")
+    local scroll=CreateFrame("ScrollFrame",nil,section,"UIPanelScrollFrameTemplate"); scroll:SetPoint("TOPLEFT",8,-76); scroll:SetPoint("BOTTOMRIGHT",-28,8)
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(620,1); scroll:SetScrollChild(child); section.scroll=scroll; section.child=child; section.rows={}
+    local body=label(child,"GameFontNormalSmall",description,C.muted); body:SetPoint("TOPLEFT",12,-18); body:SetWidth(540); body:SetJustifyH("LEFT"); section.body=body
+    self.gearSections[key]=section
+end
+
+function MainWindow:GetReferenceRow(section,index)
+    if section.rows[index] then return section.rows[index] end
+    local row=CreateFrame("Button",nil,section.child); row:SetHeight(52); row:SetPoint("TOPLEFT",0,-(index-1)*52); row:SetPoint("TOPRIGHT")
+    local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(index%2==0 and 0.040 or 0.055,index%2==0 and 0.052 or 0.070,index%2==0 and 0.078 or 0.102,0.92); row.bg=bg
+    local group=label(row,"GameFontNormalSmall","",C.muted); group:SetPoint("LEFT",10,0); group:SetWidth(118); group:SetJustifyH("LEFT"); row.group=group
+    local iconBorder=row:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(36,36); iconBorder:SetPoint("LEFT",136,0); iconBorder:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); iconBorder:SetShown(section.key=="CONSUMABLES"); row.iconBorder=iconBorder
+    local icon=row:CreateTexture(nil,"ARTWORK"); icon:SetSize(32,32); icon:SetPoint("CENTER",iconBorder); icon:SetTexCoord(0.07,0.93,0.07,0.93); icon:SetShown(section.key=="CONSUMABLES"); row.icon=icon
+    local textLeft=section.key=="CONSUMABLES" and 178 or 138; local textWidth=section.key=="CONSUMABLES" and 170 or 210
+    local name=label(row,"GameFontNormal","",C.text); name:SetPoint("LEFT",textLeft,8); name:SetWidth(textWidth); name:SetJustifyH("LEFT"); row.name=name
+    local priority=label(row,"GameFontNormalSmall","",C.accent); priority:SetPoint("LEFT",textLeft,-11); priority:SetWidth(textWidth); priority:SetJustifyH("LEFT"); row.priority=priority
+    local detail=label(row,"GameFontNormalSmall","",C.muted); detail:SetPoint("TOPLEFT",358,-8); detail:SetPoint("RIGHT",-10,0); detail:SetHeight(38); detail:SetJustifyH("LEFT"); row.detail=detail
+    row:SetScript("OnClick",function(self)
+        if self.tooltipType == "item" and IsShiftKeyDown and IsShiftKeyDown() then
+            handleModifiedItemLink(self.tooltipID)
+        elseif self.linkData then
+            MainWindow:ShowWowheadLink(self.linkData)
+        end
+    end)
+    row:SetScript("OnEnter",function(self) self.bg:SetColorTexture(0.10,0.14,0.20,0.92); if self.tooltipType=="item" and self.tooltipID then showHyperlinkTooltip(self,"item:"..self.tooltipID) elseif self.tooltipType=="spell" and self.tooltipID then showHyperlinkTooltip(self,"spell:"..self.tooltipID) end end)
+    row:SetScript("OnLeave",function(self) self.bg:SetColorTexture(index%2==0 and 0.040 or 0.055,index%2==0 and 0.052 or 0.070,index%2==0 and 0.078 or 0.102,0.92); GameTooltip:Hide() end)
+    section.rows[index]=row; return row
+end
+
+function MainWindow:RefreshReferenceSection(sectionKey,profile,catalog,order,groups)
+    local section=self.gearSections[sectionKey]; if not section then return end
+    for _,row in ipairs(section.rows) do row:Hide() end
+    local rowIndex=0
+    for _,groupKey in ipairs(order or {}) do
+        local recommendations=groups[groupKey] or {}
+        for recommendationIndex,recommendation in ipairs(recommendations) do
+            local catalogKey=recommendation.key or recommendation.itemID; local entry=catalog[catalogKey]
+            if entry then
+                rowIndex=rowIndex+1; local row=self:GetReferenceRow(section,rowIndex); row:Show()
+                local bracketData=getActiveBracketData()
+                local groupName=sectionKey=="ENCHANTS" and (bracketData.bis.slotNames[groupKey] or groupKey) or (bracketData.consumables.categoryNames[groupKey] or groupKey)
+                row.group:SetText(recommendationIndex==1 and string.upper(groupName) or "")
+                row.name:SetText(entry.name); row.priority:SetText(recommendation.priority or "")
+                row.detail:SetText(formatReferenceDetails(entry,recommendation)); row.linkData={ id=entry.itemID, name=entry.name, wowhead=entry.wowhead }
+                row.tooltipType=entry.itemID and "item" or (entry.spellID and "spell" or nil); row.tooltipID=entry.itemID or entry.spellID
+                if row.icon and sectionKey=="CONSUMABLES" then
+                    row.icon:SetTexture(getItemIcon(entry.itemID))
+                end
+            end
+        end
+    end
+    section.body:SetShown(rowIndex==0); section.child:SetHeight(math.max(1,rowIndex*52)); section.scroll:SetVerticalScroll(0)
+end
+
 function MainWindow:CreateBasicsPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.BASICS=page
     local heading=label(page,"GameFontNormalHuge","TWINK BASICS",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","The short version: finish every XP-risk task before the final level-19 lock-in.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
-    for index,entry in ipairs(ns.GuideData) do
-        local card=frame(page); card:SetHeight(92); skin(card,C.panel); self.guideCards[index]=card
-        local number=label(card,"GameFontNormalLarge",string.format("%02d",index),C.accent); number:SetPoint("TOPLEFT",14,-14)
-        local title=label(card,"GameFontNormal",entry.title,C.text); title:SetPoint("TOPLEFT",52,-14)
-        local text=label(card,"GameFontNormalSmall",entry.text,C.muted); text:SetPoint("TOPLEFT",52,-38); text:SetJustifyH("LEFT"); card.body=text
+    local bracketData=getActiveBracketData()
+    local intro=label(page,"GameFontNormalSmall",bracketData.basicsIntro or "The essential Classic Era rule: experience cannot be locked. Prepare before 19, then avoid every source of character XP.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5); self.basicsIntro=intro
+    for index,entry in ipairs(bracketData.basics) do
+        local card=frame(page); card:SetHeight(92); skin(card,C.panel,entry.critical and C.horde or C.border); self.guideCards[index]=card
+        local title=label(card,"GameFontNormal",entry.title,entry.critical and C.horde or C.text); title:SetPoint("TOPLEFT",16,-15); card.title=title
+        local text=label(card,"GameFontNormalSmall",entry.text,C.secondary); text:SetPoint("TOPLEFT",16,-39); text:SetJustifyH("LEFT"); card.body=text
     end
+end
+
+function MainWindow:RefreshBasicsPage()
+    if not self.basicsIntro then return end
+    local bracketData=getActiveBracketData()
+    self.basicsIntro:SetText(bracketData.basicsIntro or ("The essential Classic Era rule: experience cannot be locked. Prepare before "..bracketData.level..", then avoid every source of character XP."))
+    for index,card in ipairs(self.guideCards) do
+        local entry=bracketData.basics[index]
+        card:SetShown(entry~=nil)
+        if entry then
+            card.title:SetText(entry.title); card.body:SetText(entry.text)
+            card.title:SetTextColor(unpack(entry.critical and C.horde or C.text))
+            if card.SetBackdropBorderColor then card:SetBackdropBorderColor(unpack(entry.critical and C.horde or C.border)) end
+        end
+    end
+end
+
+function MainWindow:CreateClassTierMetric(card,key,text,color)
+    local metric=CreateFrame("Frame",nil,card); metric:SetHeight(24)
+    local value=label(metric,"GameFontNormalSmall",text.."  0/10",color); value:SetPoint("TOPLEFT",0,0); value:SetPoint("TOPRIGHT",0,0); value:SetJustifyH("CENTER"); metric.value=value
+    local track=metric:CreateTexture(nil,"BACKGROUND"); track:SetPoint("BOTTOMLEFT",0,1); track:SetPoint("BOTTOMRIGHT",0,1); track:SetHeight(4); track:SetColorTexture(0.12,0.15,0.21,1)
+    local bar=CreateFrame("StatusBar",nil,metric); bar:SetPoint("BOTTOMLEFT",0,1); bar:SetPoint("BOTTOMRIGHT",0,1); bar:SetHeight(4); bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8"); bar:SetMinMaxValues(0,10); bar:SetStatusBarColor(unpack(color)); metric.bar=bar
+    card.metrics[key]=metric
+end
+
+function MainWindow:CreateClassTierCard(parent,token)
+    local card=frame(parent); card:SetHeight(94); skin(card,C.panel2,C.border); card.token=token; card.metrics={}
+    local iconBorder=card:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(38,38); iconBorder:SetPoint("TOPLEFT",10,-9); iconBorder:SetColorTexture(unpack(C.border)); card.iconBorder=iconBorder
+    local icon=card:CreateTexture(nil,"ARTWORK"); icon:SetSize(34,34); icon:SetPoint("CENTER",iconBorder); icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"); local coords=CLASS_COORDS[token]; if coords then icon:SetTexCoord(unpack(coords)) end
+    local name=label(card,"GameFontNormal","",C.text); name:SetPoint("TOPLEFT",56,-8); name:SetPoint("TOPRIGHT",-10,-8); name:SetJustifyH("LEFT"); card.name=name
+    local role=label(card,"GameFontNormalSmall","",C.muted); role:SetPoint("TOPLEFT",56,-27); role:SetPoint("TOPRIGHT",-10,-27); role:SetJustifyH("LEFT"); card.role=role
+    local note=label(card,"GameFontNormalSmall","",C.guideAccent); note:SetPoint("TOPLEFT",10,-47); note:SetPoint("TOPRIGHT",-10,-47); note:SetJustifyH("LEFT"); card.note=note
+    self:CreateClassTierMetric(card,"offense","OFF",C.horde)
+    self:CreateClassTierMetric(card,"survival","SURV",C.equipped)
+    self:CreateClassTierMetric(card,"utility","UTIL",C.alliance)
+    card:SetScript("OnEnter",function(self)
+        if not self.entry then return end
+        GameTooltip:SetOwner(self,"ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:AddLine(self.displayName,1,0.82,0.35)
+        GameTooltip:AddLine(self.entry.role,C.secondary[1],C.secondary[2],C.secondary[3]); if self.entry.note then GameTooltip:AddLine(self.entry.note,C.guideAccent[1],C.guideAccent[2],C.guideAccent[3]) end
+        GameTooltip:AddLine(" "); GameTooltip:AddLine(self.entry.summary,0.92,0.95,1,true); GameTooltip:Show()
+    end)
+    card:SetScript("OnLeave",function() GameTooltip:Hide() end)
+    self.classTierCards[token]=card
+end
+
+function MainWindow:CreateClassTiersPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.CLASS_TIERS=page
+    local heading=label(page,"GameFontNormalHuge","CLASS TIERS",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","",C.muted); intro:SetPoint("TOPLEFT",7,-36); intro:SetPoint("TOPRIGHT",-7,-36); intro:SetJustifyH("LEFT"); self.classTiersIntro=intro
+    local criteria=label(page,"GameFontNormalSmall","",C.secondary); criteria:SetPoint("TOPLEFT",7,-53); criteria:SetPoint("TOPRIGHT",-7,-53); criteria:SetJustifyH("LEFT"); self.classTiersCriteria=criteria
+    local spine=page:CreateTexture(nil,"BACKGROUND"); spine:SetColorTexture(C.border[1],C.border[2],C.border[3],0.85); self.classTierSpine=spine
+    for _,tier in ipairs({"S","A","B","C"}) do
+        local tierColor=getTierColor(tier); local header=frame(page); header:SetSize(64,40); skin(header,C.panel,tierColor)
+        local title=label(header,"GameFontNormalLarge","TIER "..tier,tierColor); title:SetPoint("CENTER"); self.classTierHeaders[tier]=header
+        local branch=page:CreateTexture(nil,"BACKGROUND"); branch:SetSize(12,2); branch:SetColorTexture(tierColor[1],tierColor[2],tierColor[3],0.80); self.classTierBranches[tier]=branch
+    end
+    for _,token in ipairs(getActiveBracketData().classTiers.classOrder) do self:CreateClassTierCard(page,token) end
+    self:RefreshClassTiers()
+end
+
+function MainWindow:RefreshClassTiers()
+    if not self.classTiersIntro then return end
+    local bracketData=getActiveBracketData(); local tierData=bracketData.classTiers
+    self.classTiersIntro:SetText(tierData.intro)
+    self.classTiersCriteria:SetText(tierData.criteria)
+    for _,token in ipairs(tierData.classOrder) do
+        local card=self.classTierCards[token]; local entry=tierData.classes[token]; local profile=bracketData.bis.classes[token]
+        if card and entry and profile then
+            local tierColor=getTierColor(entry.overall); card:Show(); card.entry=entry; card.displayName=string.upper(profile.name); card.name:SetText(card.displayName); card.role:SetText(entry.role); card.note:SetText(entry.note or "")
+            card.iconBorder:SetColorTexture(unpack(tierColor)); if card.SetBackdropBorderColor then card:SetBackdropBorderColor(unpack(tierColor)) end
+            for _,key in ipairs({"offense","survival","utility"}) do local score=entry[key]; local metric=card.metrics[key]; metric.value:SetText((key=="offense" and "OFF" or key=="survival" and "SURV" or "UTIL").."  "..score.."/10"); metric.bar:SetValue(score) end
+        end
+    end
+end
+
+function MainWindow:CreatePvpCopyField(parent,captionText,valueText)
+    local caption=label(parent,"GameFontNormalSmall",captionText,C.muted); caption:SetPoint("TOPLEFT",0,0); caption:SetPoint("TOPRIGHT",0,0); caption:SetJustifyH("LEFT")
+    local value=CreateFrame("EditBox",nil,parent,BackdropTemplateMixin and "BackdropTemplate" or nil); value:SetPoint("TOPLEFT",0,-22); value:SetPoint("TOPRIGHT",0,-22); value:SetHeight(30); skin(value,C.window,C.accent)
+    value:SetFontObject(GameFontHighlightSmall); increaseFontSize(value); value:SetTextInsets(8,8,0,0); value:SetAutoFocus(false); value:SetTextColor(unpack(C.text)); value:SetText(valueText); value.readOnlyValue=valueText
+    value:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=self.readOnlyValue then self:SetText(self.readOnlyValue); self:HighlightText() end end)
+    value:SetScript("OnEditFocusGained",function(self) self:HighlightText() end); value:SetScript("OnMouseUp",function(self) self:SetFocus(); self:HighlightText() end); value:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
+    return value
+end
+
+function MainWindow:CreatePvpPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.PVP=page
+    local heading=label(page,"GameFontNormalHuge","PVP EVENTS",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","Confirmed community battleground sessions for the selected bracket.",C.muted); intro:SetPoint("TOPLEFT",7,-36)
+
+    local bonus=frame(page); bonus:SetPoint("TOPLEFT",6,-64); bonus:SetPoint("TOPRIGHT",-6,-64); bonus:SetHeight(42); skin(bonus,C.panel,C.guideAccent)
+    local bonusIcon=bonus:CreateTexture(nil,"ARTWORK"); bonusIcon:SetSize(30,30); bonusIcon:SetPoint("LEFT",12,0); bonusIcon:SetTexture(ns.EventTimersData.events.WSG.icon)
+    local bonusTitle=label(bonus,"GameFontNormal","WSG BONUS WEEKEND",C.guideAccent); bonusTitle:SetPoint("TOPLEFT",52,-7)
+    local bonusWindow=label(bonus,"GameFontNormalSmall","",C.muted); bonusWindow:SetPoint("BOTTOMLEFT",52,6); self.pvpBonusWindow=bonusWindow
+    local bonusStatus=label(bonus,"GameFontNormal","",C.accent); bonusStatus:SetPoint("RIGHT",-14,0); self.pvpBonusStatus=bonusStatus
+
+    local events=frame(page); events:SetPoint("TOPLEFT",6,-116); events:SetPoint("TOPRIGHT",-6,-116); events:SetHeight(188); skin(events,C.panel)
+    local eventsTitle=label(events,"GameFontNormal","UPCOMING EVENTS",C.accent); eventsTitle:SetPoint("TOPLEFT",16,-14)
+    local callout=label(events,"GameFontNormal","BE READY FOR BATTLE!",C.horde); callout:SetPoint("TOPRIGHT",-16,-14)
+    local emptyTitle=label(events,"GameFontNormalLarge","NO CONFIRMED EVENTS",C.guideAccent); emptyTitle:SetPoint("CENTER",0,10); self.pvpEmptyTitle=emptyTitle
+    local emptyText=label(events,"GameFontNormalSmall","No approved events are scheduled for this bracket yet.",C.secondary); emptyText:SetPoint("TOP",emptyTitle,"BOTTOM",0,-8); self.pvpEmptyText=emptyText
+    for index=1,3 do
+        local row=frame(events); row:SetPoint("TOPLEFT",12,-42-(index-1)*46); row:SetPoint("TOPRIGHT",-12,-42-(index-1)*46); row:SetHeight(40); skin(row,index%2==0 and C.panel2 or C.window)
+        local horde=row:CreateTexture(nil,"ARTWORK"); horde:SetSize(28,28); horde:SetPoint("LEFT",8,0); horde:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde"); horde:SetTexCoord(0,38/64,0,36/64)
+        local versus=label(row,"GameFontNormalSmall","VS",C.muted); versus:SetPoint("CENTER",row,"LEFT",46,0); versus:SetWidth(20); versus:SetJustifyH("CENTER")
+        local alliance=row:CreateTexture(nil,"ARTWORK"); alliance:SetSize(28,28); alliance:SetPoint("LEFT",56,0); alliance:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance"); alliance:SetTexCoord(0,32/64,0,38/64)
+        local title=label(row,"GameFontNormal","",C.text); title:SetPoint("TOPLEFT",94,-6); row.title=title
+        local when=label(row,"GameFontNormalSmall","",C.guideAccent); when:SetPoint("TOPRIGHT",-10,-7); row.when=when
+        local bracket=label(row,"GameFontNormalSmall","",C.accent); bracket:SetPoint("TOPLEFT",256,-7); bracket:SetPoint("TOPRIGHT",when,"TOPLEFT",-12,0); bracket:SetJustifyH("LEFT"); row.bracket=bracket
+        local details=label(row,"GameFontNormalSmall","",C.muted); details:SetPoint("BOTTOMLEFT",94,5); details:SetPoint("BOTTOMRIGHT",-10,5); details:SetJustifyH("LEFT"); row.details=details; row:Hide(); self.pvpEventRows[index]=row
+    end
+
+    local share=frame(page); share:SetPoint("TOPLEFT",6,-314); share:SetPoint("BOTTOMRIGHT",-6,6); skin(share,C.panel)
+    local shareTitle=label(share,"GameFontNormalLarge","SHARE A PVP EVENT",C.guideAccent); shareTitle:SetPoint("TOPLEFT",18,-16)
+    local shareText=label(share,"GameFontNormalSmall","Want your WSG or other PvP event listed here? Firemaw EU Horde players can mail Lovepotion; every realm can use Discord.",C.secondary); shareText:SetPoint("TOPLEFT",18,-45); shareText:SetPoint("TOPRIGHT",-18,-45); shareText:SetJustifyH("LEFT")
+    local required=label(share,"GameFontNormalSmall",ns.PvPEventsData.submissionFields,C.muted); required:SetPoint("TOPLEFT",18,-71); required:SetPoint("TOPRIGHT",-18,-71); required:SetJustifyH("LEFT")
+    local mailContact=frame(share); mailContact:SetPoint("TOPLEFT",18,-102); mailContact:SetPoint("TOPRIGHT",share,"TOP",-9,-102); mailContact:SetHeight(56)
+    local discordContact=frame(share); discordContact:SetPoint("TOPLEFT",share,"TOP",9,-102); discordContact:SetPoint("TOPRIGHT",-18,-102); discordContact:SetHeight(56)
+    self.pvpMailField=self:CreatePvpCopyField(mailContact,"FIREMAW EU • HORDE MAIL",ns.PvPEventsData.brackets[19].contact.character)
+    self.pvpDiscordField=self:CreatePvpCopyField(discordContact,"DISCORD PROFILE • ALL REALMS",ns.PvPEventsData.brackets[19].contact.discord)
+    local copyHint=label(share,"GameFontNormalSmall","Click a field, then press Ctrl+C to copy it.",C.muted); copyHint:SetPoint("TOP",0,-164)
+    self:RefreshPvpPage()
+end
+
+function MainWindow:RefreshPvpPage()
+    if not self.pvpEmptyTitle then return end
+    self.pvpCountdownGeneration=(self.pvpCountdownGeneration or 0)+1
+    local generation=self.pvpCountdownGeneration; local data=getActiveBracketData().pvp; local hasEvents=#data.events>0; local now=getPvpTime(); local nextRefresh
+    local bonus=ns.EventTimers:GetStatus("WSG"); self.pvpBonusStatus:SetText(bonus.text); self.pvpBonusStatus:SetTextColor(unpack(bonus.active and C.horde or C.accent)); self.pvpBonusWindow:SetText(bonus.window); nextRefresh=bonus.refreshIn
+    self.pvpEmptyTitle:SetShown(not hasEvents); self.pvpEmptyText:SetShown(not hasEvents)
+    for index,row in ipairs(self.pvpEventRows) do
+        local event=data.events[index]; row:SetShown(event~=nil)
+        if event then
+            row.title:SetText(event.battleground); row.bracket:SetText("LEVEL "..data.level.." BRACKET"); row.when:SetText(formatPvpCountdown(event,now)); row.details:SetText(table.concat({event.queueLabel..": "..event.time,event.date,event.realm,event.scope,event.faction},"  •  "))
+            local remaining=event.startsAt and (now<event.startsAt and event.startsAt-now or now<event.endsAt and event.endsAt-now)
+            if remaining then local delay=(remaining%3600)+1; nextRefresh=not nextRefresh and delay or math.min(nextRefresh,delay) end
+        end
+    end
+    self.pvpMailField.readOnlyValue=data.contact.character; self.pvpMailField:SetText(data.contact.character)
+    self.pvpDiscordField.readOnlyValue=data.contact.discord; self.pvpDiscordField:SetText(data.contact.discord)
+    if nextRefresh and C_Timer and C_Timer.After and self.pages.PVP:IsShown() then
+        C_Timer.After(math.max(1,math.min(nextRefresh,3600)),function() if generation==MainWindow.pvpCountdownGeneration and MainWindow.pages.PVP:IsShown() then MainWindow:RefreshPvpPage() end end)
+    end
+end
+
+function MainWindow:CreateEventsPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.EVENTS=page
+    local heading=label(page,"GameFontNormalHuge","EVENT TIMERS",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","Automatic recurring "..ns.Client.label.." schedules shown in server time.",C.muted); intro:SetPoint("TOPLEFT",7,-36)
+    for index,key in ipairs(ns.EventTimersData.order) do
+        local data=ns.EventTimersData.events[key]
+        local card=frame(page); local row=math.floor((index-1)/2); local y=-64-row*110
+        if index==5 then card:SetPoint("TOPLEFT",6,y); card:SetPoint("TOPRIGHT",-6,y)
+        elseif index%2==1 then card:SetPoint("TOPLEFT",6,y); card:SetPoint("TOPRIGHT",page,"TOP",-5,y)
+        else card:SetPoint("TOPLEFT",page,"TOP",5,y); card:SetPoint("TOPRIGHT",-6,y) end
+        card:SetHeight(100); skin(card,index%2==0 and C.panel2 or C.panel)
+        local icon=card:CreateTexture(nil,"ARTWORK"); icon:SetSize(40,40); icon:SetPoint("TOPLEFT",14,-12); icon:SetTexture(data.iconItemID and getItemIcon(data.iconItemID) or data.icon or "Interface\\Icons\\INV_Misc_QuestionMark"); card.icon=icon
+        local title=label(card,"GameFontNormal",data.name,C.text); title:SetPoint("TOPLEFT",64,-12); title:SetPoint("TOPRIGHT",-12,-12); title:SetJustifyH("LEFT"); card.title=title
+        local category=label(card,"GameFontNormalSmall",data.category,C.accent); category:SetPoint("TOPLEFT",64,-36); category:SetPoint("TOPRIGHT",-12,-36); category:SetJustifyH("LEFT"); card.category=category
+        local status=label(card,"GameFontNormal","",C.guideAccent); status:SetPoint("BOTTOMLEFT",14,28); card.status=status
+        local window=label(card,"GameFontNormalSmall","",C.secondary); window:SetPoint("BOTTOMLEFT",14,9); window:SetPoint("BOTTOMRIGHT",-12,9); window:SetJustifyH("LEFT"); card.window=window
+        card.note=data.note; card:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_TOP"); GameTooltip:SetText(self.title:GetText()); GameTooltip:AddLine(self.note,C.muted[1],C.muted[2],C.muted[3],true); GameTooltip:Show() end); card:SetScript("OnLeave",function() GameTooltip:Hide() end)
+        self.eventTimerCards[key]=card
+    end
+    local footnote=label(page,"GameFontNormalSmall","Timers advance automatically. Gurubashi shows an expected spawn because the live cycle can drift after clock changes or restarts.",C.muted); footnote:SetPoint("TOPLEFT",8,-402)
+    self:RefreshEventsPage()
+end
+
+function MainWindow:RefreshEventsPage()
+    if not self.pages.EVENTS then return end
+    self.eventTimerGeneration=(self.eventTimerGeneration or 0)+1
+    local generation=self.eventTimerGeneration; local nextRefresh
+    for _,key in ipairs(ns.EventTimersData.order) do
+        local card=self.eventTimerCards[key]; local status=ns.EventTimers:GetStatus(key)
+        card.title:SetText(status.name); card.category:SetText(status.category); card.icon:SetTexture(status.iconItemID and getItemIcon(status.iconItemID) or status.icon or "Interface\\Icons\\INV_Misc_QuestionMark"); card.note=status.note; card.status:SetText(status.text); card.status:SetTextColor(unpack(status.active and C.horde or C.guideAccent)); card.window:SetText(status.window)
+        nextRefresh=not nextRefresh and status.refreshIn or math.min(nextRefresh,status.refreshIn)
+    end
+    if nextRefresh and C_Timer and C_Timer.After and self.pages.EVENTS:IsShown() then
+        C_Timer.After(math.max(1,math.min(nextRefresh,3600)),function() if generation==MainWindow.eventTimerGeneration and MainWindow.pages.EVENTS:IsShown() then MainWindow:RefreshEventsPage() end end)
+    end
+end
+
+function MainWindow:CreateGuideButton(parent,key,index)
+    local data=getActiveBracketData().guides.sections[key]
+    local value=CreateFrame("Button",nil,parent); value:SetSize(142,30); value:SetPoint("TOPLEFT",8+(index-1)*148,-55)
+    local bg=value:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.06,0.08,0.12,0.95); value.bg=bg
+    local accent=value:CreateTexture(nil,"ARTWORK"); accent:SetPoint("BOTTOMLEFT"); accent:SetPoint("BOTTOMRIGHT"); accent:SetHeight(2); accent:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0); value.accent=accent
+    local title=label(value,"GameFontNormalSmall",string.upper(data.name),C.muted); title:SetPoint("CENTER"); value.title=title; value.key=key
+    value:SetScript("OnClick",function() MainWindow:SelectGuide(key) end)
+    value:SetScript("OnEnter",function() bg:SetColorTexture(0.10,0.14,0.20,1) end)
+    value:SetScript("OnLeave",function() MainWindow:RefreshGuideButtons() end)
+    self.professionGuideButtons[key]=value
+end
+
+function MainWindow:CreateGuidesPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.GUIDES=page
+    local heading=label(page,"GameFontNormalHuge","GUIDES",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local bracketData=getActiveBracketData()
+    local intro=label(page,"GameFontNormalSmall","Level-"..bracketData.level.." profession routes and related items. Informational only; every item opens its normal tooltip.",C.guideMuted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5); self.guidesIntro=intro
+    for index,key in ipairs(bracketData.guides.order) do self:CreateGuideButton(page,key,index) end
+
+    local panel=frame(page); panel:SetPoint("TOPLEFT",6,-94); panel:SetPoint("BOTTOMRIGHT",-6,6); skin(panel,C.panel)
+    local title=label(panel,"GameFontNormalLarge","",C.text); title:SetPoint("TOPLEFT",16,-13); panel.title=title
+    local tagline=label(panel,"GameFontNormalSmall","",C.guideMuted); tagline:SetPoint("TOPLEFT",16,-37); tagline:SetHeight(28); tagline:SetJustifyH("LEFT"); tagline:SetJustifyV("TOP"); panel.tagline=tagline
+    local link=CreateFrame("EditBox",nil,panel,BackdropTemplateMixin and "BackdropTemplate" or nil); link:SetPoint("TOPRIGHT",-16,-11); link:SetSize(420,30); skin(link,C.panel2,C.accent); link:SetFontObject(GameFontHighlightSmall); increaseFontSize(link); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end; link.value="Left-click an item to copy its Wowhead link."; link:SetText(link.value)
+    tagline:SetPoint("TOPRIGHT",link,"BOTTOMLEFT",-12,4)
+    link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=self.value then self:SetText(self.value); self:HighlightText() end end)
+    link:SetScript("OnEditFocusGained",function(self) if self.itemData then self:HighlightText() end end); link:SetScript("OnMouseUp",function(self) if self.itemData then self:SetFocus(); self:HighlightText() end end); link:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
+    panel.link=link
+    local scroll=CreateFrame("ScrollFrame",nil,panel,"UIPanelScrollFrameTemplate"); scroll:SetPoint("TOPLEFT",10,-68); scroll:SetPoint("BOTTOMRIGHT",-30,10)
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(900,1); scroll:SetScrollChild(child); panel.scroll=scroll; panel.child=child
+    self.guidesPanel=panel
+end
+
+function MainWindow:GetGuideRow(index)
+    local panel=self.guidesPanel
+    if self.professionGuideRows[index] then return self.professionGuideRows[index] end
+    local row=CreateFrame("Button",nil,panel.child); row:SetPoint("TOPLEFT"); row:SetPoint("TOPRIGHT"); row:SetHeight(50)
+    local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.055,0.070,0.102,0.92); row.bg=bg
+    local iconBorder=row:CreateTexture(nil,"BACKGROUND"); iconBorder:SetSize(40,40); iconBorder:SetPoint("LEFT",8,0); iconBorder:SetColorTexture(C.accent[1],C.accent[2],C.accent[3],0.65); row.iconBorder=iconBorder
+    local icon=row:CreateTexture(nil,"ARTWORK"); icon:SetSize(36,36); icon:SetPoint("CENTER",iconBorder); icon:SetTexCoord(0.07,0.93,0.07,0.93); row.icon=icon
+    local name=label(row,"GameFontNormal","",C.text); name:SetPoint("TOPLEFT",58,-8); name:SetWidth(245); name:SetJustifyH("LEFT"); row.name=name
+    local note=label(row,"GameFontNormalSmall","",C.secondary); note:SetPoint("LEFT",315,0); note:SetPoint("RIGHT",-12,0); note:SetJustifyH("LEFT"); row.note=note
+    row:SetScript("OnEnter",function(self) self.bg:SetColorTexture(0.10,0.14,0.20,0.92); showHyperlinkTooltip(self,"item:"..self.itemData.id) end)
+    row:SetScript("OnLeave",function(self) self.bg:SetColorTexture(0.055,0.070,0.102,0.92); GameTooltip:Hide() end)
+    row:SetScript("OnClick",function(self) handleGuideItemClick(self.itemData) end)
+    self.professionGuideRows[index]=row; return row
+end
+
+function MainWindow:GetGuideStep(index)
+    local panel=self.guidesPanel
+    if self.professionGuideSteps[index] then return self.professionGuideSteps[index] end
+    local card=frame(panel.child); card:SetHeight(72); skin(card,C.panel2,C.border)
+    local stripe=card:CreateTexture(nil,"ARTWORK"); stripe:SetPoint("TOPLEFT",0,0); stripe:SetPoint("BOTTOMLEFT",0,0); stripe:SetWidth(3); stripe:SetColorTexture(unpack(C.guideAccent))
+    local number=label(card,"GameFontNormalLarge",tostring(index),C.guideAccent); number:SetPoint("TOPLEFT",14,-13)
+    local title=label(card,"GameFontNormal","",C.guideAccent); title:SetPoint("TOPLEFT",44,-10); title:SetPoint("TOPRIGHT",-14,-10); title:SetJustifyH("LEFT"); card.title=title; card.lines={}
+    self.professionGuideSteps[index]=card; return card
+end
+
+function MainWindow:GetGuideStepLine(card,index)
+    if card.lines[index] then return card.lines[index] end
+    local value={}
+    local tag=label(card,"GameFontNormalSmall","",C.guideAccent); tag:SetJustifyH("LEFT"); value.tag=tag
+    local textValue=label(card,"GameFontNormalSmall","",C.guideText); textValue:SetJustifyH("LEFT"); value.text=textValue; value.icons={}
+    card.lines[index]=value; return value
+end
+
+function MainWindow:GetGuideLineIcon(card,lineView,index)
+    if lineView.icons[index] then return lineView.icons[index] end
+    local button=CreateFrame("Button",nil,card); button:SetSize(28,28)
+    local border=button:CreateTexture(nil,"BACKGROUND"); border:SetAllPoints(); border:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.65); button.border=border
+    local icon=button:CreateTexture(nil,"ARTWORK"); icon:SetPoint("TOPLEFT",2,-2); icon:SetPoint("BOTTOMRIGHT",-2,2); icon:SetTexCoord(0.07,0.93,0.07,0.93); button.icon=icon
+    local hover=button:CreateTexture(nil,"HIGHLIGHT"); hover:SetAllPoints(); hover:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.24)
+    button:SetScript("OnEnter",function(self) self.border:SetColorTexture(unpack(C.guideAccent)); showHyperlinkTooltip(self,"item:"..self.itemData.id) end)
+    button:SetScript("OnLeave",function(self) self.border:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],0.65); GameTooltip:Hide() end)
+    button:SetScript("OnClick",function(self) handleGuideItemClick(self.itemData) end)
+    lineView.icons[index]=button; return button
+end
+
+function MainWindow:RefreshGuideButtons()
+    local selected=ns.Database:Get().selectedGuide
+    for key,value in pairs(self.professionGuideButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.15 or 0.06,active and 0.12 or 0.08,active and 0.07 or 0.12,1); value.accent:SetColorTexture(C.guideAccent[1],C.guideAccent[2],C.guideAccent[3],active and 1 or 0); value.title:SetTextColor(unpack(active and C.guideAccent or C.guideMuted)) end
+end
+
+function MainWindow:SelectGuide(key)
+    if not ns.Database:SetSelectedGuide(key) then return end
+    local data=getActiveBracketData().guides.sections[key]; local panel=self.guidesPanel
+    panel.title:SetText(string.upper(data.name)); panel.tagline:SetText(data.tagline)
+    for _,card in ipairs(self.professionGuideSteps) do card:Hide() end
+    for _,row in ipairs(self.professionGuideRows) do row:Hide() end
+    local itemsByID={}; for _,itemData in ipairs(data.items) do itemsByID[itemData.id]=itemData end
+    local y=0
+    for index,step in ipairs(data.steps) do
+        local card=self:GetGuideStep(index); card:ClearAllPoints(); card:SetPoint("TOPLEFT",0,-y); card:SetPoint("TOPRIGHT"); card.title:SetText(step.title)
+        for _,lineView in ipairs(card.lines) do lineView.tag:Hide(); lineView.text:Hide(); for _,iconButton in ipairs(lineView.icons) do iconButton:Hide() end end
+        card.title:ClearAllPoints(); card.title:SetPoint("TOPLEFT",44,-10); card.title:SetPoint("TOPRIGHT",-14,-10)
+        local lineY=38
+        for lineIndex,lineData in ipairs(step.lines) do
+            local lineView=self:GetGuideStepLine(card,lineIndex); lineView.tag:ClearAllPoints(); lineView.tag:SetPoint("TOPLEFT",44,-lineY); lineView.tag:SetWidth(106); lineView.tag:SetText(lineData.label); lineView.tag:Show()
+            for iconIndex,itemID in ipairs(lineData.itemIDs) do
+                local itemData=itemsByID[itemID]; local iconButton=self:GetGuideLineIcon(card,lineView,iconIndex); iconButton:ClearAllPoints(); iconButton:SetPoint("TOPLEFT",156+(iconIndex-1)*30,-lineY+5); iconButton.itemData=itemData; iconButton.icon:SetTexture(getItemIcon(itemID)); iconButton:Show(); if C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+            end
+            local textLeft=156+#lineData.itemIDs*30; lineView.text:ClearAllPoints(); lineView.text:SetPoint("TOPLEFT",textLeft,-lineY); lineView.text:SetPoint("TOPRIGHT",-14,-lineY); lineView.text:SetHeight(48); lineView.text:SetText(lineData.text)
+            local textHeight=lineView.text.GetStringHeight and lineView.text:GetStringHeight() or 16; textHeight=math.max(16,math.ceil(textHeight)); lineView.text:SetHeight(textHeight); lineView.text:Show(); lineY=lineY+math.max(28,textHeight)+8
+        end
+        local cardHeight=math.max(72,lineY+4); card:SetHeight(cardHeight); card:Show(); y=y+cardHeight+6
+    end
+    if not panel.shopping then panel.shopping=label(panel.child,"GameFontNormal","RELATED ITEMS",C.accent) end
+    panel.shopping:ClearAllPoints(); panel.shopping:SetPoint("TOPLEFT",8,-y-4); y=y+28
+    for index,itemData in ipairs(data.items) do local row=self:GetGuideRow(index); row:ClearAllPoints(); row:SetPoint("TOPLEFT",0,-y); row:SetPoint("TOPRIGHT"); row.itemData=itemData; row.icon:SetTexture(getItemIcon(itemData.id)); row.name:SetText(itemData.name); row.note:SetText(itemData.note); row:Show(); if C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemData.id) end; y=y+52 end
+    panel.child:SetHeight(math.max(1,y)); panel.scroll:SetVerticalScroll(0); self:RefreshGuideButtons()
 end
 
 function MainWindow:CreateCommunityPage(parent)
     local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.COMMUNITY=page
     local heading=label(page,"GameFontNormalHuge","COMMUNITY",C.text); heading:SetPoint("TOPLEFT",6,-6)
-    local intro=label(page,"GameFontNormalSmall","Guilds and community links for level-19 Classic Era twinks.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    local introText=ns.Client.key=="TBC" and "Community listings are client-specific. Era-only entries below are retained as contact references." or "Classic Era twink guilds and community links. Each listing states its bracket focus."
+    local intro=label(page,"GameFontNormalSmall",introText,C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
 
     local card=frame(page); card:SetPoint("TOPLEFT",6,-62); card:SetPoint("TOPRIGHT",-6,-62); card:SetHeight(190); skin(card,C.panel)
-    local badge=frame(card); badge:SetSize(48,48); badge:SetPoint("TOPLEFT",16,-16); skin(badge,{0.34,0.055,0.070,1},{0.72,0.12,0.15,1})
-    local badgeText=label(badge,"GameFontNormalHuge","H",C.horde); badgeText:SetPoint("CENTER",0,1)
+    local badge=frame(card); badge:SetSize(66,66); badge:SetPoint("TOPLEFT",16,-12); skin(badge,C.panel2,C.horde)
+    local guildLogo=badge:CreateTexture(nil,"ARTWORK"); guildLogo:SetPoint("TOPLEFT",3,-3); guildLogo:SetPoint("BOTTOMRIGHT",-3,3); guildLogo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\twinkortreat.tga"); guildLogo:SetTexCoord(0,1,0,1)
 
     local guildName=label(card,"GameFontNormalLarge","TWINK OR TREAT",C.text); guildName:SetPoint("TOPLEFT",badge,"TOPRIGHT",14,-2)
-    local realm=label(card,"GameFontNormalSmall","HORDE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.horde); realm:SetPoint("TOPLEFT",guildName,"BOTTOMLEFT",0,-7)
-    local description=label(card,"GameFontNormalSmall","Horde guild on the EU PvP Classic Era Firemaw Cluster.",C.muted); description:SetPoint("TOPLEFT",16,-82)
+    local realm=label(card,"GameFontNormalSmall","H  HORDE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.horde); realm:SetPoint("TOPLEFT",guildName,"BOTTOMLEFT",0,-7)
+    local description=label(card,"GameFontNormalSmall","Level-19 twink guild on the EU PvP Classic Era Firemaw Cluster.",C.muted); description:SetPoint("TOPLEFT",16,-82)
 
     local discordLabel=label(card,"GameFontNormalSmall","DISCORD INVITE",C.muted); discordLabel:SetPoint("TOPLEFT",16,-112)
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
     local discord=CreateFrame("EditBox",nil,card,template); discord:SetPoint("TOPLEFT",16,-132); discord:SetPoint("TOPRIGHT",-16,-132); discord:SetHeight(38)
-    skin(discord,C.panel2,C.border); discord:SetFontObject(GameFontHighlightSmall); discord:SetTextInsets(10,10,0,0); discord:SetAutoFocus(false); discord:SetTextColor(unpack(C.accent))
+    skin(discord,C.panel2,C.border); discord:SetFontObject(GameFontHighlightSmall); increaseFontSize(discord); discord:SetTextInsets(10,10,0,0); discord:SetAutoFocus(false); discord:SetTextColor(unpack(C.accent))
     local discordURL="https://discord.gg/BdABEghf3M"
     discord:SetText(discordURL); discord:SetCursorPosition(0)
     discord:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=discordURL then self:SetText(discordURL); self:HighlightText() end end)
@@ -169,6 +729,114 @@ function MainWindow:CreateCommunityPage(parent)
     discord:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
     discord:SetScript("OnEnterPressed",function(self) self:HighlightText() end)
     local copyHint=label(card,"GameFontNormalSmall","Click the address, then press Ctrl+C to copy.",C.muted); copyHint:SetPoint("BOTTOMRIGHT",-17,8)
+
+    local allianceCard=frame(page); allianceCard:SetPoint("TOPLEFT",6,-264); allianceCard:SetPoint("TOPRIGHT",-6,-264); allianceCard:SetHeight(126); skin(allianceCard,C.panel)
+    local allianceBadge=frame(allianceCard); allianceBadge:SetSize(48,48); allianceBadge:SetPoint("TOPLEFT",16,-16); skin(allianceBadge,{0.045,0.16,0.34,1},{0.18,0.48,0.88,1})
+    local allianceBadgeText=label(allianceBadge,"GameFontNormalHuge","A",C.alliance); allianceBadgeText:SetPoint("CENTER",0,1)
+
+    local allianceName=label(allianceCard,"GameFontNormalLarge","TWINK FACTORY",C.text); allianceName:SetPoint("TOPLEFT",allianceBadge,"TOPRIGHT",14,-2)
+    local allianceRealm=label(allianceCard,"GameFontNormalSmall","A  ALLIANCE  |  FIREMAW CLUSTER  |  EU PVP  |  CLASSIC ERA",C.alliance); allianceRealm:SetPoint("TOPLEFT",allianceName,"BOTTOMLEFT",0,-7)
+    local allianceDescription=label(allianceCard,"GameFontNormalSmall","Level-19 twink guild. Whisper Sparre for an invite.",C.muted); allianceDescription:SetPoint("TOPLEFT",16,-84)
+end
+
+function MainWindow:CreateExplorationColumn(page, faction, titleText, color)
+    local panel=frame(page); panel:SetPoint("TOPLEFT",6,-72); panel:SetPoint("BOTTOMLEFT",6,6); panel:SetWidth(440); skin(panel,C.panel,color); self.explorationPanels[faction]=panel
+    local title=label(panel,"GameFontNormalLarge",titleText,color); title:SetPoint("TOPLEFT",14,-12)
+    local subtitle=label(panel,"GameFontNormalSmall","MAP REVEAL  •  RED > GOLD > BLUE > GREEN",C.muted); subtitle:SetPoint("TOPLEFT",14,-36)
+    local scroll=CreateFrame("ScrollFrame",nil,panel,"UIPanelScrollFrameTemplate"); scroll:SetPoint("TOPLEFT",10,-60); scroll:SetPoint("BOTTOMRIGHT",-30,10)
+    local child=CreateFrame("Frame",nil,scroll); child:SetSize(390,1); scroll:SetScrollChild(child); panel.scroll=scroll; panel.child=child
+    self.explorationRows[faction]={}; self.explorationHeaders=self.explorationHeaders or {}; self.explorationHeaders[faction]={}; self.explorationChildren=self.explorationChildren or {}; self.explorationChildren[faction]=child
+    local y=0
+    local rowIndex=0
+    local bracketData=getActiveBracketData()
+    for _,groupKey in ipairs(bracketData.explorationCategories.order) do
+        local header=CreateFrame("Frame",nil,child); header:SetHeight(26); header:SetPoint("TOPLEFT",0,-y); header:SetPoint("TOPRIGHT")
+        local groupTitle=label(header,"GameFontNormalSmall",bracketData.explorationCategories.labels[groupKey],C.secondary); groupTitle:SetPoint("LEFT",2,0); header.title=groupTitle; self.explorationHeaders[faction][groupKey]=header
+        y=y+28
+        for _,zone in ipairs(bracketData.exploration[faction]) do
+            if zone.group==groupKey then
+                rowIndex=rowIndex+1
+                local row=CreateFrame("Button",nil,child); row:SetHeight(44); row:SetPoint("TOPLEFT",0,-y)
+                local shade=rowIndex%2==0 and {0.055,0.070,0.100,0.95} or {0.070,0.086,0.120,0.95}; row.baseColor=shade
+                local bg=row:CreateTexture(nil,"BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(unpack(shade)); row.bg=bg
+                local zoneName=label(row,"GameFontNormal",zone.name,C.text); zoneName:SetPoint("TOPLEFT",11,-6); zoneName:SetPoint("TOPRIGHT",-126,-6); zoneName:SetJustifyH("LEFT"); row.zoneName=zoneName
+                local meta=label(row,"GameFontNormalSmall",zone.levels,C.muted); meta:SetPoint("TOPLEFT",11,-25); row.meta=meta
+                local initialTotal=#(ns.ExplorationOverlayData[zone.mapID] or {})
+                local progress=label(row,"GameFontNormalSmall",string.format("0/%d  ·  0%%",initialTotal),C.muted); progress:SetPoint("RIGHT",-8,1); progress:SetWidth(112); progress:SetJustifyH("RIGHT"); row.progress=progress
+                local progressBar=CreateFrame("StatusBar",nil,row); progressBar:SetPoint("BOTTOMLEFT",3,1); progressBar:SetPoint("BOTTOMRIGHT",-1,1); progressBar:SetHeight(3); progressBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8"); progressBar:SetMinMaxValues(0,100); progressBar:SetValue(0); row.progressBar=progressBar
+                local progressTrack=progressBar:CreateTexture(nil,"BACKGROUND"); progressTrack:SetAllPoints(); progressTrack:SetColorTexture(0.13,0.17,0.24,0.85)
+                row.zone=zone
+                row:SetScript("OnEnter",function(self)
+                    self.bg:SetColorTexture(0.10,0.14,0.20,0.98)
+                    GameTooltip:SetOwner(self,"ANCHOR_RIGHT")
+                    GameTooltip:AddLine(self.zone.name,1,0.82,0.35)
+                    GameTooltip:AddLine(getActiveBracketData().explorationCategories.labels[self.zone.group],C.secondary[1],C.secondary[2],C.secondary[3])
+                    GameTooltip:AddLine(addFactionSymbols(self.zone.note),0.85,0.88,0.95,true)
+                    GameTooltip:AddLine(" ")
+                    local state=self.progressData
+                    if state and state.available then GameTooltip:AddLine(string.format("Map reveal: %d of %d map areas (%d%%).",state.explored,state.total,state.percent),0.53,0.73,0.95,true)
+                    else GameTooltip:AddLine("Map reveal data is currently unavailable.",0.53,0.60,0.70,true) end
+                    if state and state.available then addMissingExplorationAreas(GameTooltip,state.missing) end
+                    GameTooltip:AddLine("100% map reveal does not guarantee that no exploration XP remains.",1,0.72,0.30,true)
+                    GameTooltip:Show()
+                end)
+                row:SetScript("OnLeave",function(self) self.bg:SetColorTexture(unpack(self.baseColor)); GameTooltip:Hide() end)
+                self.explorationRows[faction][#self.explorationRows[faction]+1]=row
+                y=y+48
+            end
+        end
+    end
+    child:SetHeight(math.max(1,y))
+end
+
+function MainWindow:RefreshExplorationBracketData()
+    if not self.explorationRows.HORDE then return end
+    local bracketData=getActiveBracketData()
+    for _,faction in ipairs({"HORDE","ALLIANCE"}) do
+        local orderedZones={}
+        local y=0
+        for _,groupKey in ipairs(bracketData.explorationCategories.order) do
+            local header=self.explorationHeaders[faction][groupKey]
+            if header then
+                header:ClearAllPoints(); header:SetPoint("TOPLEFT",0,-y); header:SetPoint("TOPRIGHT"); header.title:SetText(bracketData.explorationCategories.labels[groupKey]); header:Show()
+            end
+            y=y+28
+            for _,zone in ipairs(bracketData.exploration[faction]) do
+                if zone.group==groupKey then orderedZones[#orderedZones+1]=zone; y=y+46 end
+            end
+        end
+        for index,row in ipairs(self.explorationRows[faction]) do
+            local zone=orderedZones[index]
+            row:SetShown(zone~=nil)
+            if zone then
+                local rowY=0
+                for _,groupKey in ipairs(bracketData.explorationCategories.order) do
+                    rowY=rowY+28
+                    for _,candidate in ipairs(bracketData.exploration[faction]) do
+                        if candidate.group==groupKey then
+                            if candidate==zone then break end
+                            rowY=rowY+46
+                        end
+                    end
+                    if zone.group==groupKey then break end
+                end
+                row:ClearAllPoints(); row:SetPoint("TOPLEFT",0,-rowY)
+                row.zone=zone; row.zoneName:SetText(zone.name); row.meta:SetText(zone.levels)
+                local initialTotal=#(ns.ExplorationOverlayData[zone.mapID] or {})
+                row.progress:SetText(string.format("0/%d  ·  0%%",initialTotal))
+                row.progressBar:SetValue(0); row.progressData=nil
+            end
+        end
+        if self.explorationChildren[faction] then self.explorationChildren[faction]:SetHeight(math.max(1,y)) end
+    end
+end
+
+function MainWindow:CreateExplorationPage(parent)
+    local page=frame(parent); page:SetAllPoints(); page:Hide(); self.pages.EXPLORATION=page
+    local heading=label(page,"GameFontNormalHuge","EXPLORATION",C.text); heading:SetPoint("TOPLEFT",6,-6)
+    local intro=label(page,"GameFontNormalSmall","Automatic visible-map progress for this character. 100% map reveal does not guarantee that no exploration XP remains.",C.muted); intro:SetPoint("TOPLEFT",heading,"BOTTOMLEFT",1,-5)
+    self:CreateExplorationColumn(page,"HORDE","H  HORDE ROUTES",C.horde)
+    self:CreateExplorationColumn(page,"ALLIANCE","A  ALLIANCE ROUTES",C.alliance)
 end
 
 function MainWindow:CreateWowheadBar(parent)
@@ -176,7 +844,7 @@ function MainWindow:CreateWowheadBar(parent)
     local caption=label(bar,"GameFontNormalSmall","WOWHEAD LINK",C.muted); caption:SetPoint("LEFT",10,0); caption:SetWidth(220); caption:SetJustifyH("LEFT"); self.wowheadCaption=caption
     local template=BackdropTemplateMixin and "BackdropTemplate" or nil
     local link=CreateFrame("EditBox",nil,bar,template); link:SetPoint("TOPLEFT",232,-4); link:SetPoint("BOTTOMRIGHT",-5,4)
-    skin(link,C.panel,C.border); link:SetFontObject(GameFontHighlightSmall); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.accent))
+    skin(link,C.panel,C.accent); link:SetFontObject(GameFontHighlightSmall); increaseFontSize(link); link:SetTextInsets(8,8,0,0); link:SetAutoFocus(false); link:SetTextColor(unpack(C.text)); if link.SetHighlightColor then link:SetHighlightColor(C.accent[1],C.accent[2],C.accent[3],0.45) end
     bar.linkValue="Left-click an item to select its Wowhead link."
     link:SetText(bar.linkValue); link:SetCursorPosition(0)
     link:SetScript("OnTextChanged",function(self,userInput) if userInput and self:GetText()~=bar.linkValue then self:SetText(bar.linkValue); self:HighlightText() end end)
@@ -209,9 +877,59 @@ function MainWindow:CreateResizeGrip(root)
     grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
     grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
     grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-    grip:SetScript("OnMouseDown",function(_,mouseButton) if mouseButton=="LeftButton" then root:StartSizing("BOTTOMRIGHT") end end)
-    grip:SetScript("OnMouseUp",function() root:StopMovingOrSizing(); ns.Database:SetFrameSize(root:GetWidth(),root:GetHeight()); MainWindow:Layout() end)
+    grip:SetScript("OnMouseDown",function(_,mouseButton)
+        if mouseButton~="LeftButton" then return end
+        local left,top=root:GetLeft(),root:GetTop()
+        if not left or not top then return end
+        root:ClearAllPoints()
+        root:SetPoint("TOPLEFT",UIParent,"BOTTOMLEFT",left,top)
+        root:StartSizing("BOTTOMRIGHT",true)
+    end)
+    grip:SetScript("OnMouseUp",function()
+        root:StopMovingOrSizing()
+        local rootX,rootY=root:GetCenter()
+        local parentX,parentY=UIParent:GetCenter()
+        if rootX and rootY and parentX and parentY then
+            local x,y=rootX-parentX,rootY-parentY
+            root:ClearAllPoints()
+            root:SetPoint("CENTER",UIParent,"CENTER",x,y)
+            ns.Database:SetFramePosition("CENTER",x,y)
+        end
+        ns.Database:SetFrameSize(root:GetWidth(),root:GetHeight())
+        MainWindow:Layout()
+    end)
     self.resizeGrip=grip
+end
+
+function MainWindow:CreateSettingsPanel(root)
+    local panel=frame(root); panel:SetSize(430,190); panel:SetPoint("CENTER"); panel:SetFrameLevel(root:GetFrameLevel()+20); skin(panel,C.panel,C.accent); panel:Hide(); self.settingsPanel=panel
+    local title=label(panel,"GameFontNormalLarge","SETTINGS",C.text); title:SetPoint("TOPLEFT",20,-18)
+    local subtitle=label(panel,"GameFontNormalSmall","Interface options for this character.",C.muted); subtitle:SetPoint("TOPLEFT",title,"BOTTOMLEFT",0,-5)
+
+    local close=CreateFrame("Button",nil,panel); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-10,-10)
+    local closeText=label(close,"GameFontNormalLarge","×",C.muted); closeText:SetPoint("CENTER",0,1)
+    close:SetScript("OnEnter",function() closeText:SetTextColor(1,0.3,0.3) end)
+    close:SetScript("OnLeave",function() closeText:SetTextColor(unpack(C.muted)) end)
+    close:SetScript("OnClick",function() panel:Hide() end)
+
+    local checkbox=CreateFrame("CheckButton",nil,panel,"UICheckButtonTemplate"); checkbox:SetSize(28,28); checkbox:SetPoint("TOPLEFT",20,-78); checkbox:SetChecked(ns.Database:Get().showMinimapIcon); self.showMinimapIconCheckbox=checkbox
+    local checkboxLabel=label(panel,"GameFontNormal","Show minimap icon",C.text); checkboxLabel:SetPoint("LEFT",checkbox,"RIGHT",8,1)
+    checkbox:SetScript("OnClick",function(self)
+        local shown=self:GetChecked() and true or false
+        ns.Database:SetShowMinimapIcon(shown)
+        ns.MinimapButton:SetShown(shown)
+    end)
+    local note=label(panel,"GameFontNormalSmall","When hidden, use /twinktracker to open the addon.",C.muted); note:SetPoint("TOPLEFT",56,-115)
+end
+
+function MainWindow:ToggleSettings()
+    if not self.settingsPanel then return end
+    if self.settingsPanel:IsShown() then
+        self.settingsPanel:Hide()
+    else
+        self.showMinimapIconCheckbox:SetChecked(ns.Database:Get().showMinimapIcon)
+        self.settingsPanel:Show()
+    end
 end
 
 function MainWindow:Create()
@@ -219,28 +937,43 @@ function MainWindow:Create()
     local saved=ns.Database:Get(); local root=frame(UIParent,"TwinkTrackerMainFrame")
     root:SetSize(saved.frame.width,saved.frame.height); root:SetPoint(saved.frame.point,UIParent,saved.frame.point,saved.frame.x,saved.frame.y); root:SetFrameStrata("DIALOG")
     root:SetResizable(true)
-    if root.SetResizeBounds then root:SetResizeBounds(980,620,1500,950) else root:SetMinResize(980,620); root:SetMaxResize(1500,950) end
+    if root.SetResizeBounds then root:SetResizeBounds(880,620,1500,950) else root:SetMinResize(880,620); root:SetMaxResize(1500,950) end
     root:SetMovable(true); root:EnableMouse(true); root:RegisterForDrag("LeftButton"); root:SetScript("OnDragStart",root.StartMoving)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing(); local p,_,_,x,y=self:GetPoint(); ns.Database:SetFramePosition(p,x,y) end)
     skin(root,C.window,C.border); root:Hide(); self.frame=root
+    local clientVersion=label(root,"GameFontNormalSmall",ns.Client:GetDisplayText(),C.muted); clientVersion:SetPoint("BOTTOMLEFT",10,6); self.clientVersion=clientVersion
     local glow=root:CreateTexture(nil,"BACKGROUND",nil,-1); glow:SetPoint("TOPLEFT",1,-1); glow:SetPoint("TOPRIGHT",-1,-1); glow:SetHeight(100); glow:SetColorTexture(0.03,0.23,0.42,0.30)
-    local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
+    local logoFallback=root:CreateFontString(nil,"BORDER","GameFontNormalHuge"); increaseFontSize(logoFallback); logoFallback:SetPoint("TOP",0,-31); logoFallback:SetText("TWINK TRACKER"); logoFallback:SetTextColor(0.95,0.58,0.16,1)
     local logo=root:CreateTexture(nil,"ARTWORK"); logo:SetSize(276,100); logo:SetPoint("TOP",0,-1); logo:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\logo.tga"); logo:SetTexCoord(0,1,0.1367,0.8633)
-    self:CreatePageButton(root,"GEAR","GEAR",20); self:CreatePageButton(root,"BASICS","TWINK BASICS",128)
-    self:CreatePageButton(root,"COMMUNITY","COMMUNITY",236)
-    local close=CreateFrame("Button",nil,root); close:SetSize(28,28); close:SetPoint("TOPRIGHT",-17,-15); local x=label(close,"GameFontNormalLarge","×",C.muted); x:SetPoint("CENTER",0,1)
-    close:SetScript("OnEnter",function() x:SetTextColor(1,0.3,0.3) end); close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.muted)) end); close:SetScript("OnClick",function() root:Hide() end)
+    for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end
+    self:RefreshBracketButtons()
+    self:CreatePageButton(root,"GEAR","GEAR","TOPLEFT",20,88); self:CreatePageButton(root,"BASICS","TWINK BASICS","TOPLEFT",116,88); self:CreatePageButton(root,"GUIDES","GUIDES","TOPLEFT",212,88)
+    self:CreatePageButton(root,"CLASS_TIERS","CLASS TIERS","TOPLEFT",20,112,-72)
+    self:CreatePageButton(root,"EVENTS","EVENTS","TOPRIGHT",-180,100,-72)
+    if ns.Client:IsPageAvailable("PVP") then self:CreatePageButton(root,"PVP","PVP","TOPRIGHT",-84,88,-72) end
+    self:CreatePageButton(root,"EXPLORATION","EXPLORATION","TOPRIGHT",-192); self:CreatePageButton(root,"COMMUNITY","COMMUNITY","TOPRIGHT",-84)
+    local close=CreateFrame("Button",nil,root); close:SetSize(36,36); close:SetPoint("TOPRIGHT",-13,-11)
+    local closeHighlight=close:CreateTexture(nil,"HIGHLIGHT"); closeHighlight:SetAllPoints(); closeHighlight:SetColorTexture(1,0.20,0.20,0.14)
+    local x=label(close,"GameFontNormalHuge","×",C.text); x:SetPoint("CENTER",0,1)
+    local closeFont,closeSize,closeFlags=x:GetFont(); if closeFont and closeSize then x:SetFont(closeFont,closeSize+3,closeFlags) end
+    close:SetScript("OnEnter",function() x:SetTextColor(1,0.35,0.35); GameTooltip:SetOwner(close,"ANCHOR_TOP"); GameTooltip:SetText("Close"); GameTooltip:Show() end)
+    close:SetScript("OnLeave",function() x:SetTextColor(unpack(C.text)); GameTooltip:Hide() end); close:SetScript("OnClick",function() root:Hide() end)
+    local settings=CreateFrame("Button",nil,root); settings:SetSize(16,16); settings:SetPoint("RIGHT",close,"LEFT",-1,0); settings:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton"); settings:SetHighlightTexture("Interface\\Buttons\\UI-OptionsButton"); settings:GetHighlightTexture():SetAlpha(0.35)
+    settings:SetScript("OnClick",function() MainWindow:ToggleSettings() end)
+    settings:SetScript("OnEnter",function(self) GameTooltip:SetOwner(self,"ANCHOR_TOP"); GameTooltip:SetText("Settings"); GameTooltip:Show() end)
+    settings:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
     local content=frame(root); content:SetPoint("TOPLEFT",20,-108); content:SetPoint("BOTTOMRIGHT",-20,20); self.content=content
     local gearPage=frame(content); gearPage:SetAllPoints(); self.pages.GEAR=gearPage
-    local classes=frame(gearPage); classes:SetPoint("TOPLEFT"); classes:SetPoint("BOTTOMLEFT"); classes:SetWidth(208); skin(classes,C.panel)
-    local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("TOPLEFT",14,-16)
-    for i,token in ipairs(ns.BisData.classOrder) do self:CreateClassButton(classes,token,i) end
+    local classes=frame(gearPage); classes:SetPoint("TOPLEFT"); classes:SetPoint("TOPRIGHT"); classes:SetHeight(66); skin(classes,C.panel)
+    local classTitle=label(classes,"GameFontNormal","SELECT CLASS",C.muted); classTitle:SetPoint("LEFT",14,5)
+    for i,token in ipairs(getActiveBracketData().bis.classOrder) do self:CreateClassButton(classes,token,i) end
 
-    local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"TOPRIGHT",10,0); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
+    local gear=frame(gearPage); gear:SetPoint("TOPLEFT",classes,"BOTTOMLEFT",0,-8); gear:SetPoint("BOTTOMRIGHT"); skin(gear,C.window); self.gear=gear
     self.className=label(gear,"GameFontNormalHuge","DRUID",C.text); self.className:SetPoint("TOPLEFT",16,-14)
     self.classRole=label(gear,"GameFontNormalSmall","",C.muted); self.classRole:SetPoint("TOPLEFT",self.className,"BOTTOMLEFT",1,-4)
-    local legend=label(gear,"GameFontNormalSmall","|cff40d96eEQUIPPED|r   |cff5ca9ffA  ALLIANCE|r   |cffff505cH  HORDE|r",C.muted); legend:SetPoint("TOPRIGHT",-18,-22)
+    self:CreateGearSectionButton(gear,"GEAR","GEAR",-216); self:CreateGearSectionButton(gear,"ENCHANTS","ENCHANTS",-114); self:CreateGearSectionButton(gear,"CONSUMABLES","CONSUMABLES",-12)
+    local legend=label(gear,"GameFontNormalSmall","|cff40d96eEQUIPPED|r   |cff5ca9ffA  ALLIANCE|r   |cffff505cH  HORDE|r",C.muted); legend:SetPoint("TOPRIGHT",-18,-50); self.gearLegend=legend
     self:CreateWowheadBar(gear)
     local header=frame(gear); header:SetPoint("TOPLEFT",10,-103); header:SetPoint("TOPRIGHT",-14,-103); header:SetHeight(34); skin(header,C.panel2)
     local slotHeader=label(header,"GameFontNormalSmall","SLOT",C.muted); slotHeader:SetPoint("LEFT",12,0); slotHeader:SetWidth(88); slotHeader:SetJustifyH("LEFT")
@@ -249,9 +982,38 @@ function MainWindow:Create()
     local scroll=CreateFrame("ScrollFrame",nil,gear); scroll:SetPoint("TOPLEFT",10,-141); scroll:SetPoint("BOTTOMRIGHT",-16,12); self.scrollFrame=scroll
     local child=CreateFrame("Frame",nil,scroll); child:SetSize(800,ROW_HEIGHT); scroll:SetScrollChild(child); self.scrollChild=child
     for index=1,18 do self:CreateGearRow(child,index) end
-    self:CreateScrollBar(gear,scroll); self:CreateBasicsPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root)
+    self:CreateScrollBar(gear,scroll); self.gearViewFrames={header,scroll,self.scrollBar,self.gearLegend}
+    self:CreateReferenceSection(gear,"ENCHANTS","ENCHANTS","Relevant equipment slots will replace the gear table here. Each class profile will reference a shared, source-verified enchant catalog.")
+    self:CreateReferenceSection(gear,"CONSUMABLES","CONSUMABLES","A class-specific table grouped by bandages, food and drink, potions, elixirs, scrolls, Engineering, weapon consumables and class resources will appear here.")
+    self:CreateBasicsPage(content); self:CreateClassTiersPage(content); if ns.Client:IsPageAvailable("PVP") then self:CreatePvpPage(content) end; self:CreateEventsPage(content); self:CreateGuidesPage(content); self:CreateExplorationPage(content); self:CreateCommunityPage(content); self:CreateResizeGrip(root); self:CreateSettingsPanel(root)
+    root:SetScript("OnHide",function() if MainWindow.settingsPanel then MainWindow.settingsPanel:Hide() end end)
     root:SetScript("OnSizeChanged",function() if MainWindow.gear then MainWindow:Layout() end end)
-    self:Layout(); self:RefreshGear(true); self:SelectPage(saved.selectedPage); return root
+    self:Layout(); self:RefreshGear(true); self:SelectGearSection(saved.selectedGearSection); self:SelectGuide(saved.selectedGuide); self:SelectPage(saved.selectedPage); return root
+end
+
+function MainWindow:RefreshGearSectionButtons()
+    local selected=ns.Database:Get().selectedGearSection
+    for key,value in pairs(self.gearSectionButtons) do local active=key==selected; value.bg:SetColorTexture(active and 0.10 or 0.06,active and 0.17 or 0.08,active and 0.25 or 0.12,1); value.accent:SetColorTexture(0.2,0.62,1,active and 1 or 0); value.title:SetTextColor(active and 0.50 or 0.53,active and 0.80 or 0.60,active and 1.00 or 0.70,1) end
+end
+
+function MainWindow:SelectGearSection(section)
+    if not ns.Database:SetSelectedGearSection(section) then return end
+    for _,value in ipairs(self.gearViewFrames or {}) do value:SetShown(section=="GEAR") end
+    for key,value in pairs(self.gearSections) do value:SetShown(key==section) end
+    self:RefreshGearSectionButtons(); self:RefreshActiveGearSection(false)
+end
+
+function MainWindow:RefreshActiveGearSection(resetScroll)
+    local section=ns.Database:Get().selectedGearSection
+    if section=="GEAR" then self:RefreshGear(resetScroll); return end
+    local bracketData=getActiveBracketData(); local profile=bracketData.bis.classes[ns.Database:Get().selectedClass]
+    self.className:SetText(string.upper(profile.name)); self.classRole:SetText(profile.role); self:RefreshClassButtons()
+    local panel=self.gearSections[section]
+    if panel then
+        panel.className:SetText(string.upper(profile.name).." PROFILE")
+        if section=="ENCHANTS" then local data=bracketData.enchants.classes[ns.Database:Get().selectedClass]; self:RefreshReferenceSection(section,data,bracketData.enchants.catalog,data.slotOrder,data.slots)
+        else local data=bracketData.consumables.classes[ns.Database:Get().selectedClass]; self:RefreshReferenceSection(section,data,bracketData.consumables.catalog,data.categoryOrder,data.categories) end
+    end
 end
 
 function MainWindow:RefreshPageButtons()
@@ -260,24 +1022,26 @@ function MainWindow:RefreshPageButtons()
 end
 
 function MainWindow:SelectPage(page)
-    ns.Database:SetSelectedPage(page)
+    if not ns.Database:SetSelectedPage(page) then return false end
     for key,value in pairs(self.pages) do value:SetShown(key==page) end
     self:RefreshPageButtons()
-    if page=="GEAR" then self:RefreshGear(false) end
+    if page=="GEAR" then self:SelectGearSection(ns.Database:Get().selectedGearSection) elseif page=="CLASS_TIERS" then self:RefreshClassTiers() elseif page=="EVENTS" then self:RefreshEventsPage() elseif page=="PVP" then self:RefreshPvpPage() elseif page=="GUIDES" then self:SelectGuide(ns.Database:Get().selectedGuide) elseif page=="EXPLORATION" then self:RefreshExploration() end
+    return true
 end
 
 function MainWindow:Layout()
     if not self.gear then return end
     local rowWidth=math.max(660,self.gear:GetWidth()-26); local tierWidth=(rowWidth-110)/3
     self.scrollChild:SetWidth(rowWidth)
-    local profile=ns.BisData.classes[ns.Database:Get().selectedClass]
+    local profile=getActiveBracketData().bis.classes[ns.Database:Get().selectedClass]
     local contentHeight=0
     for index,row in ipairs(self.rows) do
         local slot=profile.slotOrder[index]
         local rowHeight=ROW_HEIGHT
         if slot then
             for _,tier in ipairs({"S","A","B"}) do
-                if #profile.slots[slot][tier]>1 then rowHeight=MULTI_ROW_HEIGHT; break end
+                local choiceCount=#profile.slots[slot][tier]
+                if choiceCount>1 then rowHeight=math.max(rowHeight,MULTI_ROW_HEIGHT+(choiceCount-2)*46) end
             end
         end
         row:ClearAllPoints(); row:SetPoint("TOPLEFT",0,-contentHeight); row:SetHeight(rowHeight)
@@ -288,12 +1052,41 @@ function MainWindow:Layout()
             local textWidth=math.max(90,tierWidth-62); cell.textWidth=textWidth
             cell.name:SetWidth(math.max(45,textWidth-(cell.equipped and not cell.hasAlternative and 62 or 0)))
             cell.alternative:SetWidth(math.max(44,tierWidth-12)); cell.alternative.name:SetWidth(textWidth)
+            cell.thirdAlternative:SetWidth(math.max(44,tierWidth-12)); cell.thirdAlternative.name:SetWidth(textWidth)
         end
         if slot then contentHeight=contentHeight+rowHeight end
     end
     for column,tier in ipairs({"S","A","B"}) do local title=self.tierHeaders[tier]; title:ClearAllPoints(); title:SetPoint("LEFT",122+(column-1)*tierWidth,0) end
     local guideWidth=math.max(390,(self.content:GetWidth()-18)/2)
-    for index,card in ipairs(self.guideCards) do local column=(index-1)%2; local row=math.floor((index-1)/2); card:ClearAllPoints(); card:SetPoint("TOPLEFT",6+column*(guideWidth+6),-62-row*100); card:SetWidth(guideWidth); card.body:SetWidth(guideWidth-68) end
+    for index,card in ipairs(self.guideCards) do local column=(index-1)%2; local row=math.floor((index-1)/2); card:ClearAllPoints(); card:SetPoint("TOPLEFT",6+column*(guideWidth+6),-62-row*100); card:SetWidth(guideWidth); card.body:SetWidth(guideWidth-32) end
+    local classTierData=getActiveBracketData().classTiers; local classTierLeft=82; local classTierColumns=3; local classTierWidth=math.max(220,(self.content:GetWidth()-classTierLeft-24)/classTierColumns)
+    if self.classTierSpine then self.classTierSpine:ClearAllPoints(); self.classTierSpine:SetPoint("TOPLEFT",37,-91); self.classTierSpine:SetPoint("BOTTOMLEFT",37,16); self.classTierSpine:SetWidth(2) end
+    local top=72
+    for _,tier in ipairs({"S","A","B","C"}) do
+        local classCount=0
+        for _,token in ipairs(classTierData.classOrder) do if classTierData.classes[token].overall==tier then classCount=classCount+1 end end
+        local header=self.classTierHeaders[tier]; header:SetShown(classCount>0); header:ClearAllPoints(); header:SetPoint("TOPLEFT",6,-top-27)
+        local branch=self.classTierBranches[tier]; branch:SetShown(classCount>0); branch:ClearAllPoints(); branch:SetPoint("LEFT",header,"RIGHT",0,0)
+        local column=0
+        for _,token in ipairs(classTierData.classOrder) do
+            local entry=classTierData.classes[token]; local card=self.classTierCards[token]
+            if entry.overall==tier then
+                column=column+1
+                local cardRow=math.floor((column-1)/classTierColumns); local cardColumn=(column-1)%classTierColumns
+                card:ClearAllPoints(); card:SetPoint("TOPLEFT",classTierLeft+cardColumn*(classTierWidth+6),-top-cardRow*100); card:SetWidth(classTierWidth)
+                local metricWidth=(classTierWidth-32)/3
+                for metricIndex,key in ipairs({"offense","survival","utility"}) do local metric=card.metrics[key]; metric:ClearAllPoints(); metric:SetPoint("BOTTOMLEFT",10+(metricIndex-1)*(metricWidth+6),7); metric:SetWidth(metricWidth) end
+            end
+        end
+        if classCount>0 then top=top+math.ceil(classCount/classTierColumns)*100 end
+    end
+    local explorationWidth=math.max(390,(self.content:GetWidth()-18)/2)
+    for index,faction in ipairs({"HORDE","ALLIANCE"}) do
+        local panel=self.explorationPanels[faction]
+        if panel then panel:ClearAllPoints(); panel:SetPoint("TOPLEFT",6+(index-1)*(explorationWidth+6),-72); panel:SetPoint("BOTTOMLEFT",6+(index-1)*(explorationWidth+6),6); panel:SetWidth(explorationWidth); panel.child:SetWidth(math.max(320,explorationWidth-48)); for _,explorationRow in ipairs(self.explorationRows[faction]) do explorationRow:SetWidth(math.max(320,explorationWidth-48)) end end
+    end
+    for _,section in pairs(self.gearSections) do local width=math.max(620,section:GetWidth()-44); section.child:SetWidth(width); section.body:SetWidth(math.max(420,width-24)) end
+    if self.guidesPanel then self.guidesPanel.child:SetWidth(math.max(700,self.guidesPanel:GetWidth()-48)) end
     self.scrollChild:SetHeight(contentHeight)
     local viewport=self.scrollFrame:GetHeight(); if not viewport or viewport<=0 then viewport=455 end
     self.maxScroll=math.max(0,contentHeight-viewport); self.scrollBar:SetMinMaxValues(0,self.maxScroll); if self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
@@ -305,23 +1098,27 @@ function MainWindow:RefreshClassButtons()
 end
 
 function MainWindow:RefreshGear(resetScroll)
-    local profile=ns.BisData.classes[ns.Database:Get().selectedClass]
+    local bracketData=getActiveBracketData(); local profile=bracketData.bis.classes[ns.Database:Get().selectedClass]
     local equipped=ns.GearStatus:Collect(); local profileCounts=ns.GearStatus:CountProfileItemIDs(profile)
     self.className:SetText(string.upper(profile.name)); self.classRole:SetText(profile.role); self:RefreshClassButtons()
     for index,row in ipairs(self.rows) do
         local slot=profile.slotOrder[index]; row:SetShown(slot~=nil)
         if slot then
-            row.slot:SetText(string.upper(ns.BisData.slotNames[slot]))
+            row.slot:SetText(string.upper(bracketData.bis.slotNames[slot]))
             for _,tier in ipairs({"S","A","B"}) do
-                local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
+                local choices=profile.slots[slot][tier]; local data=choices[1]; local alternative=choices[2]; local thirdAlternative=choices[3]; local cell=row.cells[tier]; local isEquipped=ns.GearStatus:IsEquipped(data,equipped,profileCounts)
                 cell.itemID=data.id; cell.itemData=data; cell.equipped=isEquipped; cell.icon:SetTexture(getItemIcon(data.id)); cell.name:SetText(data.name)
-                cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and not alternative and 0.16 or 0)
+                local acquisitionText=getGearAcquisitionText(data); local hasAcquisition=acquisitionText~=nil
+                cell.acquisition:SetText(acquisitionText or ""); cell.acquisition:SetShown(hasAcquisition)
+                cell.state:SetHeight(alternative and 48 or ROW_HEIGHT); cell.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],isEquipped and 0.16 or 0)
                 local borderColor=isEquipped and C.equipped or C.tier[tier]; cell.iconBorder:SetColorTexture(borderColor[1],borderColor[2],borderColor[3],isEquipped and 1 or 0.72)
-                cell.hasAlternative=alternative~=nil; cell.status:SetShown(isEquipped and not alternative); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",-6,-28)
+                local showEquippedStatus=isEquipped and not alternative
+                cell.hasAlternative=alternative~=nil; cell.status:SetShown(showEquippedStatus); cell.status:ClearAllPoints(); cell.status:SetPoint("TOPRIGHT",-6,-8)
+                cell.acquisition:SetWidth(160)
                 cell.name:SetTextColor(unpack(isEquipped and C.equipped or C.text))
-                cell.name:ClearAllPoints(); cell.name:SetPoint("TOPLEFT",56,isEquipped and not alternative and -9 or -17)
+                cell.name:ClearAllPoints(); cell.name:SetPoint("TOPLEFT",56,hasAcquisition and -7 or (isEquipped and not alternative and -9 or -17))
                 cell.hover:SetHeight(alternative and 48 or ROW_HEIGHT)
-                cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-(isEquipped and not alternative and 62 or 0)))
+                cell.name:SetWidth(math.max(45,(cell.textWidth or 160)-(showEquippedStatus and 62 or 0)))
                 local factionColor=getFactionColor(data.faction)
                 cell.factionBg:SetShown(factionColor~=nil); cell.factionText:SetShown(factionColor~=nil)
                 if factionColor then cell.factionBg:SetColorTexture(unpack(factionColor)); cell.factionText:SetText(string.sub(data.faction,1,1)) end
@@ -329,11 +1126,28 @@ function MainWindow:RefreshGear(resetScroll)
                 cell.alternative:SetShown(alternative~=nil)
                 if alternative then
                     local altEquipped=ns.GearStatus:IsEquipped(alternative,equipped,profileCounts); local altColor=altEquipped and C.equipped or C.tier[tier]
+                    cell.alternative.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],altEquipped and 0.16 or 0)
                     cell.alternative.itemID=alternative.id; cell.alternative.itemData=alternative; cell.alternative.icon:SetTexture(getItemIcon(alternative.id)); cell.alternative.border:SetColorTexture(altColor[1],altColor[2],altColor[3],altEquipped and 1 or 0.72)
                     cell.alternative.name:SetText(alternative.name); cell.alternative.name:SetTextColor(unpack(altEquipped and C.equipped or C.text))
+                    local altAcquisitionText=getGearAcquisitionText(alternative); local altHasAcquisition=altAcquisitionText~=nil
+                    cell.alternative.acquisition:SetText(altAcquisitionText or ""); cell.alternative.acquisition:SetShown(altHasAcquisition)
+                    cell.alternative.name:ClearAllPoints(); cell.alternative.name:SetPoint(altHasAcquisition and "TOPLEFT" or "LEFT",52,altHasAcquisition and -5 or 0)
                     local altFactionColor=getFactionColor(alternative.faction); cell.alternative.factionBg:SetShown(altFactionColor~=nil); cell.alternative.factionText:SetShown(altFactionColor~=nil)
                     if altFactionColor then cell.alternative.factionBg:SetColorTexture(unpack(altFactionColor)); cell.alternative.factionText:SetText(string.sub(alternative.faction,1,1)) end
                     if alternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(alternative.id) end
+                end
+                cell.thirdAlternative:SetShown(thirdAlternative~=nil)
+                if thirdAlternative then
+                    local thirdEquipped=ns.GearStatus:IsEquipped(thirdAlternative,equipped,profileCounts); local thirdColor=thirdEquipped and C.equipped or C.tier[tier]
+                    cell.thirdAlternative.state:SetColorTexture(C.equipped[1],C.equipped[2],C.equipped[3],thirdEquipped and 0.16 or 0)
+                    cell.thirdAlternative.itemID=thirdAlternative.id; cell.thirdAlternative.itemData=thirdAlternative; cell.thirdAlternative.icon:SetTexture(getItemIcon(thirdAlternative.id)); cell.thirdAlternative.border:SetColorTexture(thirdColor[1],thirdColor[2],thirdColor[3],thirdEquipped and 1 or 0.72)
+                    cell.thirdAlternative.name:SetText(thirdAlternative.name); cell.thirdAlternative.name:SetTextColor(unpack(thirdEquipped and C.equipped or C.text))
+                    local thirdAcquisitionText=getGearAcquisitionText(thirdAlternative); local thirdHasAcquisition=thirdAcquisitionText~=nil
+                    cell.thirdAlternative.acquisition:SetText(thirdAcquisitionText or ""); cell.thirdAlternative.acquisition:SetShown(thirdHasAcquisition)
+                    cell.thirdAlternative.name:ClearAllPoints(); cell.thirdAlternative.name:SetPoint(thirdHasAcquisition and "TOPLEFT" or "LEFT",52,thirdHasAcquisition and -5 or 0)
+                    local thirdFactionColor=getFactionColor(thirdAlternative.faction); cell.thirdAlternative.factionBg:SetShown(thirdFactionColor~=nil); cell.thirdAlternative.factionText:SetShown(thirdFactionColor~=nil)
+                    if thirdFactionColor then cell.thirdAlternative.factionBg:SetColorTexture(unpack(thirdFactionColor)); cell.thirdAlternative.factionText:SetText(string.sub(thirdAlternative.faction,1,1)) end
+                    if thirdAlternative.id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(thirdAlternative.id) end
                 end
             end
         end
@@ -342,11 +1156,40 @@ function MainWindow:RefreshGear(resetScroll)
     if resetScroll then self.scrollBar:SetValue(0) elseif self.scrollBar:GetValue()>self.maxScroll then self.scrollBar:SetValue(self.maxScroll) end
 end
 
+function MainWindow:RefreshExploration()
+    if not self.frame or not self.pages.EXPLORATION or not self.pages.EXPLORATION:IsShown() then return end
+    for _,faction in ipairs({"HORDE","ALLIANCE"}) do
+        for _,row in ipairs(self.explorationRows[faction] or {}) do
+            local state=ns.ExplorationProgress:GetZoneProgress(row.zone.mapID)
+            row.progressData=state
+            if state and state.available then
+                local progressColor=getExplorationProgressColor(state.percent,true)
+                row.progress:SetText(string.format("%d/%d  ·  %d%%",state.explored,state.total,state.percent))
+                row.progress:SetTextColor(unpack(progressColor))
+                row.zoneName:SetTextColor(unpack(state.complete and C.equipped or C.text))
+                row.progressBar:SetStatusBarColor(progressColor[1],progressColor[2],progressColor[3],0.92)
+                row.progressBar:SetValue(state.percent)
+            else
+                local total=state and state.total or 0
+                row.progress:SetText(string.format("0/%d  ·  0%%",total))
+                row.progress:SetTextColor(unpack(C.muted))
+                row.zoneName:SetTextColor(unpack(C.text))
+                row.progressBar:SetStatusBarColor(C.muted[1],C.muted[2],C.muted[3],0.55)
+                row.progressBar:SetValue(0)
+            end
+        end
+    end
+end
+
 function MainWindow:RefreshItemIcons()
-    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then self:RefreshGear(false) end
+    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then
+        if ns.Database:Get().selectedGearSection=="GEAR" then self:RefreshGear(false)
+        elseif ns.Database:Get().selectedGearSection=="CONSUMABLES" then self:RefreshActiveGearSection(false) end
+    end
+    if self.frame and self.frame:IsShown() and self.pages.GUIDES:IsShown() then self:SelectGuide(ns.Database:Get().selectedGuide) end
 end
 function MainWindow:RefreshEquipment()
-    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() then self:RefreshGear(false) end
+    if self.frame and self.frame:IsShown() and self.pages.GEAR:IsShown() and ns.Database:Get().selectedGearSection=="GEAR" then self:RefreshGear(false) end
 end
 function MainWindow:Toggle()
     local root=self:Create()

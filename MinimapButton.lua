@@ -29,6 +29,10 @@ function MinimapButton:UpdateDragPosition()
     self:SetPosition(angle)
 end
 
+function MinimapButton:SetShown(shown)
+    if self.button then self.button:SetShown(shown and true or false) end
+end
+
 function MinimapButton:Create()
     if self.button then return self.button end
 
@@ -47,7 +51,7 @@ function MinimapButton:Create()
     icon:SetSize(24,24)
     icon:SetPoint("CENTER",0,1)
     icon:SetTexture("Interface\\AddOns\\TwinkTracker\\assets\\minimap-icon.tga")
-    icon:SetTexCoord(0.06,0.94,0.06,0.94)
+    icon:SetTexCoord(0,1,0,1)
 
     local border=button:CreateTexture(nil,"OVERLAY")
     border:SetSize(54,54)
@@ -74,5 +78,6 @@ function MinimapButton:Create()
 
     self.button=button
     self:SetPosition(ns.Database:Get().minimapAngle)
+    self:SetShown(ns.Database:Get().showMinimapIcon)
     return button
 end

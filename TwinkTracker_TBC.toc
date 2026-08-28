@@ -1,0 +1,64 @@
+## Interface: 20506
+## Title: TwinkTracker
+## Notes: Level 19, 29 and 39 gear, enchants, consumables and XP-safe planning for Burning Crusade Classic
+## Author: msminipc
+## Version: 0.4.9
+## SavedVariablesPerCharacter: TwinkTrackerDB
+## IconTexture: Interface\AddOns\TwinkTracker\assets\addon-icon.tga
+## X-Curse-Project-ID: 1644210
+## X-Flavor: TBC
+## AllowLoadGameType: tbc
+
+Locales\enUS.lua
+Client.lua
+Defaults.lua
+Data\Brackets.lua
+Data\GearAcquisition.lua
+Data\GearRandomProperties.lua
+Database.lua
+Data\Basics.lua
+Data\Bis.lua
+Data\Enchants.lua
+Data\Consumables.lua
+Data\Guides.lua
+Data\ClassTiers.lua
+Data\PvPEvents.lua
+Data\Events.lua
+Data\Exploration.lua
+Data\ExplorationOverlays.lua
+Data\BracketRegistry.lua
+Data\Bracket29\Bis.lua
+Data\Bracket29\Enchants.lua
+Data\Bracket29\Consumables.lua
+Data\Bracket29\Basics.lua
+Data\Bracket29\Guides.lua
+Data\Bracket29\ClassTiers.lua
+Data\Bracket29\Exploration.lua
+Data\Bracket29\Register.lua
+Data\Bracket39\Bis.lua
+Data\Bracket39\BisDruidHunterMage.lua
+Data\Bracket39\BisPaladinPriestRogue.lua
+Data\Bracket39\BisShamanWarlockWarrior.lua
+Data\Bracket39\Enchants.lua
+Data\Bracket39\Consumables.lua
+Data\Bracket39\Basics.lua
+Data\Bracket39\Guides.lua
+Data\Bracket39\ClassTiers.lua
+Data\Bracket39\Exploration.lua
+Data\Bracket39\Register.lua
+Data\TBC\Base.lua
+Data\TBC\Systems.lua
+Data\TBC\Events.lua
+Data\TBC\GearDruidHunterMage.lua
+Data\TBC\GearPaladinPriestRogue.lua
+Data\TBC\GearShamanWarlockWarrior.lua
+Data\TBC\ClassTiers.lua
+Data\TBC\Register.lua
+GearStatus.lua
+XPTracker.lua
+ExplorationProgress.lua
+EventTimers.lua
+MainWindow.lua
+MinimapButton.lua
+SlashCommands.lua
+Core.lua

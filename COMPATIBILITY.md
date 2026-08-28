@@ -1,37 +1,92 @@
-# Compatibility and verification
+# Compatibility and live verification
 
-The pilot targets World of Warcraft Classic Era and Classic Hardcore with
-interface `11509`. It intentionally does not load in TBC, Wrath, Retail, Season
-of Discovery, or Anniversary clients.
+TwinkTracker supports two automatically selected Classic clients from one
+shared addon folder:
 
-Automated checks prove Lua 5.1 syntax, static-data integrity, persisted-state
-normalization, XP risk calculations, TOC metadata and deployment-script
-presence. They do not prove client UI layout or current item availability.
+- **Classic Era and Classic Hardcore** through `TwinkTracker.toc`, interface
+  `11509` and the Era data profile.
+- **Burning Crusade Classic** through `TwinkTracker_TBC.toc`, interface `20506`
+  and the TBC data profile.
 
-Before a release, verify in a current Era client:
+There is no in-addon expansion switch. The game must load only the matching TOC,
+and the non-interactive footer must identify the active client and addon
+version. Wrath, Retail and other unsupported clients must not load either
+profile accidentally.
 
-1. `/tt` opens, moves, resizes and closes the main window.
-2. Window position, size, selected page and class persist through `/reload`.
-3. Gear and Twink Basics switch cleanly at minimum and maximum window sizes.
-4. Each of the nine class profiles renders and can show item tooltips.
-5. Every applicable class shows separate 1H and 2H S/A/B weapon rows.
-6. Equipping and removing listed gear updates the green `EQUIPPED` state, and
-   random-suffix variants do not highlight a different alternative with the
-   same base item ID.
-7. Blue Alliance and red Horde badges remain readable at minimum window size.
-8. Same-tier choices stack vertically in an expanded slot row, use two equally
-   sized icons and equal name styling, and each keeps its own faction badge,
-   equipped state and native tooltip across the supported window sizes.
-9. With a chat edit box open, Shift-clicking either same-tier choice inserts
-   that choice's item link without performing any equipment action.
-10. `/tt` opens the addon when unclaimed; if a character-specific addon owns
-    that alias, the collision notice appears and `/twt` remains available.
-11. Gear, enchant and consumable availability is checked against the intended
-    Era realm/faction and current client data.
-12. The minimap button opens and closes the window, its tooltip remains readable,
-    and dragging it around the minimap persists its position through `/reload`.
-13. The Community page shows Twink or Treat as a Horde guild on the EU PvP
-    Firemaw Cluster and its Discord address can be selected and copied.
-14. Left-clicking every item with an ID selects its matching Wowhead Classic URL
-    for Ctrl+C copying; Shift-click continues to insert the normal item link in
-    an open chat input.
+Automated checks cover Lua 5.1 syntax, both TOCs, client selection, static-data
+integrity, all level-19/29/39 profiles, persisted-state normalization and the
+TBC audit manifest. They do not prove live UI geometry, item availability,
+realm-specific routes, event timing or unusual enchant application behavior.
+
+## Shared live checklist
+
+Complete these checks in both an Era/Hardcore client and a TBC client:
+
+1. Confirm the addon loads without Lua errors and the footer shows the correct
+   client name and current addon version.
+2. Open the window with `/twinktracker` or `/twt`; move and resize it, drag the
+   minimap button, then verify position, size, selected page, class and bracket
+   survive `/reload`.
+3. Switch through brackets **19, 29 and 39**. For every bracket, open all nine
+   classes and confirm Gear, Enchants, Consumables, Class Tiers, Twink Basics,
+   Guides and Exploration render without overlap at minimum and maximum window
+   sizes.
+4. Confirm Tier S/A/B rows retain equal styling for equal choices, faction
+   badges are readable, both ring and trinket slots are explicit, and separate
+   1H/2H/off-hand/ranged rows appear only where class proficiency allows them.
+5. Equip and remove listed items. Green equipped highlighting must update
+   immediately, including independent same-tier choices and exact
+   random-suffix matching.
+6. Hover gear, enchant, consumable and guide items for native tooltips.
+   Shift-click item entries into chat or Auction House search and confirm no
+   equipment or other protected action is performed.
+7. Left-click real entries and verify the copy field uses the active
+   expansion's Wowhead item or spell URL: `/classic/` in Era/Hardcore and
+   `/tbc/` in TBC.
+8. Verify Exploration updates visible-map progress after
+   `MAP_EXPLORATION_UPDATED`, persists after `/reload`, and continues to warn
+   that 100% visible-map reveal does not prove that no exploration XP remains.
+9. Check Twink Basics and profession guides for the selected bracket. They must
+   remain read-only, state the absence of XP locking and distinguish use,
+   crafting, profession-skill and character-level requirements.
+10. Confirm long Gear, Consumables and Guide content remains scrollable and
+    item icons, names, restrictions and faction markers do not overlap.
+
+## Era and Hardcore checks
+
+1. Confirm the **PvP Events** navigation button and page are present.
+2. Verify its confirmed community rows, submission contacts and WSG
+   bonus-weekend estimate render for the selected bracket without claiming
+   automatic queueing or guaranteed current scheduling.
+3. Confirm Event Timers, Community listings and all copied links identify
+   Classic Era where applicable.
+4. Spot-check Era-only gear, PvP vendors, enchants and profession limits in the
+   current client and intended realm/faction before release.
+
+## Burning Crusade Classic checks
+
+1. Confirm the **PvP Events button and page are absent**. Era Firemaw
+   announcements and the Era-specific PvP page must not be reachable through
+   saved page state, slash commands or bracket changes.
+2. Confirm brackets 19, 29 and 39 load TBC gear deltas, TBC class-tier data and
+   TBC Wowhead links for all nine classes.
+3. Verify Blood Elf Paladin and Draenei Shaman faction routes appear where
+   relevant and that their opposite-faction restrictions remain correct.
+4. Confirm Jewelcrafting appears in Guides and TBC-only statues appear only
+   where their profession and bracket requirements permit them.
+5. Spot-check TBC item-stat changes, required levels, PvP rewards and target
+   item-level enchant gates in the live client. Pay particular attention to
+   BoP versus BoE leg armor, spellthread, chest, bracer, boot and weapon
+   application rules before treating an expensive setup as obtainable.
+6. Confirm saved selection of the removed PvP page falls back to a valid page
+   when entering TBC and remains stable through `/reload`.
+7. Confirm Event Timers shows the TBC battleground rotation rather than the Era
+   WSG cycle, rotates Darkmoon through Terokkar, and labels the footer/header as
+   Burning Crusade Classic.
+
+## Release boundary
+
+A passing static suite or successful package proves neither client-specific
+runtime behavior nor live data availability. Record Era/Hardcore and TBC live
+verification separately, and do not infer Windows deployment, publication or
+CurseForge indexing from local test success.
