@@ -2,7 +2,7 @@
 ## Title: TwinkTracker
 ## Notes: Level 19, 29 and 39 gear, enchants, consumables and XP-safe planning for Burning Crusade Classic
 ## Author: msminipc
-## Version: 0.4.8
+## Version: 0.4.9
 ## SavedVariablesPerCharacter: TwinkTrackerDB
 ## IconTexture: Interface\AddOns\TwinkTracker\assets\addon-icon.tga
 ## X-Curse-Project-ID: 1644210

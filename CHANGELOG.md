@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 0.4.9 - 2026-08-28
+
+### Removed
+
+- Removed the two expired level-19 Warsong Gulch sessions from the Classic Era
+  PvP Events page.
+
 ## 0.4.8 - 2026-08-28
 
 ### Added
