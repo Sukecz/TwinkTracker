@@ -39,7 +39,8 @@ The game chooses the correct manifest at login:
   enchants and profession additions
 
 Classic Era and Hardcore retain the **PvP Events** page for confirmed community
-battleground sessions and the Era WSG weekend estimate. It is intentionally
+battleground sessions, including the level-29 WSG queue every Tuesday at 20:00
+server time, and the Era WSG weekend estimate. It is intentionally
 hidden in TBC so Era schedules and Firemaw announcements are never presented as
 Burning Crusade events.
 

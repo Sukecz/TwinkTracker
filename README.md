@@ -50,7 +50,8 @@ and addon version.
   button, per-character settings and remembered page, class and size.
 
 Classic Era and Hardcore also retain the **PvP Events** page for confirmed
-community battleground sessions and the Era WSG bonus-weekend estimate. This
+community battleground sessions, including the level-29 WSG queue every Tuesday
+at 20:00 server time, and the Era WSG bonus-weekend estimate. This
 page is intentionally absent in Burning Crusade Classic because the bundled
 Era schedule and Firemaw community announcements must not be presented as TBC
 events. The separate recurring **Event Timers** overview loads an independent

@@ -31,6 +31,7 @@ local function getPvpTime()
 end
 
 local function formatPvpCountdown(event,now)
+    if event.recurringLabel then return event.recurringLabel end
     if now<event.startsAt then
         local remaining=event.startsAt-now; local days=math.floor(remaining/86400); local hours=math.floor((remaining%86400)/3600)
         if days>0 then return string.format("STARTS IN %dD %dH",days,hours) end
@@ -543,7 +544,7 @@ function MainWindow:RefreshPvpPage()
         local event=data.events[index]; row:SetShown(event~=nil)
         if event then
             row.title:SetText(event.battleground); row.bracket:SetText("LEVEL "..data.level.." BRACKET"); row.when:SetText(formatPvpCountdown(event,now)); row.details:SetText(table.concat({event.queueLabel..": "..event.time,event.date,event.realm,event.scope,event.faction},"  •  "))
-            local remaining=now<event.startsAt and event.startsAt-now or now<event.endsAt and event.endsAt-now
+            local remaining=event.startsAt and (now<event.startsAt and event.startsAt-now or now<event.endsAt and event.endsAt-now)
             if remaining then local delay=(remaining%3600)+1; nextRefresh=not nextRefresh and delay or math.min(nextRefresh,delay) end
         end
     end

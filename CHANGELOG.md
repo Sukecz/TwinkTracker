@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 0.4.8 - 2026-08-28
+
+### Added
+
+- Added a recurring Classic Era level-29 Warsong Gulch event every Tuesday at
+  20:00 server time.
+
 ## 0.4.7 - 2026-08-21
 
 ### Changed
