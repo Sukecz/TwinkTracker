@@ -2,6 +2,27 @@
 
 All notable changes are documented here.
 
+## 0.5.0 - 2026-09-15
+
+### Added
+
+- Added complete Era and TBC quest metadata for gear recommendations. Quest
+  rows now show the reward quest's minimum level, and native item tooltips show
+  the quest name, giver or starting object, location and prerequisite-chain
+  start without requiring a modifier key.
+- Added a recurring Classic Era level-19 Warsong Gulch event every Wednesday
+  at 20:00 server time.
+
+### Changed
+
+- Highlighted the `QUEST` acquisition label in a distinct bright magenta so
+  quest rewards stand out from the other gear sources at a glance.
+- Extended the shared Windows deployment helper to validate, package, and
+  synchronize AtlasLoot Revival and the private Era-only TwinkTrader alongside
+  the five existing addons.
+- Included root runtime XML files in the shared bundle so addon keybindings are
+  preserved by the mirrored Windows deployment.
+
 ## 0.4.9 - 2026-08-28
 
 ### Removed

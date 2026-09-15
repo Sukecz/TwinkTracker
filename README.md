@@ -24,7 +24,10 @@ and addon version.
 - **Gear you can act on** — normal game tooltips, Shift-click item handling,
   copyable expansion-correct Wowhead links, live green highlighting for
   equipped recommendations and a compact binding/source line on every real
-  item (`BOE · DUNGEON`, `BOP · QUEST`, `NO BIND · VENDOR`, and similar).
+  item (`BOE · DUNGEON`, `BOP · QUEST · LVL 18`, `NO BIND · VENDOR`, and
+  similar). Quest gear adds the reward quest, minimum quest level, starting
+  NPC or object, location, and the beginning of any prerequisite chain to the
+  normal item tooltip without requiring a modifier key.
   Random-stat recommendations use an exact rollable suffix itemString, so the
   tooltip shows the selected stats and Shift-click searches the precise named
   variant instead of the generic base item.
@@ -50,8 +53,9 @@ and addon version.
   button, per-character settings and remembered page, class and size.
 
 Classic Era and Hardcore also retain the **PvP Events** page for confirmed
-community battleground sessions, including the level-29 WSG queue every Tuesday
-at 20:00 server time, and the Era WSG bonus-weekend estimate. This
+community battleground sessions, including level-19 WSG every Wednesday and
+level-29 WSG every Tuesday at 20:00 server time, plus the Era WSG bonus-weekend
+estimate. This
 page is intentionally absent in Burning Crusade Classic because the bundled
 Era schedule and Firemaw community announcements must not be presented as TBC
 events. The separate recurring **Event Timers** overview loads an independent
@@ -113,6 +117,6 @@ TBC checks do not replace live-client validation of UI geometry, event timing,
 realm availability or protected game behavior.
 
 Releases are packaged for CurseForge project `1644210` by the repository
-release workflow. The shared Windows helper deploys all four local addons to
+release workflow. The shared Windows helper deploys all seven local addons to
 both the Classic Era and Burning Crusade Classic clients while preserving
 SavedVariables.

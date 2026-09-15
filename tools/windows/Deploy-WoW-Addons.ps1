@@ -23,7 +23,9 @@ $addons = @(
     [pscustomobject]@{ DisplayName="Simple Scrolling Loot"; ProjectDirectory="ssl"; AddonName="SimpleScrollingLoot"; PrimaryToc="SimpleScrollingLoot.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleScrollingLoot.toc","SimpleScrollingLoot_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\ssl.png") },
     [pscustomobject]@{ DisplayName="Better Loot Rolls"; ProjectDirectory="blr"; AddonName="BetterLootRolls"; PrimaryToc="BetterLootRolls.toc"; Directories=@("Locales","assets"); RequiredFiles=@("BetterLootRolls.toc","BetterLootRolls_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
     [pscustomobject]@{ DisplayName="Simple Arsenal Swap"; ProjectDirectory="sas"; AddonName="SimpleArsenalSwap"; PrimaryToc="SimpleArsenalSwap.toc"; Directories=@("Locales","assets"); RequiredFiles=@("SimpleArsenalSwap.toc","SimpleArsenalSwap_TBC.toc","Core.lua","Options.lua","Locales\enUS.lua","assets\logo.png") },
-    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","TwinkTracker_TBC.toc","Client.lua","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","EventTimers.lua","Locales\enUS.lua","Data\Bis.lua","Data\ClassTiers.lua","Data\PvPEvents.lua","Data\Events.lua","Data\Brackets.lua","Data\BracketRegistry.lua","Data\Bracket29\ClassTiers.lua","Data\Bracket29\Register.lua","Data\Bracket39\ClassTiers.lua","Data\Bracket39\Register.lua","Data\TBC\Base.lua","Data\TBC\Events.lua","Data\TBC\Register.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga","assets\bracket-19.tga","assets\bracket-29.tga","assets\bracket-39.tga") }
+    [pscustomobject]@{ DisplayName="TwinkTracker"; ProjectDirectory="twinktracker"; AddonName="TwinkTracker"; PrimaryToc="TwinkTracker.toc"; Directories=@("Locales","Data","assets"); RequiredFiles=@("TwinkTracker.toc","TwinkTracker_TBC.toc","Client.lua","Core.lua","MainWindow.lua","MinimapButton.lua","XPTracker.lua","EventTimers.lua","Locales\enUS.lua","Data\Bis.lua","Data\ClassTiers.lua","Data\PvPEvents.lua","Data\Events.lua","Data\Brackets.lua","Data\BracketRegistry.lua","Data\Bracket29\ClassTiers.lua","Data\Bracket29\Register.lua","Data\Bracket39\ClassTiers.lua","Data\Bracket39\Register.lua","Data\TBC\Base.lua","Data\TBC\Events.lua","Data\TBC\Register.lua","assets\logo.png","assets\logo.tga","assets\minimap-icon.tga","assets\bracket-19.tga","assets\bracket-29.tga","assets\bracket-39.tga") },
+    [pscustomobject]@{ DisplayName="AtlasLoot Revival"; ProjectDirectory="atlaslootrevival"; RuntimeDirectory="AtlasLootRevival"; AddonName="AtlasLootRevival"; PrimaryToc="AtlasLootRevival.toc"; RootFiles=@("Bindings.xml"); Directories=@("Core","Data","Locales","UI","assets"); RequiredFiles=@("AtlasLootRevival.toc","AtlasLootRevival_TBC.toc","Bindings.xml","Bootstrap.lua","Core\Constants.lua","Core\Database.lua","Core\Events.lua","Core\SlashCommands.lua","Data\Instances.lua","Data\Loot.lua","Locales\enUS.lua","UI\MainWindow.lua","assets\boss-marker.tga","assets\boss-marker-ring.tga") },
+    [pscustomobject]@{ DisplayName="TwinkTrader"; ProjectDirectory="twinktrader"; RuntimeDirectory="TwinkTrader"; AddonName="TwinkTrader"; PrimaryToc="TwinkTrader.toc"; EraOnly=$true; Directories=@("Data"); RequiredFiles=@("TwinkTrader.toc","Core.lua","Database.lua","Scanner.lua","MainWindow.lua","Data\Catalog.lua") }
 )
 
 function Invoke-NativeCommand {
@@ -46,11 +48,18 @@ try {
     $archiveArguments = @()
     foreach ($addon in $addons) {
         $project = "$ProjectsRoot/$($addon.ProjectDirectory)"
+        $runtimeRelative = $addon.ProjectDirectory
+        if ($addon.PSObject.Properties.Name -contains "RuntimeDirectory") {
+            $runtimeRelative = "$runtimeRelative/$($addon.RuntimeDirectory)"
+        }
         $testCommands += "echo 'Testing $($addon.DisplayName)...' && (cd '$project' && bash tests/run.sh)"
-        $archiveArguments += "--transform='s,^$($addon.ProjectDirectory)/,$($addon.AddonName)/,'"
-        $archiveArguments += "$($addon.ProjectDirectory)/*.lua"
-        $archiveArguments += "$($addon.ProjectDirectory)/*.toc"
-        foreach ($directory in $addon.Directories) { $archiveArguments += "$($addon.ProjectDirectory)/$directory" }
+        $archiveArguments += "--transform='s,^$runtimeRelative/,$($addon.AddonName)/,'"
+        $archiveArguments += "$runtimeRelative/*.lua"
+        $archiveArguments += "$runtimeRelative/*.toc"
+        if ($addon.PSObject.Properties.Name -contains "RootFiles") {
+            foreach ($rootFile in $addon.RootFiles) { $archiveArguments += "$runtimeRelative/$rootFile" }
+        }
+        foreach ($directory in $addon.Directories) { $archiveArguments += "$runtimeRelative/$directory" }
     }
     $remoteCommand = ($testCommands -join " && ") + " && cd '$ProjectsRoot' && tar -czf '$remoteArchive' " + ($archiveArguments -join " ")
     Invoke-NativeCommand $ssh @($Server, $remoteCommand) "Addon tests or runtime bundle preparation failed. Nothing was copied."
@@ -75,6 +84,9 @@ try {
     foreach ($wowAddOnsPath in $WowAddOnsPaths) {
         Write-Host "  Target: $wowAddOnsPath" -ForegroundColor DarkCyan
         foreach ($addon in $addons) {
+            if (($addon.PSObject.Properties.Name -contains "EraOnly") -and $addon.EraOnly -and $wowAddOnsPath -notlike "*_classic_era_*") {
+                continue
+            }
             $source = Join-Path $stageRoot $addon.AddonName
             $destination = Join-Path $wowAddOnsPath $addon.AddonName
             New-Item -ItemType Directory -Path $destination -Force | Out-Null
@@ -83,7 +95,7 @@ try {
             if ($LASTEXITCODE -ge 8) { throw "Robocopy failed while updating $destination (exit code $LASTEXITCODE)" }
         }
     }
-    Write-Host "All four addons are up to date in Classic Era and Burning Crusade Classic. Enter /reload in WoW." -ForegroundColor Green
+    Write-Host "All seven addons are up to date in their supported Classic clients. Enter /reload in WoW." -ForegroundColor Green
 }
 catch { $exitCode = 1; Write-Host ""; Write-Host "Deployment failed: $($_.Exception.Message)" -ForegroundColor Red }
 finally {

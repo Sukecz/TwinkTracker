@@ -91,6 +91,8 @@ assertMetadata(23173, "TBC", "BOP", "EVENT")
 assertMetadata(29584, "TBC", "BOE", "VENDOR")
 assertMetadata(19969, "ERA", "BOP", "FISHING")
 
+local questLabel = assert(ns.GearAcquisition:Format({ id = 6667 },"ERA"))
+assert(string.find(questLabel,"|cffff66ccQUEST|r",1,true), "quest acquisition label is not highlighted")
 local eraNaxx = assert(ns.GearAcquisition:Format({ id = 15313, requiresNaxxEnchant = true },"ERA"))
 local tbcNaxx = assert(ns.GearAcquisition:Format({ id = 5404, requiresNaxxEnchant = true },"TBC"))
 assert(string.find(eraNaxx,"NO BIND",1,true) and string.find(eraNaxx,"+ NAXX",1,true))

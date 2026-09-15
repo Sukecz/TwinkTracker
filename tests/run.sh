@@ -54,6 +54,15 @@ done
 file assets/logo.tga | grep -q '1024 x 512 x 32'
 file assets/minimap-icon.tga | grep -q '256 x 256 x 32'
 grep -q 'AddonName="TwinkTracker"' tools/windows/Deploy-WoW-Addons.ps1
+grep -q 'AddonName="AtlasLootRevival"' tools/windows/Deploy-WoW-Addons.ps1
+grep -q 'AddonName="TwinkTrader"' tools/windows/Deploy-WoW-Addons.ps1
+grep -q 'RuntimeDirectory="AtlasLootRevival"' tools/windows/Deploy-WoW-Addons.ps1
+grep -q 'RuntimeDirectory="TwinkTrader"' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'EraOnly=$true' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'AtlasLootRevival_TBC.toc' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'Bindings.xml' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'assets\boss-marker.tga' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'assets\boss-marker-ring.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Brackets.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\BracketRegistry.lua' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Data\Bracket29\Register.lua' tools/windows/Deploy-WoW-Addons.ps1
@@ -72,6 +81,8 @@ grep -Fq 'foreach ($wowAddOnsPath in $WowAddOnsPaths)' tools/windows/Deploy-WoW-
 grep -Fq 'assets\bracket-19.tga' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'one runtime bundle' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'tar -czf' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'RootFiles=@("Bindings.xml")' tools/windows/Deploy-WoW-Addons.ps1
+grep -Fq 'All seven addons are up to date' tools/windows/Deploy-WoW-Addons.ps1
 grep -Fq 'Interface\\AddOns\\TwinkTracker\\assets\\logo.tga' MainWindow.lua
 grep -Fq 'ns.Client:GetDisplayText()' MainWindow.lua
 grep -Fq 'for index,level in ipairs(ns.Brackets.order) do self:CreateBracketButton(root,level,index) end' MainWindow.lua

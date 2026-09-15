@@ -23,6 +23,8 @@ viewing.
   Exploration progress
 - Normal item tooltips, Shift-click handling and copyable **Wowhead Classic or
   Wowhead TBC links**, selected automatically
+- Quest-reward labels with minimum level plus tooltip details for the quest,
+  starting NPC or object, location and prerequisite-chain start
 - Live equipped-item highlighting, a draggable minimap button and a movable,
   resizable window with per-character settings
 
@@ -39,8 +41,9 @@ The game chooses the correct manifest at login:
   enchants and profession additions
 
 Classic Era and Hardcore retain the **PvP Events** page for confirmed community
-battleground sessions, including the level-29 WSG queue every Tuesday at 20:00
-server time, and the Era WSG weekend estimate. It is intentionally
+battleground sessions, including level-19 WSG every Wednesday and level-29 WSG
+every Tuesday at 20:00 server time, plus the Era WSG weekend estimate. It is
+intentionally
 hidden in TBC so Era schedules and Firemaw announcements are never presented as
 Burning Crusade events.
 

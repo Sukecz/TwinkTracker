@@ -13,17 +13,22 @@ for _, level in ipairs({ 19, 29, 39 }) do
     assert(data.contact.discord == "https://discord.com/users/608587388184428544")
     assert(type(data.events) == "table")
 end
-assert(#ns.PvPEventsData.brackets[19].events == 0)
+assert(#ns.PvPEventsData.brackets[19].events == 1)
 assert(#ns.PvPEventsData.brackets[29].events == 1)
 assert(#ns.PvPEventsData.brackets[39].events == 0)
 
-local weekly = ns.PvPEventsData.brackets[29].events[1]
-assert(weekly.battleground == "WARSONG GULCH")
-assert(weekly.queueLabel == "QUEUE FOR WSG")
-assert(weekly.realm == "FIREMAW CLUSTER" and weekly.scope == "ALL CONNECTED REALMS")
-assert(weekly.faction == "HORDE VS ALLIANCE")
-assert(weekly.date == "EVERY TUESDAY" and weekly.recurringLabel == "EVERY TUESDAY")
-assert(weekly.time == "20:00 SERVER TIME")
-assert(weekly.startsAt == nil and weekly.endsAt == nil)
+local function assertWeeklyEvent(level, day)
+    local weekly = ns.PvPEventsData.brackets[level].events[1]
+    assert(weekly.battleground == "WARSONG GULCH")
+    assert(weekly.queueLabel == "QUEUE FOR WSG")
+    assert(weekly.realm == "FIREMAW CLUSTER" and weekly.scope == "ALL CONNECTED REALMS")
+    assert(weekly.faction == "HORDE VS ALLIANCE")
+    assert(weekly.date == "EVERY " .. day and weekly.recurringLabel == "EVERY " .. day)
+    assert(weekly.time == "20:00 SERVER TIME")
+    assert(weekly.startsAt == nil and weekly.endsAt == nil)
+end
+
+assertWeeklyEvent(19, "WEDNESDAY")
+assertWeeklyEvent(29, "TUESDAY")
 
 print("test_pvp_events.lua: ok")

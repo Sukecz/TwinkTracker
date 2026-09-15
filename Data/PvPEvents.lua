@@ -9,7 +9,11 @@ local contact = {
 
 local function bracket(level)
     local events = {}
-    if level == 29 then
+    if level == 19 then
+        events = {
+            { battleground="WARSONG GULCH", queueLabel="QUEUE FOR WSG", realm="FIREMAW CLUSTER", scope="ALL CONNECTED REALMS", date="EVERY WEDNESDAY", time="20:00 SERVER TIME", recurringLabel="EVERY WEDNESDAY", faction="HORDE VS ALLIANCE" },
+        }
+    elseif level == 29 then
         events = {
             { battleground="WARSONG GULCH", queueLabel="QUEUE FOR WSG", realm="FIREMAW CLUSTER", scope="ALL CONNECTED REALMS", date="EVERY TUESDAY", time="20:00 SERVER TIME", recurringLabel="EVERY TUESDAY", faction="HORDE VS ALLIANCE" },
         }

@@ -100,7 +100,13 @@ end
 
 local function getGearAcquisitionText(itemData)
     if not ns.GearAcquisition or not itemData or not itemData.id then return nil end
-    return ns.GearAcquisition:Format(itemData,ns.Client and ns.Client.key or "ERA")
+    local clientKey=ns.Client and ns.Client.key or "ERA"
+    local text=ns.GearAcquisition:Format(itemData,clientKey)
+    local questLevel=ns.GearQuests and ns.GearQuests:GetMinimumLevel(itemData,clientKey)
+    if text and questLevel then
+        text=text.." |cff627089·|r |cff86bff5LVL "..questLevel.."|r"
+    end
+    return text
 end
 
 local function showHyperlinkTooltip(owner,hyperlink)
@@ -111,7 +117,13 @@ end
 
 local function showItemTooltip(owner,itemData)
     local itemString=getItemString(itemData)
-    if itemString then showHyperlinkTooltip(owner,itemString) end
+    if not itemString then return end
+    GameTooltip:SetOwner(owner,"ANCHOR_CURSOR")
+    GameTooltip:SetHyperlink(itemString)
+    if ns.GearQuests then
+        ns.GearQuests:AddToTooltip(GameTooltip,itemData,ns.Client and ns.Client.key or "ERA")
+    end
+    GameTooltip:Show()
 end
 
 local function getFactionColor(faction)

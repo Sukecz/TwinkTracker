@@ -113,6 +113,16 @@ The normalized binding values are `BOE`, `BOP` and `UNBOUND`. Source values are
 display wording (`UNBOUND` becomes `NO BIND`, for example); tests require every
 real runtime gear ID in both clients to resolve to the full catalog values.
 
+Quest gear has a matching expansion-aware record in `Data/GearQuests.lua`.
+Reward-quest IDs and names were checked against the individual Wowhead Classic
+or TBC item and quest pages. Quest minimum levels use the matching Wowhead
+client value; quest givers, locations and prerequisite-chain starts were
+cross-checked against Questie database commit
+`1c5193d8b81c602b1ee473c8761e992812a223cc`. The row displays the minimum level
+of the quest that grants the item, while the tooltip labels a different earlier
+chain start separately. A quest-provided item that must be retained before
+turn-in is explicitly marked instead of being described as a normal reward.
+
 ## Random properties and class legality
 
 Every random-stat runtime recommendation resolves through

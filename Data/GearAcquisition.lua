@@ -144,6 +144,7 @@ local bindingLabels = {
     UNBOUND = "|cffffc45cNO BIND|r",
 }
 local sourceLabels = {
+    QUEST = "|cffff66ccQUEST|r",
     ["DUNGEON DROP"] = "DUNGEON",
     ["HONOR / REPUTATION"] = "HONOR / REP",
 }
